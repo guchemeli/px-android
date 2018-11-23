@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">MP Android SDK Samples</string>
 
     <string name="json_config_button_text">Eu tenho um JSON</string>
@@ -9,11 +8,11 @@
     <string name="checkout_title">Integração muito rápida</string>
     <string name="checkout_description">São apenas 5 minutos! Nesse período, você testará nosso Checkout em seu app.</string>
     <string name="select_checkout">Selecione uma configuração</string>
+    <string name="continue_label">Continuar</string>
 
     <string name="start_for_wrong">Resposta obrigatória não especificada</string>
 
     <!-- Second factor messages -->
     <string name="auth_error_password">Senha Incorreta.</string>
     <string name="auth_error_password_required">Senha requerida.</string>
-
 </resources>

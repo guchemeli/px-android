@@ -7,7 +7,6 @@ import com.mercadopago.android.px.testcheckout.pages.CashPage;
 import com.mercadopago.android.px.testcheckout.pages.CongratsPage;
 import com.mercadopago.android.px.testcheckout.pages.CreditCardPage;
 import com.mercadopago.android.px.testcheckout.pages.DebitCardPage;
-import com.mercadopago.android.px.testcheckout.pages.DiscountCodeInputPage;
 import com.mercadopago.android.px.testcheckout.pages.DiscountCongratsPage;
 import com.mercadopago.android.px.testcheckout.pages.DiscountDetailPage;
 import com.mercadopago.android.px.testcheckout.pages.ExpiryDatePage;

@@ -89,7 +89,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
             public void success(final PaymentMethodSearch paymentMethodSearch) {
                 if (isViewAttached()) {
                     PaymentVaultPresenter.this.paymentMethodSearch = paymentMethodSearch;
-                    getView().onSuccessCodeDiscountCallback(discountRepository.getDiscount());
                     initPaymentMethodSearch();
                 }
             }
@@ -105,7 +104,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
                         initPaymentVaultFlow();
                     }
                 });
-                getView().onFailureCodeDiscountCallback();
             }
         });
     }
@@ -425,11 +423,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         getView().showDetailDialog();
     }
 
-    @Override
-    public void onInputRequestClicked() {
-        getView().showDiscountInputDialog();
-    }
-
     public void selectPluginPaymentMethod(final PaymentMethodPlugin plugin) {
         userSelectionRepository.select(pluginRepository.getPluginAsPaymentMethod(plugin.getId(), PaymentTypes.PLUGIN));
         if (!showHook1(PaymentTypes.PLUGIN, Constants.Activities.HOOK_1_PLUGIN)) {
@@ -463,6 +456,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     private boolean isDiscountAvailable() {
-        return discountRepository.getDiscount() != null || discountRepository.hasCodeCampaign();
+        return discountRepository.getDiscount() != null;
     }
 }

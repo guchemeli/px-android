@@ -16,7 +16,6 @@ import java.util.Collection;
 import static com.mercadopago.android.px.utils.PaymentUtils.getBusinessPaymentApproved;
 
 final class DiscountSamples {
-
     private static final String PK_WITH_DIRECT_DISCOUNT = "APP_USR-b8925182-e1bf-4c0e-bc38-1d893a19ab45";
     private static final String PREF_WITH_DIRECT_DISCOUNT = "241261700-459d4126-903c-4bad-bc05-82e5f13fa7d3";
     private static final String PK_WITH_DIRECT_DISCOUNT_MAX_REDEEM_PER_USER_3 =
@@ -41,8 +40,6 @@ final class DiscountSamples {
         options.add(
             new Pair<>("Discount - Direct",
                 new MercadoPagoCheckout.Builder(PK_WITH_DIRECT_DISCOUNT, PREF_WITH_DIRECT_DISCOUNT)));
-        options.add(new Pair<>("Discount - Code",
-            new MercadoPagoCheckout.Builder(PK_WITH_CODE_DISCOUNT, PREF_WITH_CODE_DISCOUNT)));
         options.add(new Pair<>("Discount - Not available",
             getMercadoPagoBuilderWithNotAvailableDiscount(PK_WITH_DIRECT_DISCOUNT_MAX_REDEEM_PER_USER_3,
                 PREF_WITH_USED_UP_DISCOUNT)));

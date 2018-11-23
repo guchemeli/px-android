@@ -36,8 +36,6 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
 import javax.annotation.Nonnull;
 
-import static com.mercadopago.android.px.internal.util.TextUtil.isEmpty;
-
 public class PaymentService implements PaymentRepository {
 
     @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
@@ -273,8 +271,6 @@ public class PaymentService implements PaymentRepository {
         paymentData.setToken(paymentSettingRepository.getToken());
         paymentData.setCampaign(discountRepository.getCampaign());
         paymentData.setDiscount(discountRepository.getDiscount());
-        paymentData
-            .setCouponCode(isEmpty(discountRepository.getDiscountCode()) ? null : discountRepository.getDiscountCode());
         paymentData.setTransactionAmount(amountRepository.getAmountToPay());
         //se agrego payer info a la pref - BOLBRADESCO
         paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());

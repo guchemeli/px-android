@@ -243,7 +243,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     private void retrieveCheckoutPreference(final String checkoutPreferenceId) {
         getResourcesProvider().getCheckoutPreference(checkoutPreferenceId,
             new TaggedCallback<CheckoutPreference>(ApiUtil.RequestOrigin.GET_PREFERENCE) {
-
                 @Override
                 public void onSuccess(final CheckoutPreference checkoutPreference) {
                     paymentSettingRepository.configure(checkoutPreference);
@@ -275,12 +274,12 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         }
     }
 
-    private boolean isIdentificationInvalidInPayment(final MercadoPagoError mercadoPagoError) {
+    private boolean isIdentificationInvalidInPayment(@Nullable final MercadoPagoError mercadoPagoError) {
         boolean identificationInvalid = false;
         if (mercadoPagoError != null && mercadoPagoError.isApiException()) {
-            List<Cause> causeList = mercadoPagoError.getApiException().getCause();
+            final List<Cause> causeList = mercadoPagoError.getApiException().getCause();
             if (causeList != null && !causeList.isEmpty()) {
-                Cause cause = causeList.get(0);
+                final Cause cause = causeList.get(0);
                 if (cause.getCode().equals(ApiException.ErrorCodes.INVALID_IDENTIFICATION_NUMBER)) {
                     identificationInvalid = true;
                 }

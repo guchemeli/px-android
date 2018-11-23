@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/px_button_height"
                 android:layout_marginTop="25dp"
-                android:text="@string/px_continue_label"/>
+                android:text="@string/continue_label"/>
 
             <com.mercadopago.android.px.internal.view.MPButton
                 android:id="@+id/select_checkout"

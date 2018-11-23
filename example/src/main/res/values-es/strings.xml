@@ -8,11 +8,11 @@
     <string name="checkout_title">Integración rapidísima</string>
     <string name="checkout_description">¡Son solo 5 minutos! En ese tiempo, estarás probando Nuestro Checkout en tu aplicación.</string>
     <string name="select_checkout">Selecciona una configuración</string>
+    <string name="continue_label">Continuar</string>
 
     <string name="start_for_wrong">Inicio requerido no especificado o inválido.</string>
 
     <!-- Second factor messages -->
     <string name="auth_error_password">La clave ingresada es incorrecta.</string>
     <string name="auth_error_password_required">El campo clave es requerido.</string>
-
 </resources>

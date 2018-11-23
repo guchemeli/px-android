@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -15,13 +14,11 @@ import android.widget.FrameLayout;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.InstallmentsAdapter;
-import com.mercadopago.android.px.internal.callbacks.OnCodeDiscountCallback;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.RecyclerItemClickListener;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.features.codediscount.CodeDiscountDialog;
 import com.mercadopago.android.px.internal.features.providers.InstallmentsProviderImpl;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardRepresentationModes;
@@ -36,7 +33,6 @@ import com.mercadopago.android.px.internal.view.AmountView;
 import com.mercadopago.android.px.internal.view.DiscountDetailDialog;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.CardInfo;
-import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.exceptions.ApiException;
@@ -47,7 +43,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public class InstallmentsActivity extends MercadoPagoBaseActivity
-    implements InstallmentsActivityView, CodeDiscountDialog.DiscountListener {
+    implements InstallmentsActivityView {
 
     protected InstallmentsPresenter presenter;
 
@@ -75,7 +71,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
     private AmountView amountView;
     private PaymentSettingRepository configuration;
-    private OnCodeDiscountCallback onCodeDiscountCallback;
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -385,36 +380,5 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     @Override
     public void showDetailDialog() {
         DiscountDetailDialog.showDialog(getSupportFragmentManager());
-    }
-
-    @Override
-    public void showDiscountInputDialog() {
-        CodeDiscountDialog.showDialog(getSupportFragmentManager());
-    }
-
-    @Override
-    public void onDiscountRetrieved(final OnCodeDiscountCallback onCodeDiscountCallback) {
-        this.onCodeDiscountCallback = onCodeDiscountCallback;
-        presenter.onDiscountRetrieved();
-    }
-
-    @Override
-    public void onSuccessCodeDiscountCallback(final Discount discount) {
-        if (isCodeDiscountDialogActive()) {
-            onCodeDiscountCallback.onSuccess(discount);
-        }
-    }
-
-    @Override
-    public void onFailureCodeDiscountCallback() {
-        if (isCodeDiscountDialogActive()) {
-            onCodeDiscountCallback.onFailure();
-            presenter.initializeAmountRow();
-        }
-    }
-
-    private boolean isCodeDiscountDialogActive() {
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(CodeDiscountDialog.class.getName());
-        return fragment != null && fragment.isVisible() && onCodeDiscountCallback != null;
     }
 }

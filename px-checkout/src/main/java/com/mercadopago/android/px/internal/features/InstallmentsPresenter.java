@@ -124,7 +124,6 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
                             getView().showError(getResourcesProvider().getNoInstallmentsFoundError(), "");
                         } else if (installments.size() == 1) {
                             resolvePayerCosts(installments.get(0).getPayerCosts());
-                            getView().onSuccessCodeDiscountCallback(discountRepository.getDiscount());
                         } else {
                             getView()
                                 .showError(getResourcesProvider().getMultipleInstallmentsFoundForAnIssuerError(), "");
@@ -141,7 +140,6 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
                             }
                         });
                         getView().showError(mercadoPagoError, ApiUtil.RequestOrigin.GET_INSTALLMENTS);
-                        getView().onFailureCodeDiscountCallback();
                     }
                 });
     }
@@ -213,15 +211,5 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsActivityView
     @Override
     public void onDetailClicked() {
         getView().showDetailDialog();
-    }
-
-    @Override
-    public void onInputRequestClicked() {
-        getView().showDiscountInputDialog();
-    }
-
-    public void onDiscountRetrieved() {
-        getInstallmentsAsync();
-        initializeAmountRow();
     }
 }

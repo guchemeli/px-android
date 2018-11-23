@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,12 +16,9 @@ import android.view.View;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.internal.adapters.PaymentMethodSearchItemAdapter;
-import com.mercadopago.android.px.internal.callbacks.OnCodeDiscountCallback;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.features.codediscount.CodeDiscountDialog;
-import com.mercadopago.android.px.internal.features.codediscount.CodeDiscountDialog.DiscountListener;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookActivity;
 import com.mercadopago.android.px.internal.features.plugins.PaymentMethodPluginActivity;
@@ -45,7 +41,6 @@ import com.mercadopago.android.px.internal.view.GridSpacingItemDecoration;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
-import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -64,7 +59,7 @@ import java.util.List;
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
 
 public class PaymentVaultActivity extends MercadoPagoBaseActivity
-    implements PaymentVaultView, DiscountListener {
+    implements PaymentVaultView {
 
     public static final int COLUMN_SPACING_DP_VALUE = 20;
     public static final int COLUMNS = 2;
@@ -91,7 +86,6 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     protected View mProgressLayout;
 
     private AmountView amountView;
-    private OnCodeDiscountCallback onCodeDiscountCallback;
 
     public static void startWithPaymentMethodSelected(@NonNull final AppCompatActivity from,
         @NonNull final PaymentMethodSearchItem item) {
@@ -191,7 +185,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     protected void initializePaymentOptionsRecyclerView() {
-        int columns = COLUMNS;
+        final int columns = COLUMNS;
         mSearchItemsRecyclerView = findViewById(R.id.mpsdkGroupsList);
         mSearchItemsRecyclerView.setLayoutManager(new GridLayoutManager(this, columns));
         mSearchItemsRecyclerView.addItemDecoration(
@@ -200,27 +194,30 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         mSearchItemsRecyclerView.setAdapter(groupsAdapter);
     }
 
-    protected void populateSearchList(List<PaymentMethodSearchItem> items,
-        OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
-        PaymentMethodSearchItemAdapter adapter = (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
-        List<PaymentMethodSearchViewController> customViewControllers =
+    protected void populateSearchList(final List<PaymentMethodSearchItem> items,
+        final OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
+        final PaymentMethodSearchItemAdapter adapter =
+            (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
+        final List<PaymentMethodSearchViewController> customViewControllers =
             createSearchItemsViewControllers(items, onSelectedCallback);
         adapter.addItems(customViewControllers);
         adapter.notifyItemInserted();
     }
 
     @Deprecated
-    private void populateCustomOptionsList(List<CustomSearchItem> customSearchItems,
-        OnSelectedCallback<CustomSearchItem> onSelectedCallback) {
-        PaymentMethodSearchItemAdapter adapter = (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
-        List<PaymentMethodSearchViewController> customViewControllers =
+    private void populateCustomOptionsList(final List<CustomSearchItem> customSearchItems,
+        final OnSelectedCallback<CustomSearchItem> onSelectedCallback) {
+        final PaymentMethodSearchItemAdapter adapter =
+            (PaymentMethodSearchItemAdapter) mSearchItemsRecyclerView.getAdapter();
+        final List<PaymentMethodSearchViewController> customViewControllers =
             createCustomSearchItemsViewControllers(customSearchItems, onSelectedCallback);
         adapter.addItems(customViewControllers);
         adapter.notifyItemInserted();
     }
 
     private List<PaymentMethodSearchViewController> createSearchItemsViewControllers(
-        List<PaymentMethodSearchItem> items, final OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
+        final List<PaymentMethodSearchItem> items,
+        final OnSelectedCallback<PaymentMethodSearchItem> onSelectedCallback) {
         final List<PaymentMethodSearchViewController> customViewControllers = new ArrayList<>();
         for (final PaymentMethodSearchItem item : items) {
             PaymentMethodSearchViewController viewController = new PaymentMethodSearchOption(this, item);
@@ -475,14 +472,14 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
     @Deprecated
     @Override
-    public void showCustomOptions(List<CustomSearchItem> customSearchItems,
-        OnSelectedCallback<CustomSearchItem> customSearchItemOnSelectedCallback) {
+    public void showCustomOptions(final List<CustomSearchItem> customSearchItems,
+        final OnSelectedCallback<CustomSearchItem> customSearchItemOnSelectedCallback) {
         populateCustomOptionsList(customSearchItems, customSearchItemOnSelectedCallback);
     }
 
     @Override
-    public void showSearchItems(List<PaymentMethodSearchItem> searchItems,
-        OnSelectedCallback<PaymentMethodSearchItem> paymentMethodSearchItemSelectionCallback) {
+    public void showSearchItems(final List<PaymentMethodSearchItem> searchItems,
+        final OnSelectedCallback<PaymentMethodSearchItem> paymentMethodSearchItemSelectionCallback) {
         populateSearchList(searchItems, paymentMethodSearchItemSelectionCallback);
     }
 
@@ -507,7 +504,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     @Override
-    public void showError(MercadoPagoError error, String requestOrigin) {
+    public void showError(final MercadoPagoError error, final String requestOrigin) {
         if (error.isApiException()) {
             showApiException(error.getApiException(), requestOrigin);
         } else {
@@ -576,49 +573,10 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     @Override
-    public void showDiscountInputDialog() {
-        CodeDiscountDialog.showDialog(getSupportFragmentManager());
-    }
-
-    @Override
     public void showAmount(@NonNull final DiscountRepository discountRepository,
         @NonNull final BigDecimal totalAmount,
         @NonNull final Site site) {
         amountView.setOnClickListener(presenter);
         amountView.show(discountRepository, totalAmount, site);
-    }
-
-    @Override
-    public void onDiscountRetrieved(final OnCodeDiscountCallback onCodeDiscountCallback) {
-        this.onCodeDiscountCallback = onCodeDiscountCallback;
-        cleanPaymentMethodOptions();
-        presenter.initPaymentVaultFlow();
-    }
-
-    @Override
-    public void onSuccessCodeDiscountCallback(final Discount discount) {
-        if (isCodeDiscountDialogActive()) {
-            onCodeDiscountCallback.onSuccess(discount);
-        }
-    }
-
-    @Override
-    public void onFailureCodeDiscountCallback() {
-        if (isCodeDiscountDialogActive()) {
-            onCodeDiscountCallback.onFailure();
-            presenter.initializeAmountRow();
-        }
-    }
-
-    private boolean isCodeDiscountDialogActive() {
-        return isCodeDiscountDialogAvailable() && onCodeDiscountCallback != null;
-    }
-
-    private boolean isCodeDiscountDialogAvailable() {
-        return getCodeDiscountDialogInstance() != null && getCodeDiscountDialogInstance().isVisible();
-    }
-
-    private Fragment getCodeDiscountDialogInstance() {
-        return getSupportFragmentManager().findFragmentByTag(CodeDiscountDialog.class.getName());
     }
 }

@@ -131,9 +131,6 @@
     <color name="px_white">@color/ui_components_white_color</color>
     <color name="px_med_light_gray">@color/ui_components_light_grey_color</color>
 
-    <!-- Discounts Same color - Buttons / link -->
-    <color name="px_discount_coupon">@color/ui_components_primary_color</color>
-
     <!-- Customized colors -->
     <!-- Toolbar and status bar default -->
     <color name="px_colorPrimary">@color/ui_components_android_color_primary</color>

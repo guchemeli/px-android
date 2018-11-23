@@ -13,19 +13,11 @@ public interface DiscountRepository extends ResourcesProvider {
 
     void configureMerchantDiscountManually(@Nullable final PaymentConfiguration paymentConfiguration);
 
-    void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign);
-
     @NonNull
     MPCall<Boolean> configureDiscountAutomatically(final BigDecimal amountToPay);
 
-    @NonNull
-    MPCall<Discount> getCodeDiscount(@NonNull final BigDecimal amount, @NonNull final String inputCode);
-
     @Nullable
     Discount getDiscount();
-
-    @Nullable
-    String getDiscountCode();
 
     @Nullable
     Campaign getCampaign();
@@ -35,11 +27,7 @@ public interface DiscountRepository extends ResourcesProvider {
 
     boolean isNotAvailableDiscount();
 
-    boolean hasCodeCampaign();
-
     boolean hasValidDiscount();
-
-    void saveDiscountCode(@NonNull final String code);
 
     void reset();
 }

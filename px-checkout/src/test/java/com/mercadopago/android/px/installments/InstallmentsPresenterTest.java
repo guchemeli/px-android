@@ -513,23 +513,8 @@ public class InstallmentsPresenterTest {
         }
 
         @Override
-        public void showDiscountInputDialog() {
-            // do nothing
-        }
-
-        @Override
         public void showAmount(@NonNull final DiscountRepository discountRepository,
             @NonNull final BigDecimal itemsPlusCharges, @NonNull final Site site) {
-            // do nothing
-        }
-
-        @Override
-        public void onSuccessCodeDiscountCallback(Discount discount) {
-            // do nothing
-        }
-
-        @Override
-        public void onFailureCodeDiscountCallback() {
             // do nothing
         }
 

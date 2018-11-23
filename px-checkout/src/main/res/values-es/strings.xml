@@ -63,7 +63,6 @@
     <string name="px_lastname">Apellido</string>
     <string name="px_bank_deals_action">Ver promociones</string>
     <string name="px_security_code">Código de seguridad</string>
-    <string name="px_continue_label">Continuar</string>
 
     <string name="px_invalid_card_bin">El número de tarjeta que ingresaste no se corresponde con el tipo de tarjeta</string>
     <string name="px_invalid_card_luhn">El número de tarjeta que ingresaste es incorrecto</string>
@@ -231,24 +230,11 @@
     <string name="px_ryc_account_money_description">Con dinero en cuenta</string>
 
     <!-- Discount -->
-    <string name="px_invalid_code">Código inválido</string>
-    <string name="px_merchant_without_discount_available">Vendedor sin descuento disponible</string>
-    <string name="px_ran_out_of_quantity_uses_quantity">Se agotó la cantidad de usos</string>
-    <string name="px_amount_doesnt_match">Importe fuera del alcance</string>
-    <string name="px_campaign_expired">La campaña expiró</string>
-    <string name="px_something_went_wrong">¡Uy! Algo salió mal…</string>
     <string name="px_we_apply_the_best_available_discount">Los descuentos no son acumulables. Te damos el más alto para este pago.</string>
     <string name="px_max_coupon_amount">Tope de descuento: %1$s</string>
     <string name="px_total_to_pay">Total a %1$s</string>
-    <string name="px_enter_coupon_code">Ingresa tu cupón de descuento</string>
-    <string name="px_enter_coupon_code_title">Ingresa tu cupón</string>
     <string name="px_with_max_coupon_amount">Con tope de descuento</string>
     <string name="px_interest_label">No incluye intereses bancarios</string>
-    <string name="px_excellent">¡Excelente!</string>
-    <string name="px_get_your_discount_amount">Ahora paga tu compra y obtén\n %1$s de descuento</string>
-    <string name="px_get_your_discount_percent">Ahora paga tu compra y obtén %1$s%% de descuento</string>
-    <string name="px_discount_error_check_this_data">Revisa éste dato</string>
-    <string name="px_error_something_went_wrong_try_again">Algo salió mal, intentá nuevamente.</string>
     <string name="px_always_on_discount_detail">Con cada pago en esta marca vas a consumir el tope hasta agotarlo.</string>
     <string name="px_one_shot_discount_detail">Tope disponible para consumir en un único pago.</string>
     <string name="px_discount_detail_end_date">Válido hasta el %s.</string>

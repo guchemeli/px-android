@@ -44,11 +44,6 @@ public class DiscountServiceImp implements DiscountRepository {
     }
 
     @Override
-    public void configureDiscountManually(@Nullable final Discount discount, @Nullable final Campaign campaign) {
-        discountStorageService.configureDiscountManually(discount, campaign, false);
-    }
-
-    @Override
     public void reset() {
         fetched = false;
         discountStorageService.reset();
@@ -60,22 +55,10 @@ public class DiscountServiceImp implements DiscountRepository {
         return new AutomaticDiscountCall(amountToPay);
     }
 
-    @NonNull
-    @Override
-    public MPCall<Discount> getCodeDiscount(@NonNull final BigDecimal amount, @NonNull final String inputCode) {
-        return discountApiService.getCodeDiscount(amount, inputCode);
-    }
-
     @Nullable
     @Override
     public Discount getDiscount() {
         return discountStorageService.getDiscount();
-    }
-
-    @Nullable
-    @Override
-    public String getDiscountCode() {
-        return discountStorageService.getDiscountCode();
     }
 
     @Nullable
@@ -100,16 +83,6 @@ public class DiscountServiceImp implements DiscountRepository {
 
     public boolean isNotAvailableDiscount() {
         return discountStorageService.isNotAvailableDiscount();
-    }
-
-    @Override
-    public void saveDiscountCode(@NonNull final String code) {
-        discountStorageService.saveDiscountCode(code);
-    }
-
-    @Override
-    public boolean hasCodeCampaign() {
-        return discountStorageService.hasCodeCampaign();
     }
 
     @Override

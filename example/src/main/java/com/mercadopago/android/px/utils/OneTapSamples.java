@@ -44,8 +44,6 @@ public final class OneTapSamples {
     private static final String ONE_TAP_MERCHANT_PUBLIC_KEY = "APP_USR-648a260d-6fd9-4ad7-9284-90f22262c18d";
     private static final String ONE_TAP_DIRECT_DISCOUNT_MERCHANT_PUBLIC_KEY =
         "APP_USR-ef65214d-59a2-4c82-be23-6cf6eb945d4c";
-    private static final String ONE_TAP_CODE_DISCOUNT_MERCHANT_PUBLIC_KEY =
-        "APP_USR-a9fbcb43-4d5a-41c6-a42e-56e8b153f142";
     private static final String PAYER_EMAIL_DUMMY = "prueba@gmail.com";
     private static final String SAVED_CARD_MERCHANT_PUBLIC_KEY_1 = "TEST-92f16019-1533-4f21-aaf9-70482692f41e";
     private static final String SAVED_CARD_PAYER_PRIVATE_KEY_1 =
@@ -90,12 +88,10 @@ public final class OneTapSamples {
             startOneTapWithLowAccountMoneyWithLowerAmountAndGreaterCap()));
         options.add(new Pair<>("16 - One tap - Should suggest credit card (no account money) with direct discount",
             startOneTapNoAccountMoneyWithCreditCardAndDirectDiscount()));
-        options.add(new Pair<>("17 - One tap - Should suggest credit card (no account money) with code discount",
-            startOneTapNoAccountMoneyWithCreditCardAndCodeDiscount()));
         options
-            .add(new Pair<>("18 - One tap - Should suggest credit card (no account money) with not available discount",
+            .add(new Pair<>("17 - One tap - Should suggest credit card (no account money) with not available discount",
                 startOneTapNoAccountMoneyWithCreditCardAndNoAvailableDiscount()));
-        options.add(new Pair<>("19 - One tap - Should suggest credit card and get call for authorize result",
+        options.add(new Pair<>("18 - One tap - Should suggest credit card and get call for authorize result",
             startOneTapWithCreditCardAndShowCallForAuthorize()));
     }
 
@@ -323,16 +319,6 @@ public final class OneTapSamples {
         return new MercadoPagoCheckout.Builder(ONE_TAP_DIRECT_DISCOUNT_MERCHANT_PUBLIC_KEY, preference,
             new PaymentConfiguration.Builder(samplePaymentProcessor)
                 .setDiscountConfiguration(DiscountConfiguration.forNotAvailableDiscount()).build())
-            .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN)
-            .setAdvancedConfiguration(new AdvancedConfiguration.Builder().setExpressPaymentEnable(true).build());
-    }
-
-    // It should suggest one tap with credit card
-    private static MercadoPagoCheckout.Builder startOneTapNoAccountMoneyWithCreditCardAndCodeDiscount() {
-        final CheckoutPreference preference =
-            getCheckoutPreferenceWithPayerEmail(120);
-        return new MercadoPagoCheckout.Builder(ONE_TAP_CODE_DISCOUNT_MERCHANT_PUBLIC_KEY, preference,
-            PaymentConfigurationUtils.create())
             .setPrivateKey(ONE_TAP_PAYER_3_ACCESS_TOKEN)
             .setAdvancedConfiguration(new AdvancedConfiguration.Builder().setExpressPaymentEnable(true).build());
     }

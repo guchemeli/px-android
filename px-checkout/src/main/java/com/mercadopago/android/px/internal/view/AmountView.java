@@ -35,10 +35,7 @@ public class AmountView extends LinearLayoutCompat {
     private View mainContainer;
 
     public interface OnClick {
-
         void onDetailClicked();
-
-        void onInputRequestClicked();
     }
 
     public AmountView(@NonNull final Context context) {
@@ -69,8 +66,6 @@ public class AmountView extends LinearLayoutCompat {
             showNotAvailableDiscount(totalAmount, site);
         } else if (discountRepository.hasValidDiscount()) {
             show(discount, campaign, totalAmount, site);
-        } else if (discountRepository.hasCodeCampaign()) {
-            showCouponInput(totalAmount, site);
         } else {
             show(totalAmount, site);
         }
@@ -106,20 +101,6 @@ public class AmountView extends LinearLayoutCompat {
 
         showDiscount(discount, campaign, totalAmount, site);
         showEffectiveAmount(totalAmount.subtract(discount.getCouponAmount()), site);
-    }
-
-    private void showCouponInput(final BigDecimal totalAmount, final Site site) {
-        show(totalAmount, site);
-        configureDiscountCouponAmountDescription();
-        configureViewsVisibilityDefault();
-        mainContainer.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                if (callback != null) {
-                    callback.onInputRequestClicked();
-                }
-            }
-        });
     }
 
     private void showNotAvailableDiscount(@NonNull final BigDecimal totalAmount,
@@ -160,20 +141,12 @@ public class AmountView extends LinearLayoutCompat {
         arrow.setVisibility(GONE);
     }
 
-    private void configureDiscountCouponAmountDescription() {
-        amountDescription.setVisibility(VISIBLE);
-        amountDescription.setText(R.string.px_enter_coupon_code);
-        amountDescription.setTextColor(getResources().getColor(R.color.px_discount_coupon));
-    }
-
     private void showDiscount(@NonNull final Discount discount,
         @NonNull final Campaign campaign,
         @NonNull final BigDecimal totalAmount,
         @NonNull final Site site) {
         configureDiscountAmountDescription(discount, campaign);
-
         configureViewsVisibilityWhenDiscount(totalAmount, site);
-
         configureOnOnDetailClickedEvent();
     }
 
