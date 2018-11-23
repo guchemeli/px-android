@@ -12,6 +12,11 @@ public class PaymentData implements Serializable {
     private PayerCost payerCost;
     private Token token;
     private Payer payer;
+
+    /**
+     * @deprecated CouponCode discount is not supported anymore.
+     */
+    @Deprecated
     private String couponCode;
 
     @Nullable private Discount discount;
@@ -71,10 +76,20 @@ public class PaymentData implements Serializable {
         this.payer = payer;
     }
 
+    /**
+     * @param couponCode
+     * @deprecated CouponCode discount is not supported anymore.
+     */
+    @Deprecated
     public void setCouponCode(String couponCode) {
         this.couponCode = couponCode;
     }
 
+    /**
+     * @return code
+     * @deprecated CouponCode discount is not supported anymore.
+     */
+    @Deprecated
     public String getCouponCode() {
         return couponCode;
     }

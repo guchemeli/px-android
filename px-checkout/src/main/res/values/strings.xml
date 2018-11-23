@@ -253,17 +253,8 @@
     <string name="px_used_up_discount_row">You reached the discount limit</string>
     <string name="px_used_up_discount_title">You reached the limit</string>
     <string name="px_used_up_discount_detail">This discount is not applicable, because you have reached the limit.</string>
-<<<<<<< HEAD
 
-    <string name="px_interest_label">Doesn\'t include bank interest</string>
-    <string name="px_excellent">¡Excellent!</string>
-    <string name="px_get_your_discount_amount">Now pay your purchase and get\n %1$s discount</string>
-    <string name="px_get_your_discount_percent">Now pay your purchase and get %1$s%% discount</string>
-    <string name="px_discount_error_check_this_data">Check this data</string>
-    <string name="px_error_something_went_wrong_try_again">Something went wrong, try again.</string>
-=======
     <string name="px_interest_label">Does\'t include bank interest</string>
->>>>>>> [enhancement] Removed discount code (#1400)
 
     <!-- Unlock Card -->
     <string name="px_text_unlock_card_start">Remember to</string>
@@ -281,11 +272,5 @@
     <string name="px_bolbradesco_rejection">Payment could not be processed</string>
     <string name="px_ticket_card_holder_identification_hint" translatable="false">*** *** *** **</string>
 
-<<<<<<< HEAD
-=======
-    <!-- Invested Account Money -->
-    <string name="px_invested_account_money">You are using invested money</string>
-    
->>>>>>> [enhancement] Removed discount code (#1400)
     <string name="px_empty_string"></string>
 </resources>

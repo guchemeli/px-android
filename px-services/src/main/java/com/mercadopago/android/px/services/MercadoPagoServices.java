@@ -217,11 +217,26 @@ public class MercadoPagoServices {
         service.getPaymentMethods(publicKey, privateKey).enqueue(callback);
     }
 
+    /**
+     * @param amount amount to pay
+     * @param payerEmail payer email
+     * @param callback your callback
+     * @deprecated this mechanism will not be available anymore in {@version 5.0}
+     */
+    @Deprecated
     public void getDirectDiscount(final String amount, final String payerEmail, final Callback<Discount> callback) {
         final DiscountService service = RetrofitUtil.getRetrofitClient(context).create(DiscountService.class);
         service.getDiscount(publicKey, amount, payerEmail).enqueue(callback);
     }
 
+    /**
+     * @param amount amount to pay
+     * @param payerEmail payer email
+     * @param couponCode the code to be rewarded
+     * @param callback your callback
+     * @deprecated this mechanism will not be available anymore in {@version 5.0}
+     */
+    @Deprecated
     public void getCodeDiscount(final String amount, final String payerEmail, final String couponCode,
         final Callback<Discount> callback) {
         final DiscountService service = RetrofitUtil.getRetrofitClient(context).create(DiscountService.class);

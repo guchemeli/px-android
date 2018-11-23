@@ -16,7 +16,7 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
 
-class PrefetchService {
+/* default */ class PrefetchService {
 
     private final Handler mainHandler;
 
@@ -48,7 +48,7 @@ class PrefetchService {
                 if (!TextUtil.isEmpty(checkoutPreferenceId)) {
                     fetchPreference();
                 } else {
-                    fetchDiscounts();
+                    fetchGroups();
                 }
             }
         });
@@ -68,7 +68,7 @@ class PrefetchService {
                     @Override
                     public void success(final CheckoutPreference checkoutPreference) {
                         paymentSettings.configure(checkoutPreference);
-                        fetchDiscounts();
+                        fetchGroups();
                     }
 
                     @Override
@@ -79,23 +79,6 @@ class PrefetchService {
                 });
     }
 
-    /* default */ void fetchDiscounts() {
-        session.getDiscountRepository()
-            .configureDiscountAutomatically(session.getAmountRepository().getAmountToPay()).execute(
-            new Callback<Boolean>() {
-                @Override
-                public void success(final Boolean automatic) {
-                    initPlugins();
-                }
-
-                @Override
-                public void failure(final ApiException apiException) {
-                    //TODO Track
-                    postError();
-                }
-            });
-    }
-
     /* default */ void initPlugins() {
         final PluginRepository pluginRepository = session.getPluginRepository();
         final PluginInitTask initTask = pluginRepository.getInitTask(true);
@@ -103,13 +86,13 @@ class PrefetchService {
             @Override
             public void onDataInitialized() {
                 pluginRepository.initialized();
-                fetchGroups();
+                postSuccess();
             }
 
             @Override
             public void onFailure(@NonNull final Exception e) {
                 pluginRepository.initialized();
-                fetchGroups();
+                postSuccess();
             }
         });
     }
@@ -118,7 +101,7 @@ class PrefetchService {
         session.getGroupsRepository().getGroups().execute(new Callback<PaymentMethodSearch>() {
             @Override
             public void success(final PaymentMethodSearch paymentMethodSearch) {
-                postSuccess();
+                initPlugins();
             }
 
             @Override

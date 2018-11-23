@@ -9,7 +9,6 @@ import com.mercadopago.android.px.core.MercadoPagoCheckout;
 import com.mercadopago.android.px.core.PaymentProcessor;
 import com.mercadopago.android.px.internal.configuration.InternalConfiguration;
 import com.mercadopago.android.px.internal.datasource.AmountService;
-import com.mercadopago.android.px.internal.datasource.DiscountApiService;
 import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
 import com.mercadopago.android.px.internal.datasource.DiscountStorageService;
 import com.mercadopago.android.px.internal.datasource.EscManagerImp;
@@ -177,8 +176,6 @@ public final class Session extends ApplicationModule
             final PaymentSettingRepository paymentSettings = configurationModule.getPaymentSettings();
             discountRepository =
                 new DiscountServiceImp(new DiscountStorageService(getSharedPreferences(), getJsonUtil()),
-                    new DiscountApiService(getRetrofitClient(),
-                        paymentSettings),
                     paymentSettings);
         }
         return discountRepository;

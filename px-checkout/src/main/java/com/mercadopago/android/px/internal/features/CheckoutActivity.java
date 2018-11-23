@@ -117,7 +117,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             try {
                 presenter =
                     new CheckoutPresenter(CheckoutStateModel.fromBundle(savedInstanceState),
-                        configurationModule.getPaymentSettings(), session.getAmountRepository(),
+                        configurationModule.getPaymentSettings(),
                         configurationModule.getUserSelectionRepository(),
                         session.getDiscountRepository(),
                         session.getGroupsRepository(),
@@ -162,7 +162,6 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
 
         return new CheckoutPresenter(persistentData,
             configuration,
-            session.getAmountRepository(),
             configurationModule.getUserSelectionRepository(),
             session.getDiscountRepository(),
             session.getGroupsRepository(),

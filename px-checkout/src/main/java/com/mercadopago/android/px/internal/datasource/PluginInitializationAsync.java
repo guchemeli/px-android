@@ -1,15 +1,19 @@
 package com.mercadopago.android.px.internal.datasource;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
 
 public class PluginInitializationAsync extends PluginInitSync {
 
+    /* default */ final Handler mainHandler;
     /* default */ Thread taskThread;
 
     public PluginInitializationAsync(@NonNull final Iterable<PaymentMethodPlugin> plugins,
         @NonNull final PaymentMethodPlugin.CheckoutData checkoutData) {
         super(plugins, checkoutData);
+        mainHandler = new Handler(Looper.getMainLooper());
     }
 
     /* async init */
@@ -23,22 +27,39 @@ public class PluginInitializationAsync extends PluginInitSync {
                     public void onDataInitialized() {
                         try {
                             if (!taskThread.isInterrupted()) {
-                                callbacks.onDataInitialized();
+                                mainHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callbacks.onDataInitialized();
+                                    }
+                                });
+
                             }
                         } catch (final Exception e) {
-                            callbacks.onFailure(e);
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callbacks.onFailure(e);
+                                }
+                            });
                         }
                     }
 
                     @Override
                     public void onFailure(@NonNull final Exception e) {
                         if (!taskThread.isInterrupted()) {
-                            callbacks.onFailure(e);
+                            mainHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    callbacks.onFailure(e);
+                                }
+                            });
                         }
                     }
                 });
             }
         });
+
         taskThread.start();
     }
 

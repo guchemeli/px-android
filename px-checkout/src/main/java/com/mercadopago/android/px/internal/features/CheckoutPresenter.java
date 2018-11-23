@@ -13,7 +13,6 @@ import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookHelper;
 import com.mercadopago.android.px.internal.features.providers.CheckoutProvider;
 import com.mercadopago.android.px.internal.navigation.DefaultPaymentMethodDriver;
-import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
@@ -56,9 +55,8 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     @NonNull
     private final DiscountRepository discountRepository;
     @NonNull
-    /* default */ final PaymentSettingRepository paymentSettingRepository;
-    @NonNull
-    private final AmountRepository amountRepository;
+    private final PaymentSettingRepository paymentSettingRepository;
+
     @NonNull
     /* default */ final UserSelectionRepository userSelectionRepository;
 
@@ -74,7 +72,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     public CheckoutPresenter(@NonNull final CheckoutStateModel persistentData,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
-        @NonNull final AmountRepository amountRepository,
         @NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final DiscountRepository discountRepository,
         @NonNull final GroupsRepository groupsRepository,
@@ -83,7 +80,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         @NonNull final InternalConfiguration internalConfiguration,
         @NonNull final BusinessModelMapper businessModelMapper) {
         this.paymentSettingRepository = paymentSettingRepository;
-        this.amountRepository = amountRepository;
         this.userSelectionRepository = userSelectionRepository;
         this.discountRepository = discountRepository;
         this.groupsRepository = groupsRepository;
@@ -135,44 +131,33 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     private void startCheckout() {
         getResourcesProvider().fetchFonts();
-        initializePluginsData();
+        retrievePaymentMethodSearch();
     }
 
-    private void initializePluginsData() {
+    private void initializePluginsData(final PaymentMethodSearch paymentMethodSearch) {
         pluginInitializationTask = pluginRepository.getInitTask(false);
-        pluginInitializationTask.init(getDataInitializationCallback());
+        pluginInitializationTask.init(getDataInitializationCallback(paymentMethodSearch));
     }
 
     @NonNull
-    private PluginInitializationAsync.DataInitializationCallbacks getDataInitializationCallback() {
+    private PluginInitTask.DataInitializationCallbacks getDataInitializationCallback(
+        final PaymentMethodSearch paymentMethodSearch) {
         return new PluginInitializationAsync.DataInitializationCallbacks() {
             @Override
             public void onDataInitialized() {
-                pluginRepository.initialized();
-                finishInitializingPluginsData();
+                onPluginDone(paymentMethodSearch);
             }
 
             @Override
             public void onFailure(@NonNull final Exception e) {
-                pluginRepository.initialized();
-                finishInitializingPluginsData();
+                onPluginDone(paymentMethodSearch);
             }
         };
     }
 
-    /* default */ void finishInitializingPluginsData() {
-        discountRepository.configureDiscountAutomatically(amountRepository.getAmountToPay())
-            .enqueue(new Callback<Boolean>() {
-                @Override
-                public void success(final Boolean automatic) {
-                    retrievePaymentMethodSearch();
-                }
-
-                @Override
-                public void failure(final ApiException apiException) {
-                    retrievePaymentMethodSearch();
-                }
-            });
+    private void onPluginDone(final PaymentMethodSearch paymentMethodSearch) {
+        pluginRepository.initialized();
+        startFlow(paymentMethodSearch);
     }
 
     public void retrievePaymentMethodSearch() {
@@ -181,7 +166,8 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
                 @Override
                 public void success(final PaymentMethodSearch paymentMethodSearch) {
                     if (isViewAttached()) {
-                        startFlow(paymentMethodSearch);
+                        initializePluginsData(paymentMethodSearch);
+
                     }
                 }
 

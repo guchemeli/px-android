@@ -101,8 +101,4 @@ public class DiscountStorageService {
         return TextUtil.isEmpty(stringCampaigns) ? new ArrayList<Campaign>()
             : (List<Campaign>) jsonUtil.fromJson(stringCampaigns, listType);
     }
-
-    public void saveCampaigns(@NonNull final List<Campaign> campaigns) {
-        sharedPreferences.edit().putString(PREF_CAMPAIGNS, jsonUtil.toJson(campaigns)).apply();
-    }
 }
