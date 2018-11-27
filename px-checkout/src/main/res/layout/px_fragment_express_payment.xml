@@ -54,7 +54,7 @@
             android:paddingRight="@dimen/px_m_margin"
             android:paddingBottom="@dimen/px_xs_margin"/>
 
-        <com.mercadopago.android.px.internal.view.InstallmentsHeaderView
+        <com.mercadopago.android.px.internal.view.PaymentMethodHeaderView
             android:id="@+id/installments_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -3,22 +3,21 @@ package com.mercadopago.android.px.internal.view;
 import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import com.mercadopago.android.px.R;
-import java.util.List;
 
-import static com.mercadopago.android.px.internal.view.InstallmentsDescriptorView.Model.SELECTED_PAYER_COST_NONE;
+import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
+import com.mercadopago.android.px.internal.features.express.slider.TitlePagerAdapter;
 
 public class TitlePager extends FrameLayout implements ViewTreeObserver.OnGlobalLayoutListener {
 
-    private InstallmentsDescriptorView previousView;
-    private InstallmentsDescriptorView currentView;
-    private InstallmentsDescriptorView nextView;
+    private View previousView;
+    private View currentView;
+    private View nextView;
     private int currentWidth;
-    private int currentIndex = 0;
-
-    private List<InstallmentsDescriptorView.Model> models;
+    private TitlePagerAdapter adapter;
 
     public TitlePager(final Context context,
         @Nullable final AttributeSet attrs) {
@@ -35,17 +34,15 @@ public class TitlePager extends FrameLayout implements ViewTreeObserver.OnGlobal
         inflate(context, R.layout.px_view_title_pager, this);
     }
 
-    public void setModels(final List<InstallmentsDescriptorView.Model> models) {
-        this.models = models;
-        refreshData(currentIndex, SELECTED_PAYER_COST_NONE);
-    }
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        previousView = (InstallmentsDescriptorView) getChildAt(0);
-        currentView = (InstallmentsDescriptorView) getChildAt(1);
-        nextView = (InstallmentsDescriptorView) getChildAt(2);
+        if (getChildCount() != 3) {
+            throw new RuntimeException("Incorrect number of children for Title Pager (must be 3)");
+        }
+        previousView = getChildAt(0);
+        currentView = getChildAt(1);
+        nextView = getChildAt(2);
 
         getViewTreeObserver().addOnGlobalLayoutListener(this);
     }
@@ -59,15 +56,18 @@ public class TitlePager extends FrameLayout implements ViewTreeObserver.OnGlobal
         }
     }
 
-    public void updatePosition(final float offset, final int position) {
+    public void setAdapter(final TitlePagerAdapter adapter) {
+        this.adapter = adapter;
+    }
+
+    public void updatePosition(final float offset, final GoingToModel goingTo) {
         float positionOffset = offset;
 
         if (positionOffset == 0.0f) {
             return;
         }
 
-        if (position < currentIndex) {
-            //Going backwards
+        if (goingTo == GoingToModel.BACKWARDS) {
             previousView.setAlpha(1.0f - positionOffset);
             currentView.setAlpha(positionOffset);
             positionOffset = 1.0f - positionOffset;
@@ -86,40 +86,20 @@ public class TitlePager extends FrameLayout implements ViewTreeObserver.OnGlobal
         nextView.setX(currentWidth - offsetInPixels);
     }
 
-    public void orderViews(final int position) {
-        final InstallmentsDescriptorView auxView;
-        if (currentIndex < position) {
+    public void orderViews(final GoingToModel goingTo) {
+        final View auxView;
+        if (goingTo == GoingToModel.BACKWARDS) {
             auxView = previousView;
             previousView = currentView;
             currentView = nextView;
             nextView = auxView;
-        } else if (currentIndex > position) {
+        } else {
             auxView = nextView;
             nextView = currentView;
             currentView = previousView;
             previousView = auxView;
         }
-    }
-
-    public void updateData(final int currentIndex, final int payerCostSelected) {
-        this.currentIndex = currentIndex;
-        refreshData(currentIndex, payerCostSelected);
-    }
-
-    private void refreshData(final int currentIndex, final int payerCostSelected) {
-        if (currentIndex > 0) {
-            final InstallmentsDescriptorView.Model previousModel = models.get(currentIndex - 1);
-            previousView.update(previousModel);
-        }
-
-        final InstallmentsDescriptorView.Model currentModel = models.get(currentIndex);
-        currentModel.setCurrentPayerCost(payerCostSelected);
-        currentView.update(currentModel);
-
-        if (currentIndex + 1 < models.size()) {
-            final InstallmentsDescriptorView.Model nextModel = models.get(currentIndex + 1);
-            nextView.update(nextModel);
-        }
+        adapter.updateViewsOrder(previousView, currentView, nextView);
     }
 
     private void resetViewsPosition() {

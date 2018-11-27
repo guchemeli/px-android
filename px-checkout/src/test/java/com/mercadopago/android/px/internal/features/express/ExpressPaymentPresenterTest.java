@@ -6,7 +6,7 @@ import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
-import com.mercadopago.android.px.internal.view.InstallmentsDescriptorView;
+import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.view.SummaryView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.internal.viewmodel.mappers.ElementDescriptorMapper;
@@ -127,7 +127,7 @@ public class ExpressPaymentPresenterTest {
         expressPaymentPresenter.onSliderOptionSelected(currentElementPosition);
         verify(view).hideInstallmentsSelection();
         verify(view).showInstallmentsDescriptionRow(currentElementPosition,
-            InstallmentsDescriptorView.Model.SELECTED_PAYER_COST_NONE);
+            PaymentMethodDescriptorView.Model.SELECTED_PAYER_COST_NONE);
         verify(view).disablePaymentButton();
         verifyNoMoreInteractions(view);
     }
@@ -161,7 +161,7 @@ public class ExpressPaymentPresenterTest {
         verify(view).updateSummary(any(SummaryView.Model.class));
         verify(view).showToolbarElementDescriptor(model);
         verify(view).configurePagerAndInstallments(anyListOf(DrawableFragmentItem.class), any(Site.class),
-            anyInt(), anyListOf(InstallmentsDescriptorView.Model.class));
+            anyInt(), anyListOf(PaymentMethodDescriptorView.Model.class));
     }
 
     private void verifyOnViewResumed() {

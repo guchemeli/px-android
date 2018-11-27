@@ -8,15 +8,15 @@ import android.widget.TextView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.util.textformatter.InstallmentFormatter;
-import com.mercadopago.android.px.internal.view.InstallmentsDescriptorView;
+import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.model.AccountMoneyMetadata;
 
-public class AccountMoneyDescriptor extends InstallmentsDescriptorView.Model {
+public class AccountMoneyDescriptor extends PaymentMethodDescriptorView.Model {
 
     private final AccountMoneyMetadata accountMoneyMetadata;
 
     @NonNull
-    public static InstallmentsDescriptorView.Model createFrom(
+    public static PaymentMethodDescriptorView.Model createFrom(
         @NonNull final AccountMoneyMetadata accountMoneyMetadata) {
         return new AccountMoneyDescriptor(accountMoneyMetadata);
     }

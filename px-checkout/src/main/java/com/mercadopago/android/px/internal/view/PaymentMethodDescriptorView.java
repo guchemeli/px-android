@@ -10,18 +10,18 @@ import com.mercadopago.android.px.model.PayerCost;
 
 import java.util.List;
 
-public class InstallmentsDescriptorView extends MPTextView {
+public class PaymentMethodDescriptorView extends MPTextView {
 
-    public InstallmentsDescriptorView(final Context context) {
+    public PaymentMethodDescriptorView(final Context context) {
         this(context, null);
     }
 
-    public InstallmentsDescriptorView(final Context context,
+    public PaymentMethodDescriptorView(final Context context,
         @Nullable final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public InstallmentsDescriptorView(final Context context, @Nullable final AttributeSet attrs,
+    public PaymentMethodDescriptorView(final Context context, @Nullable final AttributeSet attrs,
         final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }

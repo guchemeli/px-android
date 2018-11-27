@@ -9,24 +9,23 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
-import java.util.ArrayList;
+import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
+
 import java.util.List;
 
-public class InstallmentsHeaderView extends LinearLayout {
+public class PaymentMethodHeaderView extends LinearLayout {
 
-    /* default */ List<InstallmentsDescriptorView> descriptorViews;
-    /* default */ MPTextView installmentsTitleView;
+    /* default */ MPTextView titleView;
     /* default */ ImageView arrow;
     /* default */ Animation rotateUp;
     /* default */ Animation rotateDown;
 
     private TitlePager titlePager;
-    private List<InstallmentsDescriptorView.Model> installmentModels;
+    private List<PaymentMethodDescriptorView.Model> installmentModels;
     private int currentIndex;
 
-    public void setInstallmentsModel(final List<InstallmentsDescriptorView.Model> installmentModels) {
+    public void setInstallmentsModel(final List<PaymentMethodDescriptorView.Model> installmentModels) {
         this.installmentModels = installmentModels;
-        titlePager.setModels(installmentModels);
     }
 
     public interface Listener {
@@ -36,12 +35,12 @@ public class InstallmentsHeaderView extends LinearLayout {
         void onInstallmentsSelectorCancelClicked();
     }
 
-    public InstallmentsHeaderView(final Context context,
+    public PaymentMethodHeaderView(final Context context,
         @Nullable final AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public InstallmentsHeaderView(final Context context, @Nullable final AttributeSet attrs,
+    public PaymentMethodHeaderView(final Context context, @Nullable final AttributeSet attrs,
         final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context);
@@ -52,12 +51,8 @@ public class InstallmentsHeaderView extends LinearLayout {
 
         rotateUp = AnimationUtils.loadAnimation(context, R.anim.px_rotate_up);
         rotateDown = AnimationUtils.loadAnimation(context, R.anim.px_rotate_down);
-        installmentsTitleView = findViewById(R.id.installments_title);
+        titleView = findViewById(R.id.installments_title);
         titlePager = findViewById(R.id.title_pager);
-        descriptorViews = new ArrayList<>();
-        for (int i = 0; i < titlePager.getChildCount(); i++) {
-            descriptorViews.add((InstallmentsDescriptorView) titlePager.getChildAt(i));
-        }
         arrow = findViewById(R.id.arrow);
     }
 
@@ -65,7 +60,7 @@ public class InstallmentsHeaderView extends LinearLayout {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
-                if (installmentsTitleView.getVisibility() == VISIBLE) {
+                if (titleView.getVisibility() == VISIBLE) {
                     arrow.startAnimation(rotateDown);
                     listener.onInstallmentsSelectorCancelClicked();
                 } else {
@@ -77,27 +72,24 @@ public class InstallmentsHeaderView extends LinearLayout {
     }
 
     public void update() {
-        installmentsTitleView.setVisibility(VISIBLE);
+        titleView.setVisibility(VISIBLE);
         titlePager.setVisibility(GONE);
     }
 
-    public void update(final int paymentMethodIndex, final int payerCostSelected) {
+    public void update(final int paymentMethodIndex) {
         currentIndex = paymentMethodIndex;
 
-        if (installmentsTitleView.getVisibility() == VISIBLE) {
+        if (titleView.getVisibility() == VISIBLE) {
             arrow.startAnimation(rotateDown);
         }
 
         titlePager.setVisibility(VISIBLE);
-        titlePager.orderViews(paymentMethodIndex);
-        titlePager.updateData(paymentMethodIndex, payerCostSelected);
-        installmentsTitleView.setVisibility(GONE);
+        titleView.setVisibility(GONE);
 
         setClickable(installmentModels.get(currentIndex).hasPayerCostList());
     }
 
     public void updatePosition(final float positionOffset, final int position) {
-        titlePager.updatePosition(positionOffset, position);
         fadeBasedOnPosition(positionOffset, position);
     }
 
@@ -105,14 +97,14 @@ public class InstallmentsHeaderView extends LinearLayout {
 
         float relativeOffset = positionOffset;
 
-        final GoingTo goingTo = position == currentIndex ? GoingTo.FORWARD : GoingTo.BACKWARDS;
+        final GoingToModel goingTo = position == currentIndex ? GoingToModel.FORWARD : GoingToModel.BACKWARDS;
 
-        final InstallmentsDescriptorView.Model currentModel = installmentModels.get(currentIndex);
-        InstallmentsDescriptorView.Model goingToModel = null;
-        if (GoingTo.BACKWARDS == goingTo && position >= 0) {
+        final PaymentMethodDescriptorView.Model currentModel = installmentModels.get(currentIndex);
+        PaymentMethodDescriptorView.Model goingToModel = null;
+        if (GoingToModel.BACKWARDS == goingTo && position >= 0) {
             goingToModel = installmentModels.get(position);
             relativeOffset = 1.0f - positionOffset;
-        } else if (GoingTo.FORWARD == goingTo && position + 1 < installmentModels.size()) {
+        } else if (GoingToModel.FORWARD == goingTo && position + 1 < installmentModels.size()) {
             goingToModel = installmentModels.get(position + 1);
         }
 
@@ -129,9 +121,5 @@ public class InstallmentsHeaderView extends LinearLayout {
                 arrow.setAlpha(0.0f);
             }
         }
-    }
-
-    private enum GoingTo {
-        FORWARD, BACKWARDS
     }
 }

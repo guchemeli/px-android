@@ -14,7 +14,7 @@ import com.mercadopago.android.px.internal.util.textformatter.InstallmentFormatt
 import com.mercadopago.android.px.internal.util.textformatter.InterestFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.PayerCostFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
-import com.mercadopago.android.px.internal.view.InstallmentsDescriptorView;
+import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.model.CardMetadata;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
@@ -25,10 +25,10 @@ import java.util.List;
  * Model used to instanciate InstallmentsDescriptorView
  * For payment methods with payer costs: credit_card only
  */
-public final class InstallmentsDescriptorWithPayerCost extends InstallmentsDescriptorView.Model {
+public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDescriptorView.Model {
 
     @NonNull
-    public static InstallmentsDescriptorView.Model createFrom(@NonNull final PaymentSettingRepository configuration,
+    public static PaymentMethodDescriptorView.Model createFrom(@NonNull final PaymentSettingRepository configuration,
         @NonNull final CardMetadata card, final int selected) {
         final CheckoutPreference checkoutPreference = configuration.getCheckoutPreference();
         final String currencyId = checkoutPreference.getSite().getCurrencyId();

@@ -5,7 +5,7 @@ import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecorator;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
-import com.mercadopago.android.px.internal.view.InstallmentsDescriptorView;
+import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.view.SummaryView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.model.Card;
@@ -21,7 +21,7 @@ public interface ExpressPayment {
     interface View extends MvpView {
 
         void configurePagerAndInstallments(@NonNull List<DrawableFragmentItem> items, @NonNull final Site site,
-            final int selectedPayerCost, @NonNull List<InstallmentsDescriptorView.Model> models);
+            final int selectedPayerCost, @NonNull List<PaymentMethodDescriptorView.Model> models);
 
         void cancel();
 

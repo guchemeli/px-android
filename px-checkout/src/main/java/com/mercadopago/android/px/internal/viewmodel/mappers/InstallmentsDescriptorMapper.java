@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.viewmodel.mappers;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
-import com.mercadopago.android.px.internal.view.InstallmentsDescriptorView;
+import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.EmptyInstallmentsDescriptor;
 import com.mercadopago.android.px.internal.viewmodel.AccountMoneyDescriptor;
 import com.mercadopago.android.px.internal.viewmodel.InstallmentsDescriptorNoPayerCost;
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InstallmentsDescriptorMapper
-    extends Mapper<List<ExpressMetadata>, List<InstallmentsDescriptorView.Model>> {
+    extends Mapper<List<ExpressMetadata>, List<PaymentMethodDescriptorView.Model>> {
 
     @NonNull private final PaymentSettingRepository configuration;
 
@@ -23,8 +23,8 @@ public class InstallmentsDescriptorMapper
     }
 
     @Override
-    public List<InstallmentsDescriptorView.Model> map(@NonNull final List<ExpressMetadata> expressMetadataList) {
-        final List<InstallmentsDescriptorView.Model> models = new ArrayList<>();
+    public List<PaymentMethodDescriptorView.Model> map(@NonNull final List<ExpressMetadata> expressMetadataList) {
+        final List<PaymentMethodDescriptorView.Model> models = new ArrayList<>();
 
         for (final ExpressMetadata expressMetadata : expressMetadataList) {
             models.add(createInstallmentsDescriptorModel(expressMetadata));
@@ -35,7 +35,7 @@ public class InstallmentsDescriptorMapper
         return models;
     }
 
-    private InstallmentsDescriptorView.Model createInstallmentsDescriptorModel(final ExpressMetadata expressMetadata) {
+    private PaymentMethodDescriptorView.Model createInstallmentsDescriptorModel(final ExpressMetadata expressMetadata) {
         final String paymentTypeId = expressMetadata.getPaymentTypeId();
         final CardMetadata cardMetadata = expressMetadata.getCard();
 
@@ -55,7 +55,7 @@ public class InstallmentsDescriptorMapper
         }
     }
 
-    private InstallmentsDescriptorView.Model createAddNewPaymentModel() {
+    private PaymentMethodDescriptorView.Model createAddNewPaymentModel() {
         return EmptyInstallmentsDescriptor.create();
     }
 }

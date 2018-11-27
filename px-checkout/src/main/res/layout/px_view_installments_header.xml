@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.mercadopago.android.px.internal.view.InstallmentsDescriptorView
+        <com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -21,7 +21,7 @@
             android:textSize="@dimen/px_s_text"
             tools:text="1x $1200 CFT: 0,00%"/>
 
-        <com.mercadopago.android.px.internal.view.InstallmentsDescriptorView
+        <com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -29,7 +29,7 @@
             android:paddingRight="@dimen/px_title_pager_padding_right"
             android:textSize="@dimen/px_s_text"/>
 
-        <com.mercadopago.android.px.internal.view.InstallmentsDescriptorView
+        <com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"

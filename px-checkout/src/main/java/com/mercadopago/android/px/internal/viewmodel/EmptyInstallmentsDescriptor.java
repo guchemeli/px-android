@@ -1,14 +1,14 @@
 package com.mercadopago.android.px.internal.viewmodel;
 
-import com.mercadopago.android.px.internal.view.InstallmentsDescriptorView;
+import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 
-public class EmptyInstallmentsDescriptor extends InstallmentsDescriptorView.Model {
+public class EmptyInstallmentsDescriptor extends PaymentMethodDescriptorView.Model {
 
     protected EmptyInstallmentsDescriptor() {
         super();
     }
 
-    public static InstallmentsDescriptorView.Model create() {
+    public static PaymentMethodDescriptorView.Model create() {
         return new EmptyInstallmentsDescriptor();
     }
 }
