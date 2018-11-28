@@ -13,7 +13,6 @@ import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
 import com.mercadopago.android.px.internal.datasource.DiscountStorageService;
 import com.mercadopago.android.px.internal.datasource.EscManagerImp;
 import com.mercadopago.android.px.internal.datasource.GroupsService;
-import com.mercadopago.android.px.internal.datasource.InstallmentService;
 import com.mercadopago.android.px.internal.datasource.InstructionsService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl;
@@ -163,8 +162,8 @@ public final class Session extends ApplicationModule
             final UserSelectionRepository userSelectionRepository = configurationModule.getUserSelectionRepository();
             amountRepository = new AmountService(configuration,
                 configurationModule.getChargeSolver(),
-                new InstallmentService(userSelectionRepository),
-                getDiscountRepository());
+                getDiscountRepository(),
+                userSelectionRepository);
         }
         return amountRepository;
     }

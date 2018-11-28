@@ -67,6 +67,30 @@ public class Discount implements Serializable, Parcelable {
         return percentOff != null && !BigDecimal.ZERO.equals(percentOff);
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Discount)) {
+            return false;
+        }
+
+        final Discount discount = (Discount) o;
+
+        if (!id.equals(discount.id)) {
+            return false;
+        }
+        return couponAmount.equals(discount.couponAmount);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id.hashCode();
+        result = 31 * result + couponAmount.hashCode();
+        return result;
+    }
+
     /* default */ Discount(final Parcel in) {
         id = in.readString();
         name = in.readString();

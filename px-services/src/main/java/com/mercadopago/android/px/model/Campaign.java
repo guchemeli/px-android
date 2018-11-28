@@ -123,6 +123,25 @@ public class Campaign implements Serializable, Parcelable {
         dest.writeLong(endDate.getTime());
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Campaign)) {
+            return false;
+        }
+
+        final Campaign campaign = (Campaign) o;
+
+        return id.equals(campaign.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
     public String getCampaignTermsUrl() {
         return String
             .format(Locale.US, "https://api.mercadolibre.com/campaigns/%s/terms_and_conditions?format_type=html", id);
