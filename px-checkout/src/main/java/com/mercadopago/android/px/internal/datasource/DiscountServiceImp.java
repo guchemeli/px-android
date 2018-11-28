@@ -3,11 +3,13 @@ package com.mercadopago.android.px.internal.datasource;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.configuration.DiscountConfiguration;
+import com.mercadopago.android.px.configuration.DiscountParamsConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
+import java.util.Set;
 
 public class DiscountServiceImp implements DiscountRepository {
 
@@ -32,6 +34,15 @@ public class DiscountServiceImp implements DiscountRepository {
     }
 
     @Override
+    public void configureExtraData(@Nullable final DiscountParamsConfiguration discountParamsConfiguration) {
+        if (discountParamsConfiguration != null) {
+            discountStorageService
+                .configureExtraData(discountParamsConfiguration.getLabels(),
+                    discountParamsConfiguration.getFlow());
+        }
+    }
+
+    @Override
     public void reset() {
         discountStorageService.reset();
     }
@@ -46,6 +57,18 @@ public class DiscountServiceImp implements DiscountRepository {
     @Override
     public Campaign getCampaign() {
         return discountStorageService.getCampaign();
+    }
+
+    @Nullable
+    @Override
+    public Set<String> getLabels() {
+        return discountStorageService.getLabels();
+    }
+
+    @Nullable
+    @Override
+    public String getFlow() {
+        return discountStorageService.getFlow();
     }
 
     @Override

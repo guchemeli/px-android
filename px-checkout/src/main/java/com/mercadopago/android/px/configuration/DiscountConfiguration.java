@@ -6,9 +6,15 @@ import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Discount;
 import java.io.Serializable;
 
+/**
+ * This class is deprecated.
+ * Discount configuration has changed. You will can not set a discountConfiguration.
+ * You only can set discount extra data in DiscountParamsConfiguration. This data will be applied when
+ * we get discounts.
+ */
 @SuppressWarnings("unused")
+@Deprecated
 public final class DiscountConfiguration implements Serializable {
-
     @Nullable private final Discount discount;
     @Nullable private final Campaign campaign;
     private final boolean isNotAvailable;

@@ -9,7 +9,7 @@ public class CustomStringConfiguration {
     @StringRes private final int mainVerbStringResourceId;
 
     /* default */ CustomStringConfiguration(@NonNull final Builder builder) {
-        this.mainVerbStringResourceId = builder.mainVerbStringResourceId;
+        mainVerbStringResourceId = builder.mainVerbStringResourceId;
     }
 
     /**
@@ -26,7 +26,7 @@ public class CustomStringConfiguration {
         /* default */ int mainVerbStringResourceId;
 
         public Builder() {
-            this.mainVerbStringResourceId = R.string.px_main_verb;
+            mainVerbStringResourceId = R.string.px_main_verb;
         }
 
         /**
