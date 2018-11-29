@@ -21,6 +21,7 @@ public class PaymentMethodSearchCustomOption implements PaymentMethodSearchViewC
     protected View mView;
     protected MPTextView mDescription;
     protected MPTextView mComment;
+    protected MPTextView mDiscountInfo;
     protected ImageView mIcon;
     protected View.OnClickListener mListener;
 
@@ -48,6 +49,7 @@ public class PaymentMethodSearchCustomOption implements PaymentMethodSearchViewC
     public void initializeControls() {
         mDescription = mView.findViewById(R.id.mpsdkDescription);
         mComment = mView.findViewById(R.id.mpsdkComment);
+        mDiscountInfo = mView.findViewById(R.id.mpsdkDiscountInfo);
         mIcon = mView.findViewById(R.id.mpsdkImage);
     }
 
@@ -66,6 +68,13 @@ public class PaymentMethodSearchCustomOption implements PaymentMethodSearchViewC
             mIcon.setImageResource(resourceId);
         } else {
             mIcon.setVisibility(View.GONE);
+        }
+
+        if (mItem.hasDiscountInfo()) {
+            mDiscountInfo.setVisibility(View.VISIBLE);
+            mDiscountInfo.setText(mItem.getDiscountInfo());
+        } else {
+            mDiscountInfo.setVisibility(View.GONE);
         }
 
         mComment.setVisibility(View.GONE);

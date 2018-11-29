@@ -47,6 +47,17 @@
                 android:textColor="@color/px_form_text"/>
 
             <com.mercadopago.android.px.internal.view.MPTextView
+                android:id="@+id/mpsdkDiscountInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxLines="1"
+                tools:text="%50 OFF"
+                android:textSize="14dp"
+                android:textColor="@color/px_discount_description"
+                android:visibility="gone"/>
+
+            <com.mercadopago.android.px.internal.view.MPTextView
                 android:id="@+id/mpsdkComment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
