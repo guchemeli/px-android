@@ -11,8 +11,6 @@ import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
 
-import java.util.List;
-
 public class PaymentMethodHeaderView extends LinearLayout {
 
     /* default */ MPTextView titleView;
@@ -21,12 +19,6 @@ public class PaymentMethodHeaderView extends LinearLayout {
     /* default */ Animation rotateDown;
 
     private TitlePager titlePager;
-    private List<PaymentMethodDescriptorView.Model> installmentModels;
-    private int currentIndex;
-
-    public void setInstallmentsModel(final List<PaymentMethodDescriptorView.Model> installmentModels) {
-        this.installmentModels = installmentModels;
-    }
 
     public interface Listener {
 
@@ -71,14 +63,12 @@ public class PaymentMethodHeaderView extends LinearLayout {
         });
     }
 
-    public void update() {
+    public void showInstallmentsListTitle() {
         titleView.setVisibility(VISIBLE);
         titlePager.setVisibility(GONE);
     }
 
-    public void update(final int paymentMethodIndex) {
-        currentIndex = paymentMethodIndex;
-
+    public void showTitlePager(final boolean clickable) {
         if (titleView.getVisibility() == VISIBLE) {
             arrow.startAnimation(rotateDown);
         }
@@ -86,40 +76,39 @@ public class PaymentMethodHeaderView extends LinearLayout {
         titlePager.setVisibility(VISIBLE);
         titleView.setVisibility(GONE);
 
-        setClickable(installmentModels.get(currentIndex).hasPayerCostList());
+        setClickable(clickable);
     }
 
-    public void updatePosition(final float positionOffset, final int position) {
-        fadeBasedOnPosition(positionOffset, position);
-    }
-
-    private void fadeBasedOnPosition(final float positionOffset, final int position) {
-
-        float relativeOffset = positionOffset;
-
-        final GoingToModel goingTo = position == currentIndex ? GoingToModel.FORWARD : GoingToModel.BACKWARDS;
-
-        final PaymentMethodDescriptorView.Model currentModel = installmentModels.get(currentIndex);
-        PaymentMethodDescriptorView.Model goingToModel = null;
-        if (GoingToModel.BACKWARDS == goingTo && position >= 0) {
-            goingToModel = installmentModels.get(position);
-            relativeOffset = 1.0f - positionOffset;
-        } else if (GoingToModel.FORWARD == goingTo && position + 1 < installmentModels.size()) {
-            goingToModel = installmentModels.get(position + 1);
+    public void updateArrowVisibility(float positionOffset, final Model model) {
+        if (model.goingTo == GoingToModel.BACKWARDS) {
+            positionOffset = 1.0f - positionOffset;
         }
 
-        if (currentModel.hasPayerCostList()) {
-            if (goingToModel != null && !goingToModel.hasPayerCostList()) {
-                arrow.setAlpha(1.0f - relativeOffset);
-            } else {
+        if (model.currentIsExpandable) {
+            if (model.nextIsExpandable) {
                 arrow.setAlpha(1.0f);
+            } else {
+                arrow.setAlpha(1.0f - positionOffset);
             }
         } else {
-            if (goingToModel != null && goingToModel.hasPayerCostList()) {
-                arrow.setAlpha(relativeOffset);
+            if (model.nextIsExpandable) {
+                arrow.setAlpha(positionOffset);
             } else {
                 arrow.setAlpha(0.0f);
             }
+        }
+    }
+
+    public static class Model {
+        final GoingToModel goingTo;
+        final boolean currentIsExpandable;
+        final boolean nextIsExpandable;
+
+        public Model(final GoingToModel goingTo, final boolean currentIsExpandable,
+            final boolean nextIsExpandable) {
+            this.goingTo = goingTo;
+            this.currentIsExpandable = currentIsExpandable;
+            this.nextIsExpandable = nextIsExpandable;
         }
     }
 }
