@@ -51,10 +51,6 @@ public interface ExpressPayment {
 
         void disableToolbarBack();
 
-        void showConfirmButton();
-
-        void hideConfirmButton();
-
         void showErrorSnackBar(@NonNull final MercadoPagoError error);
 
         void showInstallmentsDescriptionRow(final int paymentMethodIndex, final int payerCostSelected);
@@ -62,10 +58,6 @@ public interface ExpressPayment {
         void showInstallmentsList(List<PayerCost> payerCostList, final int payerCostSelected);
 
         void hideInstallmentsSelection();
-
-        void disablePaymentButton();
-
-        void enablePaymentButton();
 
         void showToolbarElementDescriptor(@NonNull final ElementDescriptorView.Model elementDescriptorModel);
 

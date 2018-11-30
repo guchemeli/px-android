@@ -112,7 +112,6 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     public void confirmPayment(final int paymentMethodSelectedIndex) {
         if (paymentRepository.isExplodingAnimationCompatible()) {
             getView().startLoadingButton(paymentRepository.getPaymentTimeout());
-            getView().hideConfirmButton();
             getView().disableToolbarBack();
         }
 
@@ -211,21 +210,11 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     public void updateElementPosition(final int paymentMethodIndex) {
         getView().hideInstallmentsSelection();
         getView().showInstallmentsDescriptionRow(paymentMethodIndex, payerCostSelection.get(paymentMethodIndex));
-
-        if (isLastElement(paymentMethodIndex)) {
-            getView().disablePaymentButton();
-        } else {
-            getView().enablePaymentButton();
-        }
     }
 
     private void updateElementPosition(final int paymentMethodIndex, final int selectedPayerCost) {
         payerCostSelection.save(paymentMethodIndex, selectedPayerCost);
         updateElementPosition(paymentMethodIndex);
-    }
-
-    private boolean isLastElement(final int position) {
-        return position >= expressMetadataList.size();
     }
 
     @Override
@@ -340,7 +329,6 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
 
     private void cancelLoading() {
         getView().enableToolbarBack();
-        getView().showConfirmButton();
         getView().cancelLoading();
     }
 

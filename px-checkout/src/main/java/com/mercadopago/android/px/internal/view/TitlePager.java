@@ -6,10 +6,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodAdapter;
 import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
-import com.mercadopago.android.px.internal.features.express.slider.TitlePagerAdapter;
 
 public class TitlePager extends FrameLayout implements ViewTreeObserver.OnGlobalLayoutListener {
 
@@ -17,7 +16,7 @@ public class TitlePager extends FrameLayout implements ViewTreeObserver.OnGlobal
     private View currentView;
     private View nextView;
     private int currentWidth;
-    private TitlePagerAdapter adapter;
+    private PaymentMethodAdapter adapter;
 
     public TitlePager(final Context context,
         @Nullable final AttributeSet attrs) {
@@ -56,7 +55,7 @@ public class TitlePager extends FrameLayout implements ViewTreeObserver.OnGlobal
         }
     }
 
-    public void setAdapter(final TitlePagerAdapter adapter) {
+    public void setAdapter(final PaymentMethodAdapter adapter) {
         this.adapter = adapter;
     }
 

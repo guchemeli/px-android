@@ -115,7 +115,6 @@ public class ExpressPaymentPresenterTest {
         when(paymentRepository.hasPayment()).thenReturn(true);
         verifyOnViewResumed();
         verify(view).enableToolbarBack();
-        verify(view).showConfirmButton();
         verify(view).cancelLoading();
         verifyNoMoreInteractions(paymentRepository);
         verifyNoMoreInteractions(view);
@@ -128,7 +127,6 @@ public class ExpressPaymentPresenterTest {
         verify(view).hideInstallmentsSelection();
         verify(view).showInstallmentsDescriptionRow(currentElementPosition,
             PaymentMethodDescriptorView.Model.SELECTED_PAYER_COST_NONE);
-        verify(view).disablePaymentButton();
         verifyNoMoreInteractions(view);
     }
 
@@ -147,7 +145,6 @@ public class ExpressPaymentPresenterTest {
         verify(view).hideInstallmentsSelection();
         verify(view).showInstallmentsDescriptionRow(paymentMethodIndex, selectedPayerCostIndex);
         verify(view).collapseInstallmentsSelection();
-        verify(view).enablePaymentButton();
         verifyNoMoreInteractions(view);
     }
 
