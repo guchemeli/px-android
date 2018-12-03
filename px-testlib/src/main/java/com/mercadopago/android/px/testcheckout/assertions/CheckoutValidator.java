@@ -7,7 +7,6 @@ import com.mercadopago.android.px.testcheckout.pages.CashPage;
 import com.mercadopago.android.px.testcheckout.pages.CongratsPage;
 import com.mercadopago.android.px.testcheckout.pages.CreditCardPage;
 import com.mercadopago.android.px.testcheckout.pages.DebitCardPage;
-import com.mercadopago.android.px.testcheckout.pages.DiscountCongratsPage;
 import com.mercadopago.android.px.testcheckout.pages.DiscountDetailPage;
 import com.mercadopago.android.px.testcheckout.pages.ExpiryDatePage;
 import com.mercadopago.android.px.testcheckout.pages.ExpressPaymentPage;
@@ -62,8 +61,6 @@ public interface CheckoutValidator extends Validator {
     void validate(@NonNull final ReviewPaymentMethodsPage reviewPaymentMethodsPage);
 
     void validate(@NonNull final DiscountDetailPage discountDetailPage);
-
-    void validate(@NonNull final DiscountCongratsPage discountCongratsPage);
 
     void validate(@NonNull final SecurityCodeToResultsPage securityCodeToResultsPage);
 
