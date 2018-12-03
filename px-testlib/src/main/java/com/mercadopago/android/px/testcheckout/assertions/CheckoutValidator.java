@@ -63,8 +63,6 @@ public interface CheckoutValidator extends Validator {
 
     void validate(@NonNull final DiscountDetailPage discountDetailPage);
 
-    void validate(@NonNull final DiscountCodeInputPage discountCodeInput);
-
     void validate(@NonNull final DiscountCongratsPage discountCongratsPage);
 
     void validate(@NonNull final SecurityCodeToResultsPage securityCodeToResultsPage);

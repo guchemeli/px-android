@@ -123,26 +123,16 @@ public class DiscountTestFlow extends TestFlow {
         return runCreditCardPaymentFlowWithCodeDiscount(card, installmentsOption, null);
     }
 
+    /**
+     * @deprecated CodeDiscount flow does not exist anymore.
+     */
+    @Deprecated
     @NonNull
     public CongratsPage runCreditCardPaymentFlowWithCodeDiscount(@NonNull final Card card, final int installmentsOption,
         final CheckoutValidator validator) {
         startCheckout();
 
-        return new PaymentMethodPage(validator).pressOnDiscountCodeInput()
-            .focusInputCode()
-            .enterDiscountCode(DISCOUNT_CODE)
-            .pressContinueToPaymentMethod()
-            .selectCard()
-            .selectCreditCard()
-            .enterCreditCardNumber(card.cardNumber())
-            .enterCardholderName(card.cardHolderName())
-            .enterExpiryDate(card.expDate())
-            .enterSecurityCodeForNewCard(card.escNumber())
-            .enterIdentificationNumberToInstallments(card.cardHolderIdentityNumber())
-            .pressOnDiscountDetail()
-            .pressCloseToInstallments()
-            .selectInstallments(installmentsOption)
-            .pressConfirmButton();
+        return new CongratsPage(validator);
     }
 
     public CongratsPage runCreditCardWithOneTapWithoutESCPaymentFlowWithMerchantDiscountApplied(final Card card) {

@@ -5,7 +5,6 @@ import android.support.test.espresso.contrib.RecyclerViewActions;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.testcheckout.assertions.CheckoutValidator;
 import com.mercadopago.android.testlib.pages.PageObject;
-import java.util.regex.Matcher;
 import org.hamcrest.Matchers;
 
 import static android.support.test.espresso.Espresso.onView;
@@ -74,11 +73,6 @@ public class PaymentMethodPage extends PageObject<CheckoutValidator> {
     public DiscountDetailPage pressOnDiscountDetail() {
         onView(withId(R.id.amount_view)).perform(click());
         return new DiscountDetailPage(validator);
-    }
-
-    public DiscountCodeInputPage pressOnDiscountCodeInput() {
-        onView(withId(R.id.amount_view)).perform(click());
-        return new DiscountCodeInputPage(validator);
     }
 
     public OneTapPage pressBack() {

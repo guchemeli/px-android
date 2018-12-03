@@ -130,11 +130,6 @@ public class DefaultValidator implements CheckoutValidator {
     }
 
     @Override
-    public void validate(@NonNull final DiscountCodeInputPage discountCodeInputPage) {
-        //TODO implement default PX Validations
-    }
-
-    @Override
     public void validate(@NonNull final DiscountCongratsPage discountCongratsPage) {
         //TODO implement default PX Validations
     }
