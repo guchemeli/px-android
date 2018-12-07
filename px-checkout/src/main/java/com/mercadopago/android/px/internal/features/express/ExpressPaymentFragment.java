@@ -48,7 +48,6 @@ import com.mercadopago.android.px.internal.view.AmountDescriptorView;
 import com.mercadopago.android.px.internal.view.DiscountDetailDialog;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.view.FixedAspectRatioFrameLayout;
-import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.view.PaymentMethodHeaderView;
 import com.mercadopago.android.px.internal.view.ScrollingPagerIndicator;
 import com.mercadopago.android.px.internal.view.SummaryView;
@@ -224,7 +223,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
         final TitlePager titlePager = view.findViewById(R.id.title_pager);
         paymentMethodAdapter = new PaymentMethodAdapterImpl(titlePager, paymentMethodHeaderView,
-            confirmButton);
+            confirmButton, summaryView);
         titlePager.setAdapter(paymentMethodAdapter);
 
         configureToolbar(view);
@@ -244,7 +243,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
             session.getConfigurationModule().getPaymentSettings(),
             session.getDiscountRepository(),
             session.getAmountRepository(),
-            new ElementDescriptorMapper(),
             session.getGroupsRepository());
     }
 
@@ -301,14 +299,14 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     }
 
     @Override
-    public void configurePagerAndInstallments(@NonNull final List<DrawableFragmentItem> items, @NonNull final Site site,
-        final int selectedPayerCost, @NonNull final List<PaymentMethodDescriptorView.Model> models) {
+    public void configureAdapters(@NonNull final List<DrawableFragmentItem> items, @NonNull final Site site,
+        final int selectedPayerCost, @NonNull final PaymentMethodAdapter.Model paymentMethodViewModel) {
         installmentsAdapter = new InstallmentsAdapter(site, new ArrayList<PayerCost>(), selectedPayerCost, this);
         installmentsRecyclerView.setAdapter(installmentsAdapter);
         paymentMethodPager.setAdapter(getAdapter(items));
         // indicator must be after paymentMethodPager adapter is set.
         indicator.attachToPager(paymentMethodPager);
-        paymentMethodAdapter.setModels(models);
+        paymentMethodAdapter.setModels(paymentMethodViewModel);
     }
 
     private void animateViewPagerDown() {
@@ -323,11 +321,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         if (callback != null) {
             callback.onOneTapCanceled();
         }
-    }
-
-    @Override
-    public void updateSummary(@NonNull final SummaryView.Model model) {
-        summaryView.update(model);
     }
 
     @Override
