@@ -38,7 +38,7 @@ public class DiscountServiceImp implements DiscountRepository {
         if (discountParamsConfiguration != null) {
             discountStorageService
                 .configureExtraData(discountParamsConfiguration.getLabels(),
-                    discountParamsConfiguration.getFlow());
+                    discountParamsConfiguration.getProductId());
         }
     }
 

@@ -9,11 +9,11 @@ import java.util.Set;
 public class DiscountParamsConfiguration {
 
     @NonNull private final Set<String> labels;
-    @Nullable private final String flow;
+    @Nullable private final String productId;
 
     /* default */ DiscountParamsConfiguration(@NonNull final Builder builder) {
         labels = builder.labels;
-        flow = builder.flow;
+        productId = builder.productId;
     }
 
     /**
@@ -27,22 +27,22 @@ public class DiscountParamsConfiguration {
     }
 
     /**
-     * Let us know what the flow is
+     * Let us know what the product id is
      *
-     * @return flow id
+     * @return product id
      */
     @Nullable
-    public String getFlow() {
-        return flow;
+    public String getProductId() {
+        return productId;
     }
 
     public static class Builder {
         /* default */ Set<String> labels;
-        /* default */ String flow;
+        /* default */ String productId;
 
         public Builder() {
             labels = new HashSet<>();
-            flow = "";
+            productId = "";
         }
 
         /**
@@ -57,13 +57,13 @@ public class DiscountParamsConfiguration {
         }
 
         /**
-         * Payment flow let us to enable discounts for the flow specified.
+         * Payment product id let us to enable discounts for the productId specified.
          *
-         * @param flow payment flow id
+         * @param productId payment product id
          * @return builder to keep operating
          */
-        public Builder setFlow(@NonNull final String flow) {
-            this.flow = flow;
+        public Builder setProductId(@NonNull final String productId) {
+            this.productId = productId;
             return this;
         }
 

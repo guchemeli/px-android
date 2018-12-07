@@ -201,9 +201,9 @@ public class AdvancedConfiguration implements Serializable {
         }
 
         /**
-         * Set flow additional info that will be applied to filter Mercado Pago discounts.
+         * Set productId additional info that will be applied to filter Mercado Pago discounts.
          *
-         * @param discountParamsConfiguration additional flow info
+         * @param discountParamsConfiguration additional productId info
          * @return builder to keep operating
          */
         public Builder setDiscountParamsConfiguration(
