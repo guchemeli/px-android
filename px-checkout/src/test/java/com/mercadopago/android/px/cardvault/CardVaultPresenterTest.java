@@ -23,11 +23,13 @@ import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Site;
+import com.mercadopago.android.px.model.SummaryAmount;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
+import com.mercadopago.android.px.services.Callback;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -737,6 +739,11 @@ public class CardVaultPresenterTest {
         public void deleteESC(String cardId) {
             deleteRequested = true;
             cardIdDeleted = cardId;
+        }
+
+        @Override
+        public void getSummaryAmountAsync(final Callback<SummaryAmount> callback) {
+            // TODO borrar al hacer refactor de installments. Esto es una prueba para el apiary y modelos de SummaryAmount.
         }
     }
 
