@@ -39,5 +39,6 @@ public interface UserSelectionRepository {
 
     void select(String paymentType);
 
-    @NonNull String getPaymentType();
+    @NonNull
+    String getPaymentType();
 }
