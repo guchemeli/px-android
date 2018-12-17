@@ -275,7 +275,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         }
     }
 
-    private void initializeAdapter(OnSelectedCallback<Integer> onSelectedCallback) {
+    private void initializeAdapter(final OnSelectedCallback<Integer> onSelectedCallback) {
         mInstallmentsAdapter =
             new InstallmentsAdapter(configuration.getCheckoutPreference().getSite(), onSelectedCallback);
         initializeAdapterListener(mInstallmentsAdapter, mInstallmentsRecyclerView);
@@ -287,7 +287,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         view.addOnItemTouchListener(new RecyclerItemClickListener(this,
             new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
-                public void onItemClick(View view, int position) {
+                public void onItemClick(final View view, final int position) {
                     presenter.onItemSelected(position);
                 }
             }));
@@ -328,8 +328,8 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     }
 
     @Override
-    public void finishWithResult(PayerCost payerCost) {
-        Intent returnIntent = new Intent();
+    public void finishWithResult(final PayerCost payerCost) {
+        final Intent returnIntent = new Intent();
         returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(payerCost));
         setResult(RESULT_OK, returnIntent);
         finish();
