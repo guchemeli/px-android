@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 public class PaymentData implements Serializable {
     private BigDecimal transactionAmount;
     private PaymentMethod paymentMethod;
-    private Issuer issuer;
-    private PayerCost payerCost;
-    private Token token;
+    @Nullable private Issuer issuer;
+    @Nullable private PayerCost payerCost;
+    @Nullable private Token token;
     private Payer payer;
 
     /**
@@ -43,18 +43,22 @@ public class PaymentData implements Serializable {
         this.issuer = issuer;
     }
 
+    @Nullable
     public PayerCost getPayerCost() {
         return payerCost;
     }
 
+    @Deprecated
     public void setPayerCost(final PayerCost payerCost) {
         this.payerCost = payerCost;
     }
 
+    @Nullable
     public Token getToken() {
         return token;
     }
 
+    @Deprecated
     public void setToken(final Token token) {
         this.token = token;
     }

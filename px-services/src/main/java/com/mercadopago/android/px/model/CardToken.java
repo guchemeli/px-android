@@ -20,7 +20,8 @@ public class CardToken {
     private Integer expirationYear;
     private String securityCode;
 
-    public CardToken(final String cardNumber, @Nullable final Integer expirationMonth, @Nullable final Integer expirationYear,
+    public CardToken(final String cardNumber, @Nullable final Integer expirationMonth,
+        @Nullable final Integer expirationYear,
         final String securityCode, final String cardholderName, final String identificationType,
         final String identificationNumber) {
         this.cardNumber = normalizeCardNumber(cardNumber);

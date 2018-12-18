@@ -32,17 +32,62 @@ public class Token implements CardInformation {
         return securityCodeLength;
     }
 
+    @Override
+    public Integer getExpirationMonth() {
+        return expirationMonth;
+    }
+
+    @Override
+    public Integer getExpirationYear() {
+        return expirationYear;
+    }
+
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public String getCardId() {
+        return cardId;
+    }
+
+    public String getLuhnValidation() {
+        return luhnValidation;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getUsedDate() {
+        return usedDate;
+    }
+
+    public Integer getCardNumberLength() {
+        return cardNumberLength;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public String getTruncCardNumber() {
+        return truncCardNumber;
+    }
+
+    public String getId() {
+        return id;
+    }
+
     /**
      * @deprecated should be non-mutable DTO
      */
     @Deprecated
     public void setSecurityCodeLength(Integer securityCodeLength) {
         this.securityCodeLength = securityCodeLength;
-    }
-
-    @Override
-    public Integer getExpirationMonth() {
-        return expirationMonth;
     }
 
     /**
@@ -53,21 +98,12 @@ public class Token implements CardInformation {
         this.expirationMonth = expirationMonth;
     }
 
-    @Override
-    public Integer getExpirationYear() {
-        return expirationYear;
-    }
-
     /**
      * @deprecated should be non-mutable DTO
      */
     @Deprecated
     public void setExpirationYear(Integer expirationYear) {
         this.expirationYear = expirationYear;
-    }
-
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
     }
 
     /**
@@ -78,20 +114,12 @@ public class Token implements CardInformation {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public Date getDueDate() {
-        return dueDate;
-    }
-
     /**
      * @deprecated should be non-mutable DTO
      */
     @Deprecated
     public void setDueDate(Date dueDate) {
         this.dueDate = dueDate;
-    }
-
-    public String getCardId() {
-        return cardId;
     }
 
     /**
@@ -102,20 +130,12 @@ public class Token implements CardInformation {
         this.cardId = cardId;
     }
 
-    public String getLuhnValidation() {
-        return luhnValidation;
-    }
-
     /**
      * @deprecated should be non-mutable DTO
      */
     @Deprecated
     public void setLuhnValidation(String luhnValidation) {
         this.luhnValidation = luhnValidation;
-    }
-
-    public String getStatus() {
-        return status;
     }
 
     /**
@@ -126,20 +146,12 @@ public class Token implements CardInformation {
         this.status = status;
     }
 
-    public String getUsedDate() {
-        return usedDate;
-    }
-
     /**
      * @deprecated should be non-mutable DTO
      */
     @Deprecated
     public void setUsedDate(String usedDate) {
         this.usedDate = usedDate;
-    }
-
-    public Integer getCardNumberLength() {
-        return cardNumberLength;
     }
 
     /**
@@ -150,8 +162,12 @@ public class Token implements CardInformation {
         this.cardNumberLength = cardNumberLength;
     }
 
-    public Date getCreationDate() {
-        return creationDate;
+    /**
+     * @deprecated should be non-mutable DTO
+     */
+    @Deprecated
+    public void setTruncCardNumber(String truncCardNumber) {
+        this.truncCardNumber = truncCardNumber;
     }
 
     /**
@@ -162,22 +178,10 @@ public class Token implements CardInformation {
         this.creationDate = creationDate;
     }
 
-    public String getTruncCardNumber() {
-        return truncCardNumber;
-    }
-
     /**
      * @deprecated should be non-mutable DTO
      */
     @Deprecated
-    public void setTruncCardNumber(String truncCardNumber) {
-        this.truncCardNumber = truncCardNumber;
-    }
-
-    public String getId() {
-        return id;
-    }
-
     public void setId(String id) {
         this.id = id;
     }
@@ -186,38 +190,14 @@ public class Token implements CardInformation {
         return publicKey;
     }
 
-    /**
-     * @deprecated should be non-mutable DTO
-     */
-    @Deprecated
-    public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
-    }
-
     @Override
     public String getFirstSixDigits() {
         return firstSixDigits;
     }
 
-    /**
-     * @deprecated should be non-mutable DTO
-     */
-    @Deprecated
-    public void setFirstSixDigits(String firstSixDigits) {
-        this.firstSixDigits = firstSixDigits;
-    }
-
     @Override
     public String getLastFourDigits() {
         return lastFourDigits;
-    }
-
-    /**
-     * @deprecated should be non-mutable DTO
-     */
-    @Deprecated
-    public void setLastFourDigits(String lastFourDigits) {
-        this.lastFourDigits = lastFourDigits;
     }
 
     @Override
@@ -229,7 +209,31 @@ public class Token implements CardInformation {
      * @deprecated should be non-mutable DTO
      */
     @Deprecated
-    public void setCardholder(Cardholder cardholder) {
+    public void setPublicKey(final String publicKey) {
+        this.publicKey = publicKey;
+    }
+
+    /**
+     * @deprecated should be non-mutable DTO
+     */
+    @Deprecated
+    public void setFirstSixDigits(final String firstSixDigits) {
+        this.firstSixDigits = firstSixDigits;
+    }
+
+    /**
+     * @deprecated should be non-mutable DTO
+     */
+    @Deprecated
+    public void setLastFourDigits(final String lastFourDigits) {
+        this.lastFourDigits = lastFourDigits;
+    }
+
+    /**
+     * @deprecated should be non-mutable DTO
+     */
+    @Deprecated
+    public void setCardholder(final Cardholder cardholder) {
         this.cardholder = cardholder;
     }
 
@@ -241,7 +245,7 @@ public class Token implements CardInformation {
      * @deprecated should be non-mutable DTO
      */
     @Deprecated
-    public void setEsc(String esc) {
+    public void setEsc(final String esc) {
         this.esc = esc;
     }
 

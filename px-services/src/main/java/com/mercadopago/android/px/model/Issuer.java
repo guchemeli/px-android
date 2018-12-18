@@ -9,9 +9,9 @@ public class Issuer implements Serializable, Parcelable {
 
     private Long id;
     private String name;
-
     private List<String> labels;
 
+    @Deprecated
     public Issuer(final Long id, final String name) {
         this.id = id;
         this.name = name;
@@ -57,12 +57,12 @@ public class Issuer implements Serializable, Parcelable {
     }
 
     @Deprecated
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
     @Deprecated
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
