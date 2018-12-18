@@ -33,8 +33,8 @@ public class BusinessModelMapper extends Mapper<BusinessPayment, BusinessPayment
         final String lastFourDigits =
             paymentData.getToken() != null ? paymentData.getToken().getLastFourDigits() : null;
 
-        return new BusinessPaymentModel(val, discountRepository.getDiscount(), paymentData.getPaymentMethod(),
-            paymentData.getPayerCost(),
+        return new BusinessPaymentModel(val, discountRepository.getCurrentConfiguration().getDiscount(),
+            paymentData.getPaymentMethod(), paymentData.getPayerCost(),
             paymentSettingRepository.getCheckoutPreference().getSite().getCurrencyId(),
             amountRepository.getAmountToPay(), lastFourDigits);
     }

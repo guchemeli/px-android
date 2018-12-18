@@ -120,7 +120,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
 
     public void initializeAmountRow() {
         if (isViewAttached()) {
-            getView().showAmount(discountRepository,
+            getView().showAmount(discountRepository.getCurrentConfiguration(),
                 paymentSettingRepository.getCheckoutPreference().getTotalAmount(),
                 paymentSettingRepository.getCheckoutPreference().getSite());
         }
@@ -453,6 +453,6 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     private boolean isDiscountAvailable() {
-        return discountRepository.getDiscount() != null;
+        return discountRepository.getCurrentConfiguration().getDiscount() != null;
     }
 }

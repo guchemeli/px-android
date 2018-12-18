@@ -30,7 +30,7 @@ public class DiscountDetailDialog extends MeliDialog {
 
         new AppliedDiscountViewTracker(discountRepository).track();
         final DiscountDetailContainer discountDetailContainer = new DiscountDetailContainer(
-            new DiscountDetailContainer.Props(DialogTitleType.BIG, discountRepository));
+            new DiscountDetailContainer.Props(DialogTitleType.BIG, discountRepository.getCurrentConfiguration()));
         discountDetailContainer.render(container);
     }
 

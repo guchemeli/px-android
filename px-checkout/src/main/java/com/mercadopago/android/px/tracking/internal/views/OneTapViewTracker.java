@@ -1,7 +1,7 @@
 package com.mercadopago.android.px.tracking.internal.views;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.repository.DiscountRepository;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.tracking.internal.model.OneTapData;
@@ -15,8 +15,8 @@ public class OneTapViewTracker extends ViewTracker {
 
     public OneTapViewTracker(final Iterable<ExpressMetadata> expressMetadataList,
         @NonNull final CheckoutPreference checkoutPreference,
-        @NonNull final DiscountRepository discountRepository) {
-        data = OneTapData.createFrom(expressMetadataList, checkoutPreference, discountRepository).toMap();
+        @NonNull final DiscountConfigurationModel discountModel) {
+        data = OneTapData.createFrom(expressMetadataList, checkoutPreference, discountModel).toMap();
     }
 
     @NonNull

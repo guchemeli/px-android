@@ -17,6 +17,7 @@ import com.mercadopago.android.px.mocks.PaymentMethodSearchs;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -169,7 +170,8 @@ public class PaymentVaultPresenterTest {
 
         presenter.initialize();
 
-        verify(paymentVaultView).showAmount(discountRepository, checkoutPreference.getTotalAmount(), mockSite);
+        verify(paymentVaultView).showAmount(discountRepository.getCurrentConfiguration(),
+            checkoutPreference.getTotalAmount(), mockSite);
         verify(paymentVaultView).setTitle(paymentVaultProvider.getTitle());
         verify(paymentVaultView).startCardFlow(true);
         verify(paymentSettingRepository, atLeastOnce()).getCheckoutPreference();
@@ -551,8 +553,8 @@ public class PaymentVaultPresenterTest {
 
         @Override
         public void startSavedCardFlow(final Card card) {
-            this.savedCardFlowStarted = true;
-            this.savedCardSelected = card;
+            savedCardFlowStarted = true;
+            savedCardSelected = card;
         }
 
         @Override
@@ -561,10 +563,10 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showSelectedItem(PaymentMethodSearchItem item) {
-            this.itemShown = item;
-            this.isItemShown = true;
-            this.searchItemsShown = item.getChildren();
+        public void showSelectedItem(final PaymentMethodSearchItem item) {
+            itemShown = item;
+            isItemShown = true;
+            searchItemsShown = item.getChildren();
         }
 
         @Override
@@ -578,10 +580,10 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showCustomOptions(List<CustomSearchItem> customSearchItems,
-            OnSelectedCallback<CustomSearchItem> customSearchItemOnSelectedCallback) {
-            this.customOptionsShown = customSearchItems;
-            this.customItemSelectionCallback = customSearchItemOnSelectedCallback;
+        public void showCustomOptions(final List<CustomSearchItem> customSearchItems,
+            final OnSelectedCallback<CustomSearchItem> customSearchItemOnSelectedCallback) {
+            customOptionsShown = customSearchItems;
+            customItemSelectionCallback = customSearchItemOnSelectedCallback;
         }
 
         @Override
@@ -591,19 +593,19 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showSearchItems(List<PaymentMethodSearchItem> searchItems,
-            OnSelectedCallback<PaymentMethodSearchItem> paymentMethodSearchItemSelectionCallback) {
-            this.searchItemsShown = searchItems;
-            this.itemSelectionCallback = paymentMethodSearchItemSelectionCallback;
+        public void showSearchItems(final List<PaymentMethodSearchItem> searchItems,
+            final OnSelectedCallback<PaymentMethodSearchItem> paymentMethodSearchItemSelectionCallback) {
+            searchItemsShown = searchItems;
+            itemSelectionCallback = paymentMethodSearchItemSelectionCallback;
         }
 
         @Override
-        public void showError(MercadoPagoError mpException, String requestOrigin) {
+        public void showError(final MercadoPagoError mpException, final String requestOrigin) {
             errorShown = mpException;
         }
 
         @Override
-        public void setTitle(String title) {
+        public void setTitle(final String title) {
             this.title = title;
         }
 
@@ -618,15 +620,15 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void finishPaymentMethodSelection(PaymentMethod selectedPaymentMethod) {
+        public void finishPaymentMethodSelection(final PaymentMethod selectedPaymentMethod) {
             this.selectedPaymentMethod = selectedPaymentMethod;
         }
 
         @Override
-        public void showAmount(@NonNull final DiscountRepository discountRepository,
+        public void showAmount(@NonNull final DiscountConfigurationModel discountModel,
             @NonNull final BigDecimal totalAmount,
             @NonNull final Site site) {
-            this.showedDiscountRow = true;
+            showedDiscountRow = true;
         }
 
         @Override
@@ -640,7 +642,7 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showHook(Hook hook, int code) {
+        public void showHook(final Hook hook, final int code) {
             //Not yet tested
         }
 
@@ -649,11 +651,11 @@ public class PaymentVaultPresenterTest {
             //Do nothing
         }
 
-        private void simulateItemSelection(int index) {
+        private void simulateItemSelection(final int index) {
             itemSelectionCallback.onSelected(searchItemsShown.get(index));
         }
 
-        private void simulateCustomItemSelection(int index) {
+        private void simulateCustomItemSelection(final int index) {
             customItemSelectionCallback.onSelected(customOptionsShown.get(index));
         }
     }

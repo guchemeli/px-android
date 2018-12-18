@@ -13,7 +13,6 @@ import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookHelper;
 import com.mercadopago.android.px.internal.features.providers.CheckoutProvider;
 import com.mercadopago.android.px.internal.navigation.DefaultPaymentMethodDriver;
-import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
@@ -25,7 +24,6 @@ import com.mercadopago.android.px.internal.viewmodel.CheckoutStateModel;
 import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper;
 import com.mercadopago.android.px.model.BusinessPayment;
-import com.mercadopago.android.px.model.Campaign;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Cause;
 import com.mercadopago.android.px.model.GenericPayment;
@@ -55,8 +53,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     @NonNull
     private final GroupsRepository groupsRepository;
     @NonNull
-    private final DiscountRepository discountRepository;
-    @NonNull
     /* default */ final PaymentSettingRepository paymentSettingRepository;
 
     @NonNull
@@ -75,7 +71,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     public CheckoutPresenter(@NonNull final CheckoutStateModel persistentData,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
         @NonNull final UserSelectionRepository userSelectionRepository,
-        @NonNull final DiscountRepository discountRepository,
         @NonNull final GroupsRepository groupsRepository,
         @NonNull final PluginRepository pluginRepository,
         @NonNull final PaymentRepository paymentRepository,
@@ -83,7 +78,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
         @NonNull final BusinessModelMapper businessModelMapper) {
         this.paymentSettingRepository = paymentSettingRepository;
         this.userSelectionRepository = userSelectionRepository;
-        this.discountRepository = discountRepository;
         this.groupsRepository = groupsRepository;
         this.pluginRepository = pluginRepository;
         this.paymentRepository = paymentRepository;
@@ -422,10 +416,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     public CheckoutPreference getCheckoutPreference() {
         return paymentSettingRepository.getCheckoutPreference();
-    }
-
-    public Campaign getCampaign() {
-        return discountRepository.getCampaign();
     }
 
     //### Hooks #####################
