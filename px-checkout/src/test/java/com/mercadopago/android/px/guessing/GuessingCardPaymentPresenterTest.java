@@ -10,6 +10,7 @@ import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.repository.SummaryAmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.BankDeals;
 import com.mercadopago.android.px.mocks.Cards;
@@ -25,7 +26,6 @@ import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
-import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Payment;
@@ -41,10 +41,8 @@ import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.tracking.internal.MPTracker;
 import com.mercadopago.android.px.utils.CardTestUtils;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -80,6 +78,7 @@ public class GuessingCardPaymentPresenterTest {
     @Mock private CheckoutPreference checkoutPreference;
     @Mock private PaymentPreference paymentPreference;
     @Mock private Site site;
+    @Mock private SummaryAmountRepository summaryAmountRepository;
 
     @Before
     public void setUp() {
@@ -94,7 +93,7 @@ public class GuessingCardPaymentPresenterTest {
         presenter =
             new GuessingCardPaymentPresenter(amountRepository, userSelectionRepository, paymentSettingRepository,
                 groupsRepository,
-                advancedConfiguration, buildMockedPaymentRecovery());
+                advancedConfiguration, buildMockedPaymentRecovery(), summaryAmountRepository);
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
     }
@@ -669,7 +668,8 @@ public class GuessingCardPaymentPresenterTest {
             paymentSettingRepository,
             groupsRepository,
             advancedConfiguration,
-            buildMockedPaymentRecovery());
+            buildMockedPaymentRecovery(),
+            summaryAmountRepository);
 
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
@@ -1175,18 +1175,8 @@ public class GuessingCardPaymentPresenterTest {
         }
 
         @Override
-        public String getMissingInstallmentsForIssuerErrorMessage() {
-            return MISSING_INSTALLMENTS;
-        }
-
-        @Override
         public String getInvalidExpiryDateErrorMessage() {
             return INVALID_EXPIRY_DATE;
-        }
-
-        @Override
-        public String getMultipleInstallmentsForIssuerErrorMessage() {
-            return MULTIPLE_INSTALLMENTS;
         }
 
         @Override
@@ -1197,18 +1187,6 @@ public class GuessingCardPaymentPresenterTest {
         @Override
         public String getInvalidFieldErrorMessage() {
             return INVALID_FIELD;
-        }
-
-        @Override
-        public void getInstallmentsAsync(final String bin, final BigDecimal amount, final Long issuerId,
-            final String paymentMethodId,
-            final Integer diff,
-            final TaggedCallback<List<Installment>> taggedCallback) {
-            if (shouldFail) {
-                taggedCallback.onFailure(failedResponse);
-            } else {
-                taggedCallback.onSuccess(null);
-            }
         }
 
         @Override

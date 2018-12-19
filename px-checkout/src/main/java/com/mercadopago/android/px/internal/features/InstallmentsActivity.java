@@ -81,7 +81,8 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         configuration = configurationModule.getPaymentSettings();
         presenter = new InstallmentsPresenter(session.getAmountRepository(), configuration,
             configurationModule.getUserSelectionRepository(),
-            session.getDiscountRepository());
+            session.getDiscountRepository(),
+            session.getSummaryAmountRepository());
 
         getActivityParameters();
         presenter.attachView(this);
@@ -302,6 +303,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         }
     }
 
+    @Override
     public void showApiException(final ApiException apiException, final String requestOrigin) {
         if (mActivityActive) {
             ErrorUtil.showApiExceptionError(this, apiException, requestOrigin);
