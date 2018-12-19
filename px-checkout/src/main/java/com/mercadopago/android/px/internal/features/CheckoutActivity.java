@@ -484,7 +484,6 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     protected void onDestroy() {
         //TODO remove null check after session is persisted
         if (presenter != null) {
-            presenter.cancelInitialization();
             presenter.detachResourceProvider();
             presenter.detachView();
         }
