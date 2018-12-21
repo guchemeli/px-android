@@ -50,11 +50,11 @@ public final class CardExtraInfo extends TrackingMapModel {
     }
 
     @NonNull
-    public static CardExtraInfo selectedExpressSavedCard(final CardMetadata card, final int payerCost,
+    public static CardExtraInfo selectedExpressSavedCard(final CardMetadata card, final PayerCost payerCost,
         final boolean hasEsc) {
         return new CardExtraInfo(card.getId(),
             hasEsc,
-            card.getDisplayInfo().issuerId, new PayerCostInfo(card.getPayerCost(payerCost)));
+            card.getDisplayInfo().issuerId, new PayerCostInfo(payerCost));
     }
 
     @NonNull

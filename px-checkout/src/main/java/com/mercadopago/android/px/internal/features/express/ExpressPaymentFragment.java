@@ -250,7 +250,8 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
             session.getConfigurationModule().getPaymentSettings(),
             session.getDiscountRepository(),
             session.getAmountRepository(),
-            session.getGroupsRepository());
+            session.getGroupsRepository(),
+            session.getPayerCostRepository());
     }
 
     @Override
