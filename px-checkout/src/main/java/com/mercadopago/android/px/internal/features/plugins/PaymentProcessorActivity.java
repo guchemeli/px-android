@@ -18,14 +18,17 @@ import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandlerWrappe
 import com.mercadopago.android.px.internal.datasource.EscManagerImp;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import java.util.List;
 
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_FAIL_ESC;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_PAYMENT;
@@ -78,41 +81,54 @@ public final class PaymentProcessorActivity extends AppCompatActivity
     @Override
     public void onCreate(@Nullable final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         final FrameLayout frameLayout = new FrameLayout(this);
         frameLayout.setId(R.id.px_main_container);
-        setContentView(frameLayout,
-            new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-        final Session session = Session.getSession(getApplicationContext());
-        final ConfigurationModule configurationModule = session.getConfigurationModule();
-        final PaymentProcessor paymentProcessor =
-            configurationModule.getPaymentSettings()
-                .getPaymentConfiguration()
-                .getPaymentProcessor();
-
-        paymentServiceHandlerWrapper = new PaymentServiceHandlerWrapper(session.getPaymentRepository(),
-            new EscManagerImp(session.getMercadoPagoESC()), session.getInstructionsRepository());
-
-        final CheckoutPreference checkoutPreference = configurationModule.getPaymentSettings().getCheckoutPreference();
-        final PaymentProcessor.CheckoutData checkoutData =
-            new PaymentProcessor.CheckoutData(session.getPaymentRepository().getPaymentData(), checkoutPreference);
+        setContentView(frameLayout, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT));
 
         final FragmentManager supportFragmentManager = getSupportFragmentManager();
         final Fragment fragmentByTag = supportFragmentManager.findFragmentByTag(TAG_PROCESSOR_FRAGMENT);
 
+        final Session session = Session.getSession(getApplicationContext());
+
+        paymentServiceHandlerWrapper = new PaymentServiceHandlerWrapper(session.getPaymentRepository(),
+            new EscManagerImp(session.getMercadoPagoESC()), session.getInstructionsRepository());
+
         if (fragmentByTag == null) { // if fragment is not added, then create it.
-            final Fragment fragment = paymentProcessor.getFragment(checkoutData, this);
-            final Bundle fragmentBundle = paymentProcessor.getFragmentBundle(checkoutData, this);
-            if (fragment != null) {
+            addPaymentProcessorFragment(supportFragmentManager, session);
+        }
+    }
 
-                if (fragmentBundle != null) {
-                    fragment.setArguments(fragmentBundle);
-                }
+    private void addPaymentProcessorFragment(@NonNull final FragmentManager supportFragmentManager,
+        @NonNull final Session session) {
 
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.px_main_container, fragment, TAG_PROCESSOR_FRAGMENT)
-                    .commit();
+        final ConfigurationModule configurationModule = session.getConfigurationModule();
+        final PaymentSettingRepository paymentSettings = configurationModule.getPaymentSettings();
+
+        final PaymentProcessor paymentProcessor = paymentSettings
+            .getPaymentConfiguration()
+            .getPaymentProcessor();
+
+        final List<PaymentData> paymentData = session
+            .getPaymentRepository()
+            .getPaymentDataList();
+
+        final CheckoutPreference checkoutPreference = paymentSettings.getCheckoutPreference();
+
+        final PaymentProcessor.CheckoutData checkoutData =
+            new PaymentProcessor.CheckoutData(paymentData, checkoutPreference);
+
+        final Fragment fragment = paymentProcessor.getFragment(checkoutData, this);
+        final Bundle fragmentBundle = paymentProcessor.getFragmentBundle(checkoutData, this);
+        if (fragment != null) {
+            //TODO remove when fragment bundle != null.
+            if (fragmentBundle != null && fragment.getArguments() == null) {
+                fragment.setArguments(fragmentBundle);
             }
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.px_main_container, fragment, TAG_PROCESSOR_FRAGMENT)
+                .commit();
         }
     }
 

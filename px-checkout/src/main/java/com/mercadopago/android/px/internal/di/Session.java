@@ -286,9 +286,7 @@ public final class Session extends ApplicationModule
     //TODO move.
     @NonNull
     public BusinessModelMapper getBusinessModelMapper() {
-        return new BusinessModelMapper(getDiscountRepository(), getConfigurationModule().getPaymentSettings(),
-            getAmountRepository(),
-            getPaymentRepository());
+        return new BusinessModelMapper(getConfigurationModule().getPaymentSettings(), getPaymentRepository());
     }
 
     @NonNull

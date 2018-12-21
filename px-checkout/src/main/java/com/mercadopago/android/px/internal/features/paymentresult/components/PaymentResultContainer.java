@@ -102,19 +102,14 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
     public Body getBodyComponent() {
         Body body = null;
         if (props.paymentResult != null) {
-            //TODO fix amount.
+
             final PaymentResultBodyProps bodyProps =
                 new PaymentResultBodyProps.Builder(props.getPaymentResultScreenPreference())
-                .setStatus(props.paymentResult.getPaymentStatus())
-                .setStatusDetail(props.paymentResult.getPaymentStatusDetail())
-                .setPaymentData(props.paymentResult.getPaymentData())
-                .setDisclaimer(props.paymentResult.getStatementDescription())
-                .setPaymentId(props.paymentResult.getPaymentId())
-                .setInstruction(props.instruction)
-                .setCurrencyId(props.currencyId)
-                .setAmount(props.paymentResult.getPaymentData().getTransactionAmount())
-                .setProcessingMode(props.processingMode)
-                .build();
+                    .setPaymentResult(props.paymentResult)
+                    .setInstruction(props.instruction)
+                    .setCurrencyId(props.currencyId)
+                    .setProcessingMode(props.processingMode)
+                    .build();
             body = new Body(bodyProps, getDispatcher(), paymentResultProvider);
         }
         return body;
@@ -269,18 +264,15 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
         }
     }
 
-
     private CharSequence getTitle(@NonNull final PaymentResultProps props) {
-        if (props.hasCustomizedTitle()) {
-            return props.getPreferenceTitle();
-        } else if (props.hasInstructions()) {
+        if (props.hasInstructions()) { // Si el medio off tiene instrucciones, tomo las del titulo.
             return props.getInstructionsTitle();
-        } else if (props.paymentResult == null) { // TODO REMOVE THIS, is only used in mocks
-            return paymentResultProvider.getEmptyText();
-        } else if (isPaymentMethodOff(props.paymentResult)) {
+        } else if (isPaymentMethodOff(props.paymentResult)) { // Caso off, sin instrucciones.
             return paymentResultProvider.getEmptyText();
         } else {
+
             final String paymentMethodName = props.paymentResult.getPaymentData().getPaymentMethod().getName();
+
             final String status = props.paymentResult.getPaymentStatus();
             final String statusDetail = props.paymentResult.getPaymentStatusDetail();
 

@@ -90,7 +90,7 @@ import java.util.Set;
         final DynamicDialogConfiguration dynamicDialogConfiguration =
             paymentSettings.getAdvancedConfiguration().getDynamicDialogConfiguration();
         final DynamicDialogCreator.CheckoutData checkoutData =
-            new DynamicDialogCreator.CheckoutData(checkoutPreference, paymentRepository.getPaymentData());
+            new DynamicDialogCreator.CheckoutData(checkoutPreference, paymentRepository.getPaymentDataList());
         if (dynamicDialogConfiguration.hasCreatorFor(location)) {
             getView().showDynamicDialog(dynamicDialogConfiguration.getCreatorFor(location), checkoutData);
         }
@@ -193,7 +193,7 @@ import java.util.Set;
         if (error.isPaymentProcessing()) {
             final PaymentResult paymentResult =
                 new PaymentResult.Builder()
-                    .setPaymentData(paymentRepository.getPaymentData())
+                    .setPaymentData(paymentRepository.getPaymentDataList())
                     .setPaymentStatus(Payment.StatusCodes.STATUS_IN_PROCESS)
                     .setPaymentStatusDetail(Payment.StatusDetail.STATUS_DETAIL_PENDING_CONTINGENCY)
                     .build();

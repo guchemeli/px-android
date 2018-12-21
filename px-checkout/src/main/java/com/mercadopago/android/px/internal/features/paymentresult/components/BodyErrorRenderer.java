@@ -1,11 +1,13 @@
 package com.mercadopago.android.px.internal.features.paymentresult.components;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
 
@@ -16,7 +18,7 @@ import com.mercadopago.android.px.internal.view.Renderer;
 public class BodyErrorRenderer extends Renderer<BodyError> {
 
     @Override
-    public View render(final BodyError component, final Context context, final ViewGroup parent) {
+    public View render(@NonNull final BodyError component, @NonNull final Context context, final ViewGroup parent) {
         final View bodyErrorView = inflate(R.layout.px_payment_result_body_error, parent);
         final ViewGroup bodyViewGroup = bodyErrorView.findViewById(R.id.bodyErrorContainer);
         final MPTextView titleTextView = bodyErrorView.findViewById(R.id.paymentResultBodyErrorTitle);
@@ -33,9 +35,10 @@ public class BodyErrorRenderer extends Renderer<BodyError> {
         setText(secondDescriptionTextView, component.getSecondDescription());
 
         if (component.getTitle().isEmpty()) {
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-            int marginTop = (int) context.getResources().getDimension(R.dimen.px_l_margin);
+            final LinearLayout.LayoutParams params =
+                new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            final int marginTop = (int) context.getResources().getDimension(R.dimen.px_l_margin);
             params.setMargins(0, marginTop, 0, 0);
             descriptionTextView.setLayoutParams(params);
         }
@@ -60,7 +63,8 @@ public class BodyErrorRenderer extends Renderer<BodyError> {
             bottomDivider.setVisibility(View.GONE);
         }
 
-        stretchHeight(bodyViewGroup);
+        ViewUtils.stretchHeight(bodyViewGroup);
+
         return bodyErrorView;
     }
 }

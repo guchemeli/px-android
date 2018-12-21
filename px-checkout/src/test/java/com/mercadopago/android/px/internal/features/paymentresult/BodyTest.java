@@ -3,6 +3,11 @@ package com.mercadopago.android.px.internal.features.paymentresult;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
+import com.mercadopago.android.px.internal.constants.ProcessingModes;
+import com.mercadopago.android.px.internal.features.paymentresult.components.Body;
+import com.mercadopago.android.px.internal.features.paymentresult.components.BodyError;
+import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultBodyProps;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Receipt;
 import com.mercadopago.android.px.mocks.Instructions;
@@ -10,11 +15,6 @@ import com.mercadopago.android.px.mocks.PaymentResults;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.internal.features.paymentresult.components.Body;
-import com.mercadopago.android.px.internal.features.paymentresult.components.BodyError;
-import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultBodyProps;
-import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
-import com.mercadopago.android.px.internal.constants.ProcessingModes;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,10 +54,12 @@ public class BodyTest {
         Assert.assertEquals(instructionsComponent.props.instruction, instruction);
     }
 
-    private PaymentResultBodyProps getBodyPropsForInstructions(Instruction instruction) {
+    private PaymentResultBodyProps getBodyPropsForInstructions(final Instruction instruction) {
         return new PaymentResultBodyProps.Builder(new PaymentResultScreenConfiguration.Builder().build())
-            .setStatus(Payment.StatusCodes.STATUS_PENDING)
-            .setStatusDetail(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT)
+            .setPaymentResult(new PaymentResult.Builder()
+                .setPaymentStatus(Payment.StatusCodes.STATUS_PENDING)
+                .setPaymentStatusDetail(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT)
+                .build())
             .setProcessingMode(ProcessingModes.AGGREGATOR)
             .setInstruction(instruction)
             .build();
@@ -192,7 +194,6 @@ public class BodyTest {
             dispatcher, paymentResultProvider);
 
         Assert.assertTrue(body.hasBottomCustomComponent());
-        Assert.assertNotNull(body.getPaymentMethodComponent());
     }
 
     @Test
@@ -207,7 +208,6 @@ public class BodyTest {
         final Body body = new Body(getBodyPropsForOnPayment(paymentResult, preference),
             dispatcher, paymentResultProvider);
 
-
         Assert.assertTrue(body.hasTopCustomComponent());
         Assert.assertTrue(body.hasBottomCustomComponent());
     }
@@ -221,10 +221,7 @@ public class BodyTest {
     private PaymentResultBodyProps getBodyPropsForOnPayment(@NonNull final PaymentResult paymentResult,
         @NonNull final PaymentResultScreenConfiguration preference) {
         return new PaymentResultBodyProps.Builder(preference)
-            .setStatus(paymentResult.getPaymentStatus())
-            .setStatusDetail(paymentResult.getPaymentStatusDetail())
-            .setPaymentData(paymentResult.getPaymentData())
-            .setPaymentId(paymentResult.getPaymentId())
+            .setPaymentResult(paymentResult)
             .build();
     }
 }

@@ -40,10 +40,10 @@ public final class EscUtil {
             Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC.equals(paymentDetail);
     }
 
-    public static boolean isErrorInvalidPaymentWithEsc(final MercadoPagoError error, final PaymentData paymentData) {
+    public static boolean isErrorInvalidPaymentWithEsc(final MercadoPagoError error) {
         if (error.isApiException() && error.getApiException().getStatus() == ApiUtil.StatusCodes.BAD_REQUEST) {
             final List<Cause> causes = error.getApiException().getCause();
-            if (causes != null && paymentData.containsCardInfo()) {
+            if (causes != null) {
                 boolean isInvalidEsc = false;
                 for (final Cause cause : causes) {
                     isInvalidEsc |= ApiException.ErrorCodes.INVALID_PAYMENT_WITH_ESC.equals(cause.getCode());

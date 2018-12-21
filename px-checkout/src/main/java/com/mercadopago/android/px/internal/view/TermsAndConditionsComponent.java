@@ -9,6 +9,7 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.TermsAndConditionsActivity;
 import com.mercadopago.android.px.internal.features.paymentresult.components.LineSeparator;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.TermsAndConditionsModel;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 
 public class TermsAndConditionsComponent extends CompactComponent<TermsAndConditionsModel, Void> {
 
@@ -19,9 +20,9 @@ public class TermsAndConditionsComponent extends CompactComponent<TermsAndCondit
     @Override
     public View render(@NonNull final ViewGroup parent) {
         final Context context = parent.getContext();
-        final LinearLayout linearContainer = CompactComponent.createLinearContainer(context);
+        final LinearLayout linearContainer = ViewUtils.createLinearContainer(context);
 
-        final View termsAndConditionsView = inflate(parent, R.layout.px_view_terms_and_conditions);
+        final View termsAndConditionsView = ViewUtils.inflate(parent, R.layout.px_view_terms_and_conditions);
         final MPTextView mTermsAndConditionsMessageView =
             termsAndConditionsView.findViewById(R.id.terms_and_conditions_message);
         final MPTextView mTermsAndConditionsLinkView =

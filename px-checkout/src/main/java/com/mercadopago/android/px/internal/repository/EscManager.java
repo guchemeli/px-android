@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import java.util.List;
 
 public interface EscManager {
 
@@ -23,7 +24,7 @@ public interface EscManager {
      * @param paymentStatusDetail the payment detail related with the status
      * @return isInvalidEsc
      */
-    boolean manageEscForPayment(final PaymentData paymentData,
+    boolean manageEscForPayment(final List<PaymentData> paymentDataList,
         final String paymentStatus,
         final String paymentStatusDetail);
 
@@ -34,5 +35,5 @@ public interface EscManager {
      * @param error the payment error
      * @return isInvalidEsc
      */
-    boolean manageEscForError(final MercadoPagoError error, final PaymentData paymentData);
+    boolean manageEscForError(final MercadoPagoError error, final List<PaymentData> paymentData);
 }

@@ -9,32 +9,16 @@ import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.core.PaymentProcessor;
 import com.mercadopago.android.px.core.SplitPaymentProcessor;
 
-public class SampleSplitPaymentProcessor extends SplitPaymentProcessor {
+public class SampleSplitPaymentProcessor implements SplitPaymentProcessor {
 
     private final PaymentProcessor samplePaymentProcessor = new SamplePaymentProcessor();
-
-    @Nullable
-    @Override
-    public Fragment getFragment(@NonNull final SplitPaymentProcessor.SplitCheckoutData data,
-        @NonNull final Context context) {
-        // Wrapped call - just one payment method
-        return samplePaymentProcessor
-            .getFragment(new CheckoutData(data.paymentDataList.get(0), data.checkoutPreference), context);
-    }
-
-    @Override
-    public void startPayment(@NonNull final SplitPaymentProcessor.SplitCheckoutData data,
-        @NonNull final Context context, @NonNull final OnPaymentListener paymentListener) {
-        // Wrapped call - just one payment method
-        samplePaymentProcessor.startPayment(new CheckoutData(data.paymentDataList.get(0), data.checkoutPreference),
-            context, paymentListener);
-    }
 
     // region old implementation
 
     @Override
     public void startPayment(@NonNull final CheckoutData data, @NonNull final Context context,
         @NonNull final OnPaymentListener paymentListener) {
+        //TODO checkout data has more than one payment method;
         samplePaymentProcessor.startPayment(data, context, paymentListener);
     }
 
@@ -51,12 +35,15 @@ public class SampleSplitPaymentProcessor extends SplitPaymentProcessor {
     @Nullable
     @Override
     public Bundle getFragmentBundle(@NonNull final CheckoutData data, @NonNull final Context context) {
+        //TODO checkout data has more than one payment method;
         return samplePaymentProcessor.getFragmentBundle(data, context);
     }
 
     @Nullable
     @Override
     public Fragment getFragment(@NonNull final CheckoutData data, @NonNull final Context context) {
+
+        //TODO checkout data has more than one payment method;
         return samplePaymentProcessor.getFragment(data, context);
     }
 
@@ -77,7 +64,7 @@ public class SampleSplitPaymentProcessor extends SplitPaymentProcessor {
     };
 
     /* default */ SampleSplitPaymentProcessor(final Parcel in) {
-        super(in);
+        //Do nothing
     }
 
     @Override
@@ -87,6 +74,7 @@ public class SampleSplitPaymentProcessor extends SplitPaymentProcessor {
 
     @Override
     public void writeToParcel(final Parcel dest, final int flags) {
+        //Do nothing
     }
 
     // endregion

@@ -107,18 +107,8 @@ public class PaymentResultProviderImpl implements PaymentResultProvider {
     }
 
     @Override
-    public String getExitButtonDefaultText() {
-        return context.getString(R.string.px_cancel_payment);
-    }
-
-    @Override
     public String getChangePaymentMethodLabel() {
         return context.getString(R.string.px_text_pay_with_other_method);
-    }
-
-    @Override
-    public String getRecoverPayment() {
-        return context.getString(R.string.px_text_enter_again);
     }
 
     @Override

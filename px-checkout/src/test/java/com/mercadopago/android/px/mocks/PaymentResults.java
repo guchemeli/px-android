@@ -55,7 +55,7 @@ public class PaymentResults {
     }
 
     public static PaymentResult getStatusRejectedOtherPaymentResult() {
-        String json = ResourcesUtil.getStringResource("payment_result_rejected_other.json");
+        final String json = ResourcesUtil.getStringResource("payment_result_rejected_other.json");
         return JsonUtil.getInstance().fromJson(json, PaymentResult.class);
     }
 

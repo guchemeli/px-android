@@ -134,11 +134,11 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
     }
 
     private boolean handleEsc(@NonNull final MercadoPagoError error) {
-        return escManager.manageEscForError(error, paymentRepository.getPaymentData());
+        return escManager.manageEscForError(error, paymentRepository.getPaymentDataList());
     }
 
     private boolean handleEsc(@NonNull final IPayment payment) {
-        return escManager.manageEscForPayment(paymentRepository.getPaymentData(),
+        return escManager.manageEscForPayment(paymentRepository.getPaymentDataList(),
             payment.getPaymentStatus(),
             payment.getPaymentStatusDetail());
     }

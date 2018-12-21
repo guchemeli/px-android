@@ -37,43 +37,11 @@ public class PaymentResultProps {
             .setProcessingMode(processingMode);
     }
 
-    public boolean hasCustomizedTitle() {
-
-        if (isApprovedTitleValidState()) {
-            return paymentResultScreenPreferences.getApprovedTitle() != null &&
-                !paymentResultScreenPreferences.getApprovedTitle().isEmpty();
-        } else if (isPendingTitleValidState()) {
-            return paymentResultScreenPreferences.getPendingTitle() != null &&
-                !paymentResultScreenPreferences.getPendingTitle().isEmpty();
-        } else if (isRejectedTitleValidState()) {
-            return paymentResultScreenPreferences.getRejectedTitle() != null &&
-                !paymentResultScreenPreferences.getRejectedTitle().isEmpty();
-        }
-        return false;
-    }
-
     public boolean isPluginPaymentResult(@Nullable final PaymentResult paymentResult) {
         return paymentResult != null &&
             (Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_PLUGIN_PM.equals(paymentResult.getPaymentStatusDetail())
                 ||
                 Payment.StatusDetail.STATUS_DETAIL_APPROVED_PLUGIN_PM.equals(paymentResult.getPaymentStatusDetail()));
-    }
-
-    public String getPreferenceTitle() {
-
-        if (isApprovedTitleValidState()) {
-            return paymentResultScreenPreferences.getApprovedTitle();
-        } else if (isPendingTitleValidState()) {
-            return paymentResultScreenPreferences.getPendingTitle();
-        } else if (isRejectedTitleValidState()) {
-            return paymentResultScreenPreferences.getRejectedTitle();
-        }
-
-        return "";
-    }
-
-    private boolean isApprovedTitleValidState() {
-        return isStatusApproved();
     }
 
     private boolean isStatusApproved() {
@@ -82,17 +50,6 @@ public class PaymentResultProps {
 
     private boolean isStatusRejected() {
         return paymentResult != null && paymentResult.getPaymentStatus().equals(Payment.StatusCodes.STATUS_REJECTED);
-    }
-
-    private boolean isPendingTitleValidState() {
-        return paymentResult != null && ((paymentResult.getPaymentStatus().equals(Payment.StatusCodes.STATUS_PENDING)
-            && !paymentResult.getPaymentStatusDetail()
-            .equals(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT)) ||
-            paymentResult.getPaymentStatus().equals(Payment.StatusCodes.STATUS_IN_PROCESS));
-    }
-
-    private boolean isRejectedTitleValidState() {
-        return isStatusRejected();
     }
 
     public boolean hasCustomizedLabel() {
@@ -191,7 +148,7 @@ public class PaymentResultProps {
             return this;
         }
 
-        public Builder setProcessingMode(String processingMode) {
+        public Builder setProcessingMode(final String processingMode) {
             this.processingMode = processingMode;
             return this;
         }

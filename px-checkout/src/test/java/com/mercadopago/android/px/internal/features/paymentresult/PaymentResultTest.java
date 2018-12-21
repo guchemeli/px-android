@@ -14,7 +14,6 @@ import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
-import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,13 +28,13 @@ public class PaymentResultTest {
     @Mock private PaymentSettingRepository paymentSettingRepository;
     @Mock private CheckoutPreference checkoutPreference;
     @Mock private InstructionsRepository instructionsRepository;
-    
+
     @Before
-    public void setUp(){
+    public void setUp() {
         when(paymentSettingRepository.getCheckoutPreference()).thenReturn(checkoutPreference);
         when(checkoutPreference.getSite()).thenReturn(Sites.ARGENTINA);
     }
-    
+
     @Test
     public void whenPaymentWithCardApprovedThenShowCongrats() {
         MockedNavigator navigator = new MockedNavigator();
@@ -207,106 +206,6 @@ public class PaymentResultTest {
 //        Assert.assertTrue(mockedView.rejectionShown);
     }
 
-    @Test
-    public void whenUnknownStatusThenShowError() {
-        MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
-            paymentSettingRepository, instructionsRepository);
-
-        PaymentData paymentData = new PaymentData();
-        paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
-
-        PaymentResult paymentResult = new PaymentResult.Builder()
-            .setPaymentStatus("UNKNOWN")
-            .setPaymentData(paymentData)
-            .build();
-
-        presenter.setPaymentResult(paymentResult);
-
-        MockedPropsView mockedView = new MockedPropsView();
-        MockedProvider mockedProvider = new MockedProvider();
-
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(mockedProvider);
-
-        presenter.initialize();
-
-        Assert.assertTrue(navigator.errorShown);
-    }
-
-    @Test
-    public void whenPaymentDataIsNullThenShowError() {
-        MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
-            paymentSettingRepository, instructionsRepository);
-
-        PaymentData paymentData = new PaymentData();
-        paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
-
-        PaymentResult paymentResult = new PaymentResult.Builder()
-            .setPaymentStatus("UNKNOWN")
-            .setPaymentData(null)
-            .build();
-
-        presenter.setPaymentResult(paymentResult);
-
-        MockedPropsView mockedView = new MockedPropsView();
-        MockedProvider mockedProvider = new MockedProvider();
-
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(mockedProvider);
-
-        presenter.initialize();
-
-        Assert.assertTrue(navigator.errorShown);
-    }
-
-    @Test
-    public void whenPaymentResultIsNullThenShowError() {
-        MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
-            paymentSettingRepository, instructionsRepository);
-
-        presenter.setPaymentResult(null);
-
-        MockedPropsView mockedView = new MockedPropsView();
-        MockedProvider mockedProvider = new MockedProvider();
-
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(mockedProvider);
-
-        presenter.initialize();
-
-        Assert.assertTrue(navigator.errorShown);
-    }
-
-    @Test
-    public void whenPaymentResultStatusIsNullThenShowError() {
-        MockedNavigator navigator = new MockedNavigator();
-        PaymentResultPresenter presenter = new PaymentResultPresenter(navigator,
-            paymentSettingRepository, instructionsRepository);
-
-        PaymentData paymentData = new PaymentData();
-        paymentData.setPaymentMethod(PaymentMethods.getPaymentMethodOnVisa());
-
-        PaymentResult paymentResult = new PaymentResult.Builder()
-            .setPaymentStatus(null)
-            .setPaymentData(null)
-            .build();
-
-        presenter.setPaymentResult(paymentResult);
-
-        MockedPropsView mockedView = new MockedPropsView();
-        MockedProvider mockedProvider = new MockedProvider();
-
-        presenter.attachView(mockedView);
-        presenter.attachResourcesProvider(mockedProvider);
-
-        presenter.initialize();
-
-        Assert.assertTrue(navigator.errorShown);
-    }
-
     private class MockedPropsView implements PaymentResultPropsView {
 
         @Override
@@ -429,17 +328,7 @@ public class PaymentResultTest {
         }
 
         @Override
-        public String getExitButtonDefaultText() {
-            return null;
-        }
-
-        @Override
         public String getChangePaymentMethodLabel() {
-            return null;
-        }
-
-        @Override
-        public String getRecoverPayment() {
             return null;
         }
 

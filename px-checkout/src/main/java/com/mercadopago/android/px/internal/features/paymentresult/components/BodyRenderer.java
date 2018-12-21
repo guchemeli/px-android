@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.FragmentUtil;
+import com.mercadopago.android.px.internal.util.ViewUtils;
+import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
 
@@ -35,8 +37,10 @@ public class BodyRenderer extends Renderer<Body> {
                     component.topFragment());
             }
 
-            if (component.hasPaymentMethodDescription()) {
-                RendererFactory.create(context, component.getPaymentMethodComponent()).render(bodyViewGroup);
+            if (component.isStatusApproved()) {
+                for (final Component pmComponent : component.getPaymentMethodComponents()) {
+                    RendererFactory.create(context, pmComponent).render(bodyViewGroup);
+                }
             }
 
             if (component.hasBottomCustomComponent()) {
@@ -46,7 +50,7 @@ public class BodyRenderer extends Renderer<Body> {
             }
         }
 
-        stretchHeight(bodyViewGroup);
+        ViewUtils.stretchHeight(bodyViewGroup);
 
         return bodyView;
     }

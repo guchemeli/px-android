@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.internal.features.business_result.components;
+package com.mercadopago.android.px.internal.features.business_result;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -12,57 +12,69 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.paymentresult.components.Header;
 import com.mercadopago.android.px.internal.features.paymentresult.props.HeaderProps;
 import com.mercadopago.android.px.internal.util.FragmentUtil;
+import com.mercadopago.android.px.internal.util.ViewUtils;
+import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.internal.view.Button;
 import com.mercadopago.android.px.internal.view.CompactComponent;
 import com.mercadopago.android.px.internal.view.Footer;
 import com.mercadopago.android.px.internal.view.HelpComponent;
 import com.mercadopago.android.px.internal.view.PaymentMethodComponent;
 import com.mercadopago.android.px.internal.view.Receipt;
-import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
+import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
 import com.mercadopago.android.px.model.ExitAction;
+import javax.annotation.Nonnull;
 
-public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> {
+public class BusinessPaymentContainer
+    extends CompactComponent<BusinessPaymentModel, ActionDispatcher> {
+
+    public BusinessPaymentContainer(
+        final BusinessPaymentModel businessPaymentModel,
+        final ActionDispatcher callBack) {
+        super(businessPaymentModel, callBack);
+    }
 
     @Override
-    protected View render(@NonNull final BusinessPaymentContainer component,
-        @NonNull final Context context,
-        @Nullable final ViewGroup parent) {
+    public View render(@Nonnull final ViewGroup parent) {
 
-        final LinearLayout mainContentContainer = CompactComponent.createLinearContainer(context);
-        final LinearLayout headerContainer = CompactComponent.createLinearContainer(context);
-        final ScrollView scrollView = CompactComponent.createScrollContainer(context);
+        final Context context = parent.getContext();
+        final LinearLayout mainContentContainer = ViewUtils.createLinearContainer(context);
+        final LinearLayout headerContainer = ViewUtils.createLinearContainer(context);
+        final ScrollView scrollView = ViewUtils.createScrollContainer(context);
         scrollView.addView(mainContentContainer);
         mainContentContainer.addView(headerContainer);
 
-        final View header = renderHeader(component, headerContainer);
+        final View header = renderHeader(headerContainer);
 
         final ViewTreeObserver vto = scrollView.getViewTreeObserver();
 
-        if (component.props.payment.hasReceipt()) {
-            RendererFactory.create(context, new Receipt(new Receipt.ReceiptProps(component.props.payment.getReceipt())))
+        if (props.payment.hasReceipt()) {
+            RendererFactory
+                .create(context, new Receipt(new Receipt.ReceiptProps(props.payment.getReceipt())))
                 .render(headerContainer);
         }
 
-        if (component.props.payment.hasHelp()) {
-            final View helpView = new HelpComponent(component.props.payment.getHelp()).render(mainContentContainer);
+        if (props.payment.hasHelp()) {
+            final View helpView = new HelpComponent(props.payment.getHelp()).render(mainContentContainer);
             mainContentContainer.addView(helpView);
         }
 
-        if (component.props.payment.hasTopFragment()) {
+        if (props.payment.hasTopFragment()) {
             FragmentUtil.addFragmentInside(mainContentContainer,
                 R.id.px_fragment_container_top,
-                component.props.payment.getTopFragment());
+                props.payment.getTopFragment());
         }
 
-        if (component.props.payment.shouldShowPaymentMethod()) {
-            renderPaymentMethod(component.props.paymentMethod, mainContentContainer);
+        if (props.payment.shouldShowPaymentMethod()) {
+            for (final PaymentMethodComponent.PaymentMethodProps prop : props.getPaymentMethodProps()) {
+                renderPaymentMethod(prop, mainContentContainer);
+            }
         }
 
-        if (component.props.payment.hasBottomFragment()) {
+        if (props.payment.hasBottomFragment()) {
             FragmentUtil.addFragmentInside(mainContentContainer,
                 R.id.px_fragment_container_bottom,
-                component.props.payment.getBottomFragment());
+                props.payment.getBottomFragment());
         }
 
         if (mainContentContainer.getChildCount() == 1) { //has only header
@@ -72,7 +84,7 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
                 bodyCorrection(mainContentContainer, scrollView, mainContentContainer.getChildAt(1)));
         }
 
-        renderFooter(component, mainContentContainer);
+        renderFooter(mainContentContainer);
 
         return scrollView;
     }
@@ -100,12 +112,11 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
         };
     }
 
-    private void renderFooter(@NonNull final BusinessPaymentContainer component,
-        @NonNull final LinearLayout linearLayout) {
-        final Button.Props primaryButtonProps = getButtonProps(component.props.payment.getPrimaryAction());
-        final Button.Props secondaryButtonProps = getButtonProps(component.props.payment.getSecondaryAction());
+    private void renderFooter(@NonNull final LinearLayout linearLayout) {
+        final Button.Props primaryButtonProps = getButtonProps(props.payment.getPrimaryAction());
+        final Button.Props secondaryButtonProps = getButtonProps(props.payment.getSecondaryAction());
         final Footer footer =
-            new Footer(new Footer.Props(primaryButtonProps, secondaryButtonProps), component.getDispatcher());
+            new Footer(new Footer.Props(primaryButtonProps, secondaryButtonProps), getActions());
         final View footerView = footer.render(linearLayout);
         linearLayout.addView(footerView);
     }
@@ -120,10 +131,9 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
     }
 
     @NonNull
-    private View renderHeader(@NonNull final BusinessPaymentContainer component,
-        @NonNull final LinearLayout linearLayout) {
+    private View renderHeader(@NonNull final LinearLayout linearLayout) {
         final Context context = linearLayout.getContext();
-        final Header header = new Header(HeaderProps.from(component.props.payment, context), component.getDispatcher());
+        final Header header = new Header(HeaderProps.from(props.payment, context), getActions());
         final View render = RendererFactory.create(context, header).render(linearLayout);
         return render.findViewById(R.id.headerContainer);
     }
@@ -146,7 +156,7 @@ public class BusinessPaymentRenderer extends Renderer<BusinessPaymentContainer> 
         };
     }
 
-    /* default */ int calculateDiff(final LinearLayout mainContentContainer, final ScrollView scrollView) {
+    private int calculateDiff(final LinearLayout mainContentContainer, final ScrollView scrollView) {
         final int linearHeight = mainContentContainer.getMeasuredHeight();
         final int scrollHeight = scrollView.getMeasuredHeight();
         return scrollHeight - linearHeight;

@@ -90,8 +90,9 @@ public class EscManagerImpTest {
     @Test
     public void whenManageEscForPaymentHasValidPaymentDataAndIsApproveSavesCardReturnFalse() {
         final PaymentData paymentData = validCardPaymentData();
-        final boolean invalid = escManager.manageEscForPayment(paymentData, Payment.StatusCodes.STATUS_APPROVED,
-            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED);
+        final boolean invalid =
+            escManager.manageEscForPayment(Collections.singletonList(paymentData), Payment.StatusCodes.STATUS_APPROVED,
+                Payment.StatusDetail.STATUS_DETAIL_ACCREDITED);
         verify(mercadoPagoESC).saveESC(paymentData.getToken().getCardId(), paymentData.getToken().getEsc());
         verifyNoMoreInteractions(mercadoPagoESC);
         assertFalse(invalid);
@@ -100,8 +101,9 @@ public class EscManagerImpTest {
     @Test
     public void whenManageEscForPaymentHasValidPaymentDataAndIsRejectedDoNothingReturnFalse() {
         final PaymentData paymentData = validCardPaymentData();
-        final boolean invalid = escManager.manageEscForPayment(paymentData, Payment.StatusCodes.STATUS_REJECTED,
-            Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_BAD_FILLED_DATE);
+        final boolean invalid =
+            escManager.manageEscForPayment(Collections.singletonList(paymentData), Payment.StatusCodes.STATUS_REJECTED,
+                Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_BAD_FILLED_DATE);
         verify(mercadoPagoESC).deleteESC(paymentData.getToken().getCardId());
         verifyNoMoreInteractions(mercadoPagoESC);
         assertFalse(invalid);
@@ -110,8 +112,9 @@ public class EscManagerImpTest {
     @Test
     public void whenManageEscForPaymentHasValidPaymentDataAndIsRejectedEscInvalidDeleteESCReturnTrue() {
         final PaymentData paymentData = validCardPaymentData();
-        final boolean invalid = escManager.manageEscForPayment(paymentData, Payment.StatusCodes.STATUS_REJECTED,
-            Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
+        final boolean invalid =
+            escManager.manageEscForPayment(Collections.singletonList(paymentData), Payment.StatusCodes.STATUS_REJECTED,
+                Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
         verify(mercadoPagoESC).deleteESC(paymentData.getToken().getCardId());
         verifyNoMoreInteractions(mercadoPagoESC);
         assertTrue(invalid);
@@ -120,8 +123,9 @@ public class EscManagerImpTest {
     @Test
     public void whenManageEscForPaymentHasNonCardPaymentDataAndIsRejectedDoNothingReturnFalse() {
         final PaymentData paymentData = mock(PaymentData.class);
-        final boolean invalid = escManager.manageEscForPayment(paymentData, Payment.StatusCodes.STATUS_REJECTED,
-            Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
+        final boolean invalid =
+            escManager.manageEscForPayment(Collections.singletonList(paymentData), Payment.StatusCodes.STATUS_REJECTED,
+                Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
         verifyNoMoreInteractions(mercadoPagoESC);
         assertFalse(invalid);
     }
@@ -129,8 +133,9 @@ public class EscManagerImpTest {
     @Test
     public void whenManageEscForPaymentHasNonCardPaymentDataAndIsApprovedDoNothingReturnFalse() {
         final PaymentData paymentData = mock(PaymentData.class);
-        final boolean invalid = escManager.manageEscForPayment(paymentData, Payment.StatusCodes.STATUS_APPROVED,
-            Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
+        final boolean invalid =
+            escManager.manageEscForPayment(Collections.singletonList(paymentData), Payment.StatusCodes.STATUS_APPROVED,
+                Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
         verifyNoMoreInteractions(mercadoPagoESC);
         assertFalse(invalid);
     }
@@ -139,7 +144,7 @@ public class EscManagerImpTest {
     public void whenManageEscForErrorHasCardPaymentDataBadRequestWithCauseInvalidEscDeleteEscAndReturnTrue() {
         final PaymentData paymentData = validCardPaymentData();
         final MercadoPagoError error = escMpError();
-        final boolean invalid = escManager.manageEscForError(error, paymentData);
+        final boolean invalid = escManager.manageEscForError(error, Collections.singletonList(paymentData));
         verify(mercadoPagoESC).deleteESC(paymentData.getToken().getCardId());
         verifyNoMoreInteractions(mercadoPagoESC);
         assertTrue(invalid);
@@ -149,7 +154,7 @@ public class EscManagerImpTest {
     public void whenManageEscForErrorHasCardPaymentDataBadRequestWithMultipleCauseAndInvalidEscDeleteEscAndReturnTrue() {
         final PaymentData paymentData = validCardPaymentData();
         final MercadoPagoError error = multipleErrorEscMpError();
-        final boolean invalid = escManager.manageEscForError(error, paymentData);
+        final boolean invalid = escManager.manageEscForError(error, Collections.singletonList(paymentData));
         verify(mercadoPagoESC).deleteESC(paymentData.getToken().getCardId());
         verifyNoMoreInteractions(mercadoPagoESC);
         assertTrue(invalid);
@@ -159,7 +164,7 @@ public class EscManagerImpTest {
     public void whenManageEscForErrorHasCardPaymentDataBadRequestWithNoEscCauseReturnFalse() {
         final PaymentData paymentData = validCardPaymentData();
         final MercadoPagoError error = noEscMpError();
-        final boolean invalid = escManager.manageEscForError(error, paymentData);
+        final boolean invalid = escManager.manageEscForError(error, Collections.singletonList(paymentData));
         verifyNoMoreInteractions(mercadoPagoESC);
         assertFalse(invalid);
     }
@@ -168,7 +173,7 @@ public class EscManagerImpTest {
     public void whenManageEscForErrorNoCardPaymentDataBadRequestWithNoEscCauseReturnFalse() {
         final PaymentData paymentData = mock(PaymentData.class);
         final MercadoPagoError error = noEscMpError();
-        final boolean invalid = escManager.manageEscForError(error, paymentData);
+        final boolean invalid = escManager.manageEscForError(error, Collections.singletonList(paymentData));
         verifyNoMoreInteractions(mercadoPagoESC);
         assertFalse(invalid);
     }

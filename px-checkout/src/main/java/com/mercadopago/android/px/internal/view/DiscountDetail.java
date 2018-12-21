@@ -30,7 +30,7 @@ public class DiscountDetail extends CompactComponent<DiscountDetail.Props, Void>
 
     @Override
     public View render(@Nonnull final ViewGroup parent) {
-        final View mainContainer = inflate(parent, R.layout.px_view_discount_detail);
+        final View mainContainer = ViewUtils.inflate(parent, R.layout.px_view_discount_detail);
         configureSubtitleMessage(mainContainer);
         configureDetailMessage(mainContainer);
         configureSubDetailsMessage(mainContainer);

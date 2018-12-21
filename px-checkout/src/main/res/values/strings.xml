@@ -115,7 +115,6 @@
 
     <!-- Rejection -->
     <string name="px_text_pay_with_other_method">Change payment method</string>
-    <string name="px_text_enter_again">Enter again</string>
     <string name="px_title_other_reason_rejection">%1$s did not process the payment</string>
     <string name="px_title_bad_filled_other">Oops, we could not process your payment</string>
     <string name="px_text_some_card_data_is_incorrect">Any datum of your %1$s is incorrect</string>

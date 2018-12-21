@@ -244,16 +244,14 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     private void onPaymentMethodSelected() {
-        if (!showHook2(paymentRepository.getPaymentData())) {
-            hook2Continue();
-        }
+        showReviewAndConfirm();
     }
 
     private void resolvePaymentFailure(final MercadoPagoError mercadoPagoError) {
         if (mercadoPagoError != null && mercadoPagoError.isPaymentProcessing()) {
             final PaymentResult paymentResult =
                 new PaymentResult.Builder()
-                    .setPaymentData(paymentRepository.getPaymentData())
+                    .setPaymentData(paymentRepository.getPaymentDataList())
                     .setPaymentStatus(Payment.StatusCodes.STATUS_IN_PROCESS)
                     .setPaymentStatusDetail(Payment.StatusDetail.STATUS_DETAIL_PENDING_CONTINGENCY)
                     .build();

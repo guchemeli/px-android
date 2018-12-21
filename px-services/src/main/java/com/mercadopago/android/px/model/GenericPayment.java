@@ -5,13 +5,18 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+@SuppressWarnings("unused")
 public class GenericPayment implements IPayment, Parcelable {
 
     public final Long id;
     public final String status;
     public final String statusDetail;
     @Nullable public final String statementDescription;
+    @Nullable public final String paymentMethodId;
 
+    /**
+     * Constructor for non-splited payment ; where is not neccessary to say which payment method have failed.
+     **/
     public GenericPayment(final Long paymentId,
         @NonNull final String status,
         @NonNull final String statusDetail) {
@@ -19,12 +24,47 @@ public class GenericPayment implements IPayment, Parcelable {
         this.status = status;
         this.statusDetail = processStatusDetail(status, statusDetail);
         statementDescription = null;
+        paymentMethodId = null;
+    }
+
+    public GenericPayment(final Long paymentId,
+        @NonNull final String status,
+        @NonNull final String statusDetail,
+        @NonNull final String statementDescription) {
+        id = paymentId;
+        this.status = status;
+        this.statusDetail = processStatusDetail(status, statusDetail);
+        this.statementDescription = statementDescription;
+        paymentMethodId = null;
+    }
+
+    private GenericPayment(final Long id, final String status, final String statusDetail,
+        @Nullable final String statementDescription,
+        @NonNull final String paymentMethodId) {
+        this.id = id;
+        this.status = status;
+        this.statusDetail = processStatusDetail(status, statusDetail);
+        this.statementDescription = statementDescription;
+        this.paymentMethodId = paymentMethodId;
+    }
+
+    public static GenericPayment forSplittedPayment(@NonNull final GenericPayment genericPayment,
+        @NonNull final String paymentMethodId) {
+        return new GenericPayment(genericPayment.id, genericPayment.status, genericPayment.statusDetail,
+            genericPayment.statementDescription,
+            paymentMethodId);
+    }
+
+    public static GenericPayment from(final IPayment payment) {
+        return new GenericPayment(payment.getId(),
+            payment.getPaymentStatus(),
+            payment.getPaymentStatusDetail(),
+            payment.getStatementDescription());
     }
 
     /**
-     * Resolve the status type, it transforms a generic status and detail
-     * into a known status detail
-     * {@link Payment.StatusDetail }
+     * Resolve the status type, it transforms a generic status and detail into a known status detail {@link
+     * Payment.StatusDetail }
      *
      * @param status the payment status type
      * @param statusDetail the payment detail type
@@ -72,13 +112,6 @@ public class GenericPayment implements IPayment, Parcelable {
         return statusDetail;
     }
 
-    public static GenericPayment from(final IPayment payment) {
-        return new GenericPayment(payment.getId(),
-            payment.getPaymentStatus(),
-            payment.getPaymentStatusDetail(),
-            payment.getStatementDescription());
-    }
-
     public static final Creator<GenericPayment> CREATOR = new Creator<GenericPayment>() {
         @Override
         public GenericPayment createFromParcel(final Parcel in) {
@@ -107,6 +140,7 @@ public class GenericPayment implements IPayment, Parcelable {
         dest.writeString(status);
         dest.writeString(statusDetail);
         dest.writeString(statementDescription);
+        dest.writeString(paymentMethodId);
     }
 
     protected GenericPayment(final Parcel in) {
@@ -118,15 +152,6 @@ public class GenericPayment implements IPayment, Parcelable {
         status = in.readString();
         statusDetail = in.readString();
         statementDescription = in.readString();
-    }
-
-    public GenericPayment(final Long paymentId,
-        @NonNull final String status,
-        @NonNull final String statusDetail,
-        @NonNull final String statementDescription) {
-        id = paymentId;
-        this.status = status;
-        this.statusDetail = processStatusDetail(status, statusDetail);
-        this.statementDescription = statementDescription;
+        paymentMethodId = in.readString();
     }
 }

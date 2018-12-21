@@ -11,6 +11,7 @@ import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
 import com.mercadopago.android.px.internal.util.ResourceUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.CompactComponent;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -29,7 +30,8 @@ import com.mercadopago.android.px.services.Callback;
             this.title = title;
         }
 
-        /* default */ static Props createFrom(final PaymentModel props) {
+        /* default */
+        static Props createFrom(final PaymentModel props) {
             return new Props(props.paymentMethodId,
                 props.paymentMethodName);
         }
@@ -41,7 +43,7 @@ import com.mercadopago.android.px.services.Callback;
 
     @Override
     public View render(@NonNull final ViewGroup parent) {
-        final View paymentView = inflate(parent, R.layout.px_payment_method_account_money);
+        final View paymentView = ViewUtils.inflate(parent, R.layout.px_payment_method_account_money);
 
         // TODO: process this on PaymentMethodComponent to only render here.
         final Session session = Session.getSession(parent.getContext());

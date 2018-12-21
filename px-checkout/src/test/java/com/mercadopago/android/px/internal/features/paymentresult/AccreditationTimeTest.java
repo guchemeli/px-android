@@ -1,10 +1,10 @@
 package com.mercadopago.android.px.internal.features.paymentresult;
 
+import com.mercadopago.android.px.internal.features.paymentresult.components.AccreditationComment;
+import com.mercadopago.android.px.internal.features.paymentresult.components.AccreditationTime;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
 import com.mercadopago.android.px.mocks.Instructions;
 import com.mercadopago.android.px.model.Instruction;
-import com.mercadopago.android.px.internal.features.paymentresult.components.AccreditationComment;
-import com.mercadopago.android.px.internal.features.paymentresult.components.AccreditationTime;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Before;
@@ -55,8 +55,8 @@ public class AccreditationTimeTest {
 
         final List<AccreditationComment> accreditationCommentList = component.getAccreditationCommentComponents();
 
-        for (AccreditationComment accreditationComment : accreditationCommentList) {
-            Assert.assertNotNull(accreditationComment.props.comment);
+        for (final AccreditationComment accreditationComment : accreditationCommentList) {
+            Assert.assertNotNull(accreditationComment.props);
         }
     }
 }

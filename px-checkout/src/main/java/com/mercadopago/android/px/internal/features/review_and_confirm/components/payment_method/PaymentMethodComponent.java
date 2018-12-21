@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.Button;
 import com.mercadopago.android.px.internal.view.ButtonLink;
 import com.mercadopago.android.px.internal.view.CompactComponent;
@@ -52,7 +53,7 @@ public class PaymentMethodComponent extends CompactComponent<PaymentModel, Payme
 
             });
 
-            compose(paymentMethodView, buttonLink.render(paymentMethodView));
+            ViewUtils.compose(paymentMethodView, buttonLink.render(paymentMethodView));
         }
 
         return paymentMethodView;

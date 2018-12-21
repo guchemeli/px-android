@@ -16,11 +16,13 @@ import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -113,6 +115,7 @@ public class ReviewAndConfirmPresenterTest {
 
     @Test
     public void whenPaymentErrorIsPaymentProcessingThenShowResult() {
+        when(paymentRepository.getPaymentDataList()).thenReturn(Collections.singletonList(mock(PaymentData.class)));
         final MercadoPagoError mercadoPagoError = mock(MercadoPagoError.class);
 
         when(mercadoPagoError.isPaymentProcessing()).thenReturn(true);
@@ -175,11 +178,11 @@ public class ReviewAndConfirmPresenterTest {
 
     @Test
     public void whenViewIsResumedThenAttachItAndResolveDynamicDialogWithoutCreator() {
-
+        when(paymentRepository.getPaymentDataList()).thenReturn(Collections.singletonList(mock(PaymentData.class)));
         reviewAndConfirmPresenter.onViewResumed(view);
 
         verifyAttachView();
-        verify(paymentRepository).getPaymentData();
+        verify(paymentRepository).getPaymentDataList();
         verify(dynamicDialogConfiguration, atLeastOnce())
             .hasCreatorFor(DynamicDialogConfiguration.DialogLocation.ENTER_REVIEW_AND_CONFIRM);
 

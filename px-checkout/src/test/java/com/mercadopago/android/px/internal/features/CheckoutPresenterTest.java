@@ -382,16 +382,12 @@ public class CheckoutPresenterTest {
     @Test
     public void whenCardFlowResponseHasNotRecoverableTokenProcessAndThereIsNoAvailableHooksThenShowReviewAndConfirm() {
         final CheckoutPresenter presenter = getPresenter();
-        final PaymentData paymentData = mock(PaymentData.class);
 
         when(paymentRepository.hasPayment()).thenReturn(false);
-
-        when(paymentRepository.getPaymentData()).thenReturn(paymentData);
 
         presenter.onCardFlowResponse();
 
         verify(paymentRepository).hasPayment();
-        verify(paymentRepository).getPaymentData();
         verify(checkoutView).showReviewAndConfirm(false);
         verifyNoMoreInteractions(checkoutView);
         verifyNoMoreInteractions(paymentRepository);

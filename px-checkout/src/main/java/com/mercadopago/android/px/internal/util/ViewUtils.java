@@ -3,23 +3,27 @@ package com.mercadopago.android.px.internal.util;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import com.mercadolibre.android.ui.font.Font;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.view.MPEditText;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+import javax.annotation.Nonnull;
 import uk.co.chrisjenx.calligraphy.TypefaceUtils;
 
 import static android.view.View.GONE;
@@ -165,5 +169,54 @@ public final class ViewUtils {
             styleSpan = new StyleSpan(typeface.getStyle());
         }
         setFontInSpannable(indexStart, indexEnd, spannable, styleSpan);
+    }
+
+    public static void stretchHeight(@NonNull final View view) {
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            0,
+            1.0f
+        );
+        view.setLayoutParams(params);
+    }
+
+    @Nonnull
+    public static View inflate(@Nonnull final ViewGroup parent, @LayoutRes final int layout) {
+        return LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
+    }
+
+    @Nonnull
+    public static View compose(@Nonnull final ViewGroup container, @Nonnull final View... children) {
+        for (View child : children) {
+            container.addView(child);
+        }
+        return container;
+    }
+
+    @Nonnull
+    public static View compose(@Nonnull final ViewGroup container, @Nonnull final View child) {
+        container.addView(child);
+        return container;
+    }
+
+    @Nonnull
+    public static LinearLayout createLinearContainer(final Context context) {
+        final LinearLayout linearLayout = new LinearLayout(context);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+        linearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT));
+        return linearLayout;
+    }
+
+    @Nonnull
+    public static ScrollView createScrollContainer(final Context context) {
+        final ScrollView scrollView = new ScrollView(context);
+        scrollView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT));
+        scrollView.setBackgroundColor(scrollView
+            .getContext()
+            .getResources()
+            .getColor(R.color.px_white_background));
+        return scrollView;
     }
 }

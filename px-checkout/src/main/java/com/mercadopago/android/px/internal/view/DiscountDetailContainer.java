@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
@@ -80,9 +81,9 @@ public class DiscountDetailContainer extends CompactComponent<DiscountDetailCont
     }
 
     private MPTextView getTitleTextView(final ViewGroup parent) {
-        return props.dialogTitleType == Props.DialogTitleType.BIG
-            ? (MPTextView) inflate(parent, R.layout.px_view_big_modal_title)
-            : (MPTextView) inflate(parent, R.layout.px_view_small_modal_title);
+        return props.dialogTitleType.equals(Props.DialogTitleType.BIG) ? (MPTextView) ViewUtils.inflate(parent,
+            R.layout.px_view_big_modal_title)
+            : (MPTextView) ViewUtils.inflate(parent, R.layout.px_view_small_modal_title);
     }
 }
 

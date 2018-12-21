@@ -11,6 +11,7 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.review_and_confirm.models.PaymentModel;
 import com.mercadopago.android.px.internal.util.ResourceUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.CompactComponent;
 import java.util.Locale;
 
@@ -48,7 +49,7 @@ class MethodCard extends CompactComponent<MethodCard.Props, Void> {
     @Override
     public View render(@NonNull final ViewGroup parent) {
 
-        View paymentView = inflate(parent, R.layout.px_payment_method_card);
+        View paymentView = ViewUtils.inflate(parent, R.layout.px_payment_method_card);
 
         TextView title = paymentView.findViewById(R.id.title);
         title.setText(formatTitle(title.getContext()));

@@ -7,6 +7,7 @@ import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import java.util.List;
 
 public class EscManagerImp implements EscManager {
 
@@ -22,23 +23,36 @@ public class EscManagerImp implements EscManager {
     }
 
     @Override
-    public boolean manageEscForPayment(final PaymentData paymentData, final String paymentStatus,
+    public boolean manageEscForPayment(final List<PaymentData> paymentDataList, final String paymentStatus,
         final String paymentStatusDetail) {
-        if (EscUtil.shouldDeleteEsc(paymentData, paymentStatus,
-            paymentStatusDetail)) {
-            mercadoPagoESC.deleteESC(paymentData.getToken().getCardId());
-        } else if (EscUtil.shouldStoreESC(paymentData, paymentStatus, paymentStatusDetail)) {
-            mercadoPagoESC.saveESC(paymentData.getToken().getCardId(), paymentData.getToken().getEsc());
+
+        boolean result = false;
+        for (final PaymentData paymentData : paymentDataList) {
+            if (EscUtil.shouldDeleteEsc(paymentData, paymentStatus,
+                paymentStatusDetail)) {
+                mercadoPagoESC.deleteESC(paymentData.getToken().getCardId());
+            } else if (EscUtil.shouldStoreESC(paymentData, paymentStatus, paymentStatusDetail)) {
+                mercadoPagoESC.saveESC(paymentData.getToken().getCardId(), paymentData.getToken().getEsc());
+            }
+
+            result |= EscUtil.isInvalidEscPayment(paymentData, paymentStatus, paymentStatusDetail);
         }
-        return EscUtil.isInvalidEscPayment(paymentData, paymentStatus, paymentStatusDetail);
+
+        return result;
     }
 
     @Override
-    public boolean manageEscForError(final MercadoPagoError error, final PaymentData paymentData) {
-        final boolean isInvalidEsc = EscUtil.isErrorInvalidPaymentWithEsc(error, paymentData);
-        if (isInvalidEsc) {
-            mercadoPagoESC.deleteESC(paymentData.getToken().getCardId());
+    public boolean manageEscForError(final MercadoPagoError error, final List<PaymentData> paymentDataList) {
+        boolean result = false;
+
+        for (final PaymentData paymentData : paymentDataList) {
+            final boolean isInvalidEsc = paymentData.containsCardInfo() && EscUtil.isErrorInvalidPaymentWithEsc(error);
+            if (isInvalidEsc) {
+                mercadoPagoESC.deleteESC(paymentData.getToken().getCardId());
+            }
+            result |= isInvalidEsc;
         }
-        return isInvalidEsc;
+
+        return result;
     }
 }

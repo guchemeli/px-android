@@ -1,8 +1,6 @@
 package com.mercadopago.android.px.internal.features.paymentresult;
 
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
-import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
-import com.mercadopago.android.px.model.Instructions;
 
 public interface PaymentResultProvider extends ResourcesProvider {
 
@@ -21,6 +19,10 @@ public interface PaymentResultProvider extends ResourcesProvider {
     String getRejectedCardDisabledTitle(final String paymentMethodName);
 
     String getRejectedBadFilledCardTitle(final String paymentMethodName);
+
+    String getRejectedCardDisabledBodyErrorDescription(String paymentMethodName);
+
+    String getRejectedCallForAuthBodyActionText(final String paymentMethodName);
 
     String getRejectedBadFilledCardTitle();
 
@@ -44,11 +46,7 @@ public interface PaymentResultProvider extends ResourcesProvider {
 
     String getContinueShopping();
 
-    String getExitButtonDefaultText();
-
     String getChangePaymentMethodLabel();
-
-    String getRecoverPayment();
 
     String getCardEnabled();
 
@@ -59,8 +57,6 @@ public interface PaymentResultProvider extends ResourcesProvider {
     String getPendingReviewManualBodyErrorDescription();
 
     String getRejectedCallForAuthBodyErrorDescription();
-
-    String getRejectedCardDisabledBodyErrorDescription(String paymentMethodName);
 
     String getRejectedInsufficientAmountBodyErrorDescription();
 
@@ -77,8 +73,6 @@ public interface PaymentResultProvider extends ResourcesProvider {
     String getRejectedMaxAttemptsBodyErrorDescription();
 
     String getRejectedHighRiskBodyErrorDescription();
-
-    String getRejectedCallForAuthBodyActionText(final String paymentMethodName);
 
     String getRejectedCallForAuthBodySecondaryTitle();
 

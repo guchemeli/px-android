@@ -31,7 +31,7 @@ public class PayerInformationComponent extends CompactComponent<Payer, PayerInfo
 
     @Override
     public View render(@Nonnull final ViewGroup parent) {
-        final ViewGroup payerInfoView = (ViewGroup) inflate(parent, R.layout.px_payer_information);
+        final ViewGroup payerInfoView = (ViewGroup) ViewUtils.inflate(parent, R.layout.px_payer_information);
         final MPTextView docTypeAndNumber = payerInfoView.findViewById(R.id.payer_doc_type_and_number);
         final MPTextView fullName = payerInfoView.findViewById(R.id.payer_full_name);
         final ImageView icon = payerInfoView.findViewById(R.id.icon);

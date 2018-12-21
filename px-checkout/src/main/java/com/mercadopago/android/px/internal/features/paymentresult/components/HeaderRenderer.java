@@ -11,6 +11,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.features.paymentresult.props.HeaderProps;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
@@ -31,7 +32,7 @@ public class HeaderRenderer extends Renderer<Header> {
         if (component.props.height.equals(HeaderProps.HEADER_MODE_WRAP)) {
             wrapHeight(headerContainer);
         } else if (component.props.height.equals(HeaderProps.HEADER_MODE_STRETCH)) {
-            stretchHeight(headerContainer);
+            ViewUtils.stretchHeight(headerContainer);
         }
 
         headerContainer.setBackgroundColor(background);
@@ -49,7 +50,7 @@ public class HeaderRenderer extends Renderer<Header> {
 
     private void setStatusBarColor(final int statusBarColor, final Context context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = ((Activity) context).getWindow();
+            final Window window = ((Activity) context).getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(statusBarColor);
         }

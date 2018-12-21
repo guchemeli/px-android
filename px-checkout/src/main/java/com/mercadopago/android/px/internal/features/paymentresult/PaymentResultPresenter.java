@@ -47,45 +47,17 @@ import java.util.List;
 
     public void initialize() {
         if (!initialized) {
-            try {
-                validateParameters();
-                onValidStart();
-                initialized = true;
-            } catch (final IllegalStateException exception) {
-                navigator.showError(new MercadoPagoError(exception.getMessage(), false), "");
-            }
-        }
-    }
-
-    private void validateParameters() {
-        if (!isPaymentResultValid()) {
-            throw new IllegalStateException("payment result is invalid");
-        } else if (!isPaymentMethodValid()) {
-            throw new IllegalStateException("payment data is invalid");
+            onValidStart();
+            initialized = true;
         }
     }
 
     protected void onValidStart() {
         new ResultViewTrack(ResultViewTrack.Style.GENERIC, paymentResult).track();
-        getView().setPropPaymentResult(paymentSettings.getCheckoutPreference().getSite().getCurrencyId(), paymentResult,
+        getView().setPropPaymentResult(paymentSettings.getCheckoutPreference().getSite().getCurrencyId(),
+            paymentResult,
             paymentResult.isOffPayment());
         checkGetInstructions();
-    }
-
-    private boolean isPaymentResultValid() {
-        return paymentResult != null && paymentResult.getPaymentStatus() != null &&
-            paymentResult.getPaymentStatusDetail() != null;
-    }
-
-    private boolean isPaymentMethodValid() {
-        return paymentResult != null && paymentResult.getPaymentData() != null &&
-            paymentResult.getPaymentData().getPaymentMethod() != null &&
-            paymentResult.getPaymentData().getPaymentMethod().getId() != null &&
-            !paymentResult.getPaymentData().getPaymentMethod().getId().isEmpty() &&
-            paymentResult.getPaymentData().getPaymentMethod().getPaymentTypeId() != null &&
-            !paymentResult.getPaymentData().getPaymentMethod().getPaymentTypeId().isEmpty() &&
-            paymentResult.getPaymentData().getPaymentMethod().getName() != null &&
-            !paymentResult.getPaymentData().getPaymentMethod().getName().isEmpty();
     }
 
     public void setPaymentResult(final PaymentResult paymentResult) {
@@ -101,34 +73,36 @@ import java.util.List;
     }
 
     /* default */ void getInstructionsAsync() {
-        instructionsRepository.getInstructions(paymentResult).enqueue(new Callback<List<Instruction>>() {
-            @Override
-            public void success(final List<Instruction> instructions) {
-                if (isViewAttached()) {
-                    if (instructions.isEmpty()) {
-                        navigator
-                            .showError(new MercadoPagoError(getResourcesProvider().getStandardErrorMessage(), false),
-                                ApiUtil.RequestOrigin.GET_INSTRUCTIONS);
-                    } else {
-                        resolveInstructions(instructions);
+        instructionsRepository.getInstructions(paymentResult)
+            .enqueue(new Callback<List<Instruction>>() {
+                @Override
+                public void success(final List<Instruction> instructions) {
+                    if (isViewAttached()) {
+                        if (instructions.isEmpty()) {
+                            navigator
+                                .showError(
+                                    new MercadoPagoError(getResourcesProvider().getStandardErrorMessage(), false),
+                                    ApiUtil.RequestOrigin.GET_INSTRUCTIONS);
+                        } else {
+                            resolveInstructions(instructions);
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void failure(final ApiException apiException) {
-                if (isViewAttached()) {
-                    navigator.showError(new MercadoPagoError(apiException, ApiUtil.RequestOrigin.GET_INSTRUCTIONS),
-                        ApiUtil.RequestOrigin.GET_INSTRUCTIONS);
-                    setFailureRecovery(new FailureRecovery() {
-                        @Override
-                        public void recover() {
-                            getInstructionsAsync();
-                        }
-                    });
+                @Override
+                public void failure(final ApiException apiException) {
+                    if (isViewAttached()) {
+                        navigator.showError(new MercadoPagoError(apiException, ApiUtil.RequestOrigin.GET_INSTRUCTIONS),
+                            ApiUtil.RequestOrigin.GET_INSTRUCTIONS);
+                        setFailureRecovery(new FailureRecovery() {
+                            @Override
+                            public void recover() {
+                                getInstructionsAsync();
+                            }
+                        });
+                    }
                 }
-            }
-        });
+            });
     }
 
     public void recoverFromFailure() {

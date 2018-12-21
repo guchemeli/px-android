@@ -17,15 +17,10 @@ public class AccreditationTime extends Component<AccreditationTime.Props, Void> 
     }
 
     public List<AccreditationComment> getAccreditationCommentComponents() {
-        List<AccreditationComment> componentList = new ArrayList<>();
+        final List<AccreditationComment> componentList = new ArrayList<>();
 
-        for (String comment : props.accreditationComments) {
-            final AccreditationComment.Props commentProps = new AccreditationComment.Props.Builder()
-                .setComment(comment)
-                .build();
-
-            final AccreditationComment component = new AccreditationComment(commentProps, getDispatcher());
-
+        for (final String comment : props.accreditationComments) {
+            final AccreditationComment component = new AccreditationComment(comment, getDispatcher());
             componentList.add(component);
         }
 

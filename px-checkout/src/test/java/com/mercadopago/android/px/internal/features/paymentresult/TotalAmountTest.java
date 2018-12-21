@@ -76,8 +76,8 @@ public class TotalAmountTest {
     }
 
     private TotalAmount getTotalAmountComponent(PayerCost payerCost) {
-        final TotalAmount.TotalAmountProps props =
-            new TotalAmount.TotalAmountProps(CURRENCY_ID, new BigDecimal(1000), payerCost, null);
+        final TotalAmount.Props props =
+            new TotalAmount.Props(CURRENCY_ID, new BigDecimal(1000), payerCost, null);
         return new TotalAmount(props);
     }
 }

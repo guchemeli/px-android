@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.ResourceUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.model.PaymentTypes;
 import java.util.Locale;
 
@@ -37,7 +38,7 @@ public class PaymentMethodRenderer extends Renderer<PaymentMethodComponent> {
         setText(statementDescriptionTextView, getDisclaimer(props.paymentMethod.getPaymentTypeId(),
             props.disclaimer, context));
 
-        stretchHeight(paymentMethodViewGroup);
+        ViewUtils.stretchHeight(paymentMethodViewGroup);
         return paymentMethodView;
     }
 
@@ -50,8 +51,8 @@ public class PaymentMethodRenderer extends Renderer<PaymentMethodComponent> {
             .render(totalAmountContainer);
     }
 
-    private Component getTotalAmountComponent(final TotalAmount.TotalAmountProps totalAmountProps) {
-        return new TotalAmount(totalAmountProps);
+    private Component getTotalAmountComponent(final TotalAmount.Props props) {
+        return new TotalAmount(props);
     }
 
     @VisibleForTesting

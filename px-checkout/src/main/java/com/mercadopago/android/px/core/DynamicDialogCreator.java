@@ -3,23 +3,34 @@ package com.mercadopago.android.px.core;
 import android.content.Context;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Size;
 import android.support.v4.app.DialogFragment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import java.util.Collections;
+import java.util.List;
 
 public interface DynamicDialogCreator extends Parcelable {
 
     /* default */ final class CheckoutData {
 
-        @NonNull
-        public final CheckoutPreference checkoutPreference;
-        @NonNull
-        public final PaymentData paymentData;
+        @NonNull public final PaymentData paymentData;
+        @NonNull public final CheckoutPreference checkoutPreference;
+        @NonNull public final List<PaymentData> paymentDataList;
 
+        @Deprecated
         public CheckoutData(@NonNull final CheckoutPreference checkoutPreference,
             @NonNull final PaymentData paymentData) {
-            this.checkoutPreference = checkoutPreference;
             this.paymentData = paymentData;
+            this.checkoutPreference = checkoutPreference;
+            paymentDataList = Collections.singletonList(paymentData);
+        }
+
+        public CheckoutData(@NonNull final CheckoutPreference checkoutPreference,
+            @NonNull @Size(min = 1) final List<PaymentData> paymentData) {
+            this.paymentData = paymentData.get(0);
+            paymentDataList = paymentData;
+            this.checkoutPreference = checkoutPreference;
         }
     }
 

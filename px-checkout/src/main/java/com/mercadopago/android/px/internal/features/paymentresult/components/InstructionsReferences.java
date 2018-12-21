@@ -20,9 +20,9 @@ public class InstructionsReferences extends Component<InstructionsReferencesProp
     }
 
     public List<InstructionReferenceComponent> getReferenceComponents() {
-        List<InstructionReferenceComponent> componentList = new ArrayList<>();
+        final List<InstructionReferenceComponent> componentList = new ArrayList<>();
 
-        for (InstructionReference reference : props.references) {
+        for (final InstructionReference reference : props.references) {
             final InstructionReferenceComponent.Props referenceProps = new InstructionReferenceComponent.Props.Builder()
                 .setReference(reference)
                 .build();

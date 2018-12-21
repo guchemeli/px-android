@@ -21,6 +21,7 @@ import com.mercadopago.android.px.internal.viewmodel.mappers.CardMapper;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
+import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Payment;
@@ -35,6 +36,8 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PaymentService implements PaymentRepository {
 
@@ -238,7 +241,7 @@ public class PaymentService implements PaymentRepository {
         } else {
             final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
             final PaymentProcessor.CheckoutData checkoutData =
-                new PaymentProcessor.CheckoutData(getPaymentData(), checkoutPreference);
+                new PaymentProcessor.CheckoutData(getPaymentDataList(), checkoutPreference);
             paymentProcessor.startPayment(checkoutData, context, handlerWrapper);
         }
     }
@@ -255,7 +258,8 @@ public class PaymentService implements PaymentRepository {
      */
     @NonNull
     @Override
-    public PaymentData getPaymentData() {
+    public List<PaymentData> getPaymentDataList() {
+        final List<PaymentData> paymentDataList = new ArrayList<>();
         final PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(userSelectionRepository.getPaymentMethod());
         paymentData.setPayerCost(userSelectionRepository.getPayerCost());
@@ -267,7 +271,21 @@ public class PaymentService implements PaymentRepository {
         paymentData.setTransactionAmount(amountRepository.getAmountToPay());
         //se agrego payer info a la pref - BOLBRADESCO
         paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
-        return paymentData;
+        paymentDataList.add(paymentData);
+
+        return paymentDataList;
+    }
+
+    @NonNull
+    @Override
+    public PaymentResult createPaymentResult(@NonNull final IPayment payment) {
+        return new PaymentResult.Builder()
+            .setPaymentData(getPaymentDataList())
+            .setPaymentId(payment.getId())
+            .setPaymentStatus(payment.getPaymentStatus())
+            .setStatementDescription(payment.getStatementDescription())
+            .setPaymentStatusDetail(payment.getPaymentStatusDetail())
+            .build();
     }
 
     /**
@@ -278,10 +296,11 @@ public class PaymentService implements PaymentRepository {
      */
     @NonNull
     @Override
-    public PaymentResult createPaymentResult(@NonNull final IPayment payment) {
+    public PaymentResult createPaymentResult(@NonNull final GenericPayment payment) {
         return new PaymentResult.Builder()
-            .setPaymentData(getPaymentData())
+            .setPaymentData(getPaymentDataList())
             .setPaymentId(payment.getId())
+            .setPaymentMethodId(payment.paymentMethodId)
             .setPaymentStatus(payment.getPaymentStatus())
             .setStatementDescription(payment.getStatementDescription())
             .setPaymentStatusDetail(payment.getPaymentStatusDetail())

@@ -63,15 +63,6 @@ public abstract class Renderer<T extends Component> {
         viewGroup.setLayoutParams(params);
     }
 
-    public void stretchHeight(@NonNull final ViewGroup viewGroup) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            0,
-            1.0f
-        );
-        viewGroup.setLayoutParams(params);
-    }
-
     protected void setText(@NonNull final TextView view, @StringRes final int resource) {
         try {
             String text = context.getResources().getString(resource);

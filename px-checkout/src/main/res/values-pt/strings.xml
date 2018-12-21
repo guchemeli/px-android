@@ -106,7 +106,6 @@
 
     <!-- Rejection -->
     <string name="px_text_pay_with_other_method">Alterar o meio de pagamento</string>
-    <string name="px_text_enter_again">Digite novamente</string>
     <string name="px_title_other_reason_rejection">%1$s não processou o pagamento</string>
     <string name="px_title_bad_filled_other">Ops! Não foi possível processar o seu pagamento</string>
     <string name="px_text_some_card_data_is_incorrect">Qualquer dado de seu %1$s é incorreto</string>
