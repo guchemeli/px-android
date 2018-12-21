@@ -35,17 +35,16 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
-import javax.annotation.Nonnull;
 
 public class PaymentService implements PaymentRepository {
 
     @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
     @NonNull private final PaymentSettingRepository paymentSettingRepository;
+    @NonNull /* default */ final PluginRepository pluginRepository;
     @NonNull private final DiscountRepository discountRepository;
     @NonNull private final AmountRepository amountRepository;
     @NonNull private final PaymentProcessor paymentProcessor;
     @NonNull private final Context context;
-    @Nonnull private final PluginRepository pluginRepository;
     @NonNull private final TokenRepository tokenRepository;
     @NonNull private final GroupsRepository groupsRepository;
     @NonNull private final EscManager escManager;
@@ -76,6 +75,7 @@ public class PaymentService implements PaymentRepository {
         this.context = context;
         this.tokenRepository = tokenRepository;
         this.groupsRepository = groupsRepository;
+
         handlerWrapper = new PaymentServiceHandlerWrapper(this, escManager, instructionsRepository);
     }
 
@@ -137,7 +137,6 @@ public class PaymentService implements PaymentRepository {
         groupsRepository.getGroups().enqueue(new Callback<PaymentMethodSearch>() {
             @Override
             public void success(final PaymentMethodSearch paymentMethodSearch) {
-
                 final String paymentTypeId = expressMetadata.getPaymentTypeId();
 
                 if (PaymentTypes.isCardPaymentType(paymentTypeId)) {
@@ -282,13 +281,12 @@ public class PaymentService implements PaymentRepository {
     /**
      * Transforms IPayment into a {@link PaymentResult}
      *
-     * @param payment
-     * @return
+     * @param payment The payment model
+     * @return The transformed {@link PaymentResult}
      */
     @NonNull
     @Override
-    public PaymentResult createPaymentResult(
-        @NonNull final IPayment payment) {
+    public PaymentResult createPaymentResult(@NonNull final IPayment payment) {
         return new PaymentResult.Builder()
             .setPaymentData(getPaymentData())
             .setPaymentId(payment.getId())
