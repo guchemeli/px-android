@@ -4,6 +4,7 @@ import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.model.PayerCost;
+import com.mercadopago.android.px.model.PayerCostModel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,13 +29,14 @@ public final class ExpressInstallmentsData extends TrackingMapModel {
         availableInstallments = payerCostTrackModels;
     }
 
-    public static ExpressInstallmentsData createFrom(@NonNull final ExpressMetadata expressMetadata) {
+    public static ExpressInstallmentsData createFrom(@NonNull final ExpressMetadata expressMetadata,
+        @NonNull final PayerCostModel payerCostModel) {
         final String paymentMethodType = expressMetadata.getPaymentTypeId();
         final String paymentMethodId = expressMetadata.getPaymentMethodId();
         final String cardId = expressMetadata.getCard().getId();
         final Long issuerId = expressMetadata.getCard().getDisplayInfo().issuerId;
         final List<PayerCostInfo> payerCostTrackModels = new ArrayList<>();
-        for (final PayerCost payerCost : expressMetadata.getCard().getPayerCosts()) {
+        for (final PayerCost payerCost : payerCostModel.getPayerCosts()) {
             payerCostTrackModels.add(new PayerCostInfo(payerCost));
         }
 

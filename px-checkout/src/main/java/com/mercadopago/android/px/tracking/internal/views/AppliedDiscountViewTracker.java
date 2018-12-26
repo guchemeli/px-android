@@ -1,17 +1,17 @@
 package com.mercadopago.android.px.tracking.internal.views;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.repository.DiscountRepository;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.tracking.internal.model.DiscountInfo;
 import java.util.Map;
 
 public class AppliedDiscountViewTracker extends ViewTracker {
     private static final String PATH = BASE_VIEW_PATH + PAYMENTS_PATH + "/applied_discount";
 
-    @NonNull private final DiscountRepository discountRepository;
+    @NonNull private final DiscountConfigurationModel discountModel;
 
-    public AppliedDiscountViewTracker(@NonNull final DiscountRepository discountRepository) {
-        this.discountRepository = discountRepository;
+    public AppliedDiscountViewTracker(@NonNull final DiscountConfigurationModel discountModel) {
+        this.discountModel = discountModel;
     }
 
     @NonNull
@@ -19,8 +19,8 @@ public class AppliedDiscountViewTracker extends ViewTracker {
     public Map<String, Object> getData() {
         final Map<String, Object> data = super.getData();
         data.put("discount",
-            DiscountInfo.with(discountRepository.getDiscount(), discountRepository.getCampaign(),
-                !discountRepository.isNotAvailableDiscount()).toMap());
+            DiscountInfo.with(discountModel.getDiscount(), discountModel.getCampaign(),
+                discountModel.isAvailable()).toMap());
         return data;
     }
 

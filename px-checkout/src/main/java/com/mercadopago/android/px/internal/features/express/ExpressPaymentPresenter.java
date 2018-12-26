@@ -261,7 +261,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
                     selectedPayerCostIndex = payerCostModel.getDefaultPayerCostIndex();
                 }
                 getView().showInstallmentsList(payerCostList, selectedPayerCostIndex);
-                new InstallmentsEventTrack(expressMetadata).track();
+                new InstallmentsEventTrack(expressMetadata, payerCostModel).track();
             }
         }
     }

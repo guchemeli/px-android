@@ -51,7 +51,8 @@ import java.util.Set;
         this.paymentSettings = paymentSettings;
         explodeDecoratorMapper = new ExplodeDecoratorMapper();
         reviewAndConfirmViewTracker =
-            new ReviewAndConfirmViewTracker(escCardIds, userSelectionRepository, paymentSettings, discountRepository);
+            new ReviewAndConfirmViewTracker(escCardIds, userSelectionRepository, paymentSettings,
+                discountRepository.getCurrentConfiguration());
         confirmEvent = ConfirmEvent.from(escCardIds, userSelectionRepository);
     }
 

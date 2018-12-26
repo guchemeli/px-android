@@ -28,7 +28,7 @@ public class DiscountDetailDialog extends MeliDialog {
         final DiscountRepository discountRepository = Session.getSession(view.getContext()).getDiscountRepository();
         final ViewGroup container = view.findViewById(R.id.main_container);
 
-        new AppliedDiscountViewTracker(discountRepository).track();
+        new AppliedDiscountViewTracker(discountRepository.getCurrentConfiguration()).track();
         final DiscountDetailContainer discountDetailContainer = new DiscountDetailContainer(
             new DiscountDetailContainer.Props(DialogTitleType.BIG, discountRepository.getCurrentConfiguration()));
         discountDetailContainer.render(container);
