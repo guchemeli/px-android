@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
@@ -63,12 +64,10 @@ import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Issuer;
-import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentType;
 import com.mercadopago.android.px.model.PaymentTypes;
-import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
@@ -93,6 +92,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
 
     public static final String ERROR_STATE = "textview_error";
     public static final String NORMAL_STATE = "textview_normal";
+    protected static final String EXTRA_ISSUERS = "issuers";
 
     protected GuessingCardPresenter mPresenter;
     protected MPEditText mCardNumberEditText;
@@ -1383,14 +1383,25 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
         openKeyboard(mCardNumberEditText);
     }
 
+    /**
+     * When guessing card has non - automatic selected issuer then should show issuers screen.
+     *
+     * @param issuers all issuers
+     */
     @Override
-    public void finishCardFlow(final PaymentMethod paymentMethod, final Token token,
-        final List<Issuer> issuers) {
+    public void finishCardFlow(@NonNull final List<Issuer> issuers) {
+        overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
         final Intent returnIntent = new Intent();
-        returnIntent.putExtra("issuers", JsonUtil.getInstance().toJson(issuers));
+        returnIntent.putExtra(EXTRA_ISSUERS, JsonUtil.getInstance().toJson(issuers));
         setResult(RESULT_OK, returnIntent);
         finish();
+    }
+
+    @Override
+    public void finishCardFlow() {
         overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
+        setResult(Activity.RESULT_OK);
+        finish();
     }
 
     @Override
@@ -1405,15 +1416,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     }
 
     @Override
-    public void finishCardFlow(final PaymentMethod paymentMethod, final Token token,
-        final Issuer issuer, final List<PayerCost> payerCosts) {
-        final Intent returnIntent = new Intent();
-        setResult(RESULT_OK, returnIntent);
-        finish();
-        overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
-    }
-
-    @Override
     public void finishCardStorageFlowWithSuccess() {
         CardAssociationResultSuccessActivity.startCardAssociationResultSuccessActivity(this);
         finish();
@@ -1423,16 +1425,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     @Override
     public void finishCardStorageFlowWithError(final String accessToken) {
         CardAssociationResultErrorActivity.startCardAssociationResultErrorActivity(this, accessToken);
-        finish();
-        overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
-    }
-
-    @Override
-    public void finishCardFlow(final PaymentMethod paymentMethod, final Token token,
-        final Issuer issuer, final PayerCost payerCost) {
-        final Intent returnIntent = new Intent();
-        returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(payerCost));
-        setResult(RESULT_OK, returnIntent);
         finish();
         overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
     }

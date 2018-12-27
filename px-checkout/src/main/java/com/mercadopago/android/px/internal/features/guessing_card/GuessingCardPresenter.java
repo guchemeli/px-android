@@ -111,7 +111,7 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
             session.getConfigurationModule().getUserSelectionRepository(),
             session.getConfigurationModule().getPaymentSettings(), session.getGroupsRepository(),
             session.getConfigurationModule().getPaymentSettings().getAdvancedConfiguration(),
-            paymentRecovery, session.getSummaryAmountRepository());
+            paymentRecovery);
     }
 
     public static GuessingCardPresenter buildGuessingCardStoragePresenter(final CardAssociationSession session,

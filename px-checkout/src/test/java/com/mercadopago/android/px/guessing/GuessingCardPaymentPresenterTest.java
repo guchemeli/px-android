@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.guessing;
 
+import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingController;
@@ -26,7 +27,6 @@ import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Issuer;
-import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -91,7 +91,8 @@ public class GuessingCardPaymentPresenterTest {
         when(advancedConfiguration.isBankDealsEnabled()).thenReturn(true);
         presenter =
             new GuessingCardPaymentPresenter(userSelectionRepository, paymentSettingRepository,
-                groupsRepository, advancedConfiguration, buildMockedPaymentRecovery(), summaryAmountRepository);
+                groupsRepository, advancedConfiguration, buildMockedPaymentRecovery()
+            );
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
     }
@@ -662,7 +663,7 @@ public class GuessingCardPaymentPresenterTest {
             .thenReturn(Collections.singletonList(paymentMethodList.get(0)));
 
         presenter = new GuessingCardPaymentPresenter(userSelectionRepository, paymentSettingRepository,
-            groupsRepository, advancedConfiguration, buildMockedPaymentRecovery(), summaryAmountRepository);
+            groupsRepository, advancedConfiguration, buildMockedPaymentRecovery());
 
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
@@ -830,6 +831,16 @@ public class GuessingCardPaymentPresenterTest {
         }
 
         @Override
+        public void finishCardFlow(@NonNull final List<Issuer> issuers) {
+            // Empty method
+        }
+
+        @Override
+        public void finishCardFlow() {
+            // Empty method
+        }
+
+        @Override
         public void setErrorContainerListener() {
             // Empty method
         }
@@ -853,12 +864,6 @@ public class GuessingCardPaymentPresenterTest {
         }
 
         @Override
-        public void finishCardFlow(final PaymentMethod paymentMethod, final Token token, final Issuer issuer,
-            final PayerCost payerCost) {
-            // Empty body
-        }
-
-        @Override
         public void finishCardStorageFlowWithSuccess() {
             // Empty body
         }
@@ -870,12 +875,6 @@ public class GuessingCardPaymentPresenterTest {
 
         @Override
         public void showProgress() {
-            // Empty body
-        }
-
-        @Override
-        public void finishCardFlow(final PaymentMethod paymentMethod, final Token token, final Issuer issuer,
-            final List<PayerCost> payerCosts) {
             // Empty body
         }
 
@@ -1076,11 +1075,6 @@ public class GuessingCardPaymentPresenterTest {
         @Override
         public void initializeTitle() {
             initializeGuessingForm = true;
-        }
-
-        @Override
-        public void finishCardFlow(final PaymentMethod paymentMethod, final Token token, final List<Issuer> issuers) {
-            // Empty body
         }
 
         @Override

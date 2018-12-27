@@ -270,13 +270,13 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
                     mercadoPagoESC.saveESC(token.getCardId(), token.getEsc());
                     if (isViewAttached()) {
                         getView().finishWithResult();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(final MercadoPagoError error) {
-                if (error.isApiException() &&
-                    EscUtil.isInvalidEscForApiException(error.getApiException())) {
+                @Override
+                public void onFailure(final MercadoPagoError error) {
+                    if (error.isApiException() &&
+                        EscUtil.isInvalidEscForApiException(error.getApiException())) {
                         mercadoPagoESC.deleteESC(escCardToken.getCardId());
                         esc = null;
                         //Start CVV screen if fail
