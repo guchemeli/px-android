@@ -6,10 +6,10 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
-import com.mercadopago.android.px.services.BuildConfig;
 import com.mercadopago.android.px.internal.core.ConnectivityStateInterceptor;
 import com.mercadopago.android.px.internal.core.TLSSocketFactory;
 import com.mercadopago.android.px.internal.core.UserAgentInterceptor;
+import com.mercadopago.android.px.services.BuildConfig;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import okhttp3.Cache;
@@ -23,7 +23,7 @@ public final class HttpClientUtil {
     private static OkHttpClient customClient;
     private static final int CACHE_SIZE = 10 * 1024 * 1024; // 10 MB
     private static final String CACHE_DIR_NAME = "PX_OKHTTP_CACHE_SERVICES";
-    private static final HttpLoggingInterceptor.Level LOGGING_INTERCEPTOR = HttpLoggingInterceptor.Level.BODY;
+    private static final HttpLoggingInterceptor.Level LOGGING_INTERCEPTOR = HttpLoggingInterceptor.Level.NONE;
 
     private HttpClientUtil() {
     }

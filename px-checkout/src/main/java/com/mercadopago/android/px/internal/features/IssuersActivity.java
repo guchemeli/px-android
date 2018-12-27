@@ -342,9 +342,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
     @Override
     public void onBackPressed() {
-        final Intent returnIntent = new Intent();
-        returnIntent.putExtra("backButtonPressed", true);
-        setResult(RESULT_CANCELED, returnIntent);
+        setResult(RESULT_CANCELED);
         finish();
     }
 }

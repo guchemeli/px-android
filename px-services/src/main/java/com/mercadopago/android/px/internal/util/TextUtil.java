@@ -4,8 +4,10 @@ import android.support.annotation.Nullable;
 
 public final class TextUtil {
 
+    public static final String EMPTY = "";
+
     private TextUtil() {
-        //Do nothing
+        throw new AssertionError("Util classes shouldn't be instantiated.");
     }
 
     public static boolean isEmpty(@Nullable final CharSequence text) {

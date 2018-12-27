@@ -38,7 +38,7 @@
             android:name=".internal.features.PaymentVaultActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
-            android:name=".internal.features.InstallmentsActivity"
+            android:name=".internal.features.installments.InstallmentsActivity"
             android:theme="@style/Theme.MercadoPagoTheme.NoActionBar"/>
         <activity
             android:name=".internal.features.IssuersActivity"

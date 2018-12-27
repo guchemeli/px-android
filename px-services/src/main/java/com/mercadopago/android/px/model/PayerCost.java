@@ -2,6 +2,8 @@ package com.mercadopago.android.px.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import com.mercadopago.android.px.internal.util.ParcelableUtil;
 import java.io.Serializable;
@@ -122,6 +124,7 @@ public class PayerCost implements Parcelable, Serializable {
         }
     };
 
+    @Deprecated
     @VisibleForTesting
     public PayerCost() {
     }

@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.util.InstallmentsUtil;
+import com.mercadopago.android.px.internal.util.CountyInstallmentsUtils;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.internal.util.CurrenciesUtil;
 import java.math.BigDecimal;
@@ -56,7 +56,7 @@ public class PayerCostColumn {
     private void drawBasicPayerCost() {
         setInstallmentsText();
 
-        if (!InstallmentsUtil.shouldWarnAboutBankInterests(mSiteId)) {
+        if (!CountyInstallmentsUtils.shouldWarnAboutBankInterests(mSiteId)) {
             if (installmentsRate.compareTo(BigDecimal.ZERO) == 0) {
                 if (installments > 1) {
                     mZeroRateText.setVisibility(View.VISIBLE);

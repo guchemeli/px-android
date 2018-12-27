@@ -142,11 +142,7 @@
     <string name="px_standard_error_message">Estamos trabalhando para solucionar o problema. Por favor, tente novamente mais tarde.</string>
     <string name="px_error_message_email_required">O e-mail é obrigatório</string>
     <string name="px_error_message_missing_public_key">A public key é obrigatória</string>
-    <string name="px_error_message_missing_amount">O valor é obrigatório</string>
-    <string name="px_error_message_missing_site">O site é obrigatório</string>
     <string name="px_error_message_missing_payer_cost">Nenhuma parcela encontrada</string>
-    <string name="px_error_message_missing_installment_for_issuer">Nenhum financiamento foi encontrado para esse banco</string>
-    <string name="px_error_message_multiple_installments_for_issuer">Parcelas múltiplas foram encontradas para este banco</string>
     <string name="px_error_message_missing_identification_types">Nenhum tipo de identificação encontrado</string>
     <string name="px_error_message_missing_setting_for_bin">Nenhuma configuração encontrada para esse bin</string>
 

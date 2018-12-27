@@ -1,25 +1,23 @@
-package com.mercadopago.android.px.internal.features;
+package com.mercadopago.android.px.internal.features.installments;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.adapters.InstallmentsAdapter;
-import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
-import com.mercadopago.android.px.internal.callbacks.RecyclerItemClickListener;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.features.providers.InstallmentsProviderImpl;
+import com.mercadopago.android.px.internal.features.MercadoPagoBaseActivity;
+import com.mercadopago.android.px.internal.features.express.installments.InstallmentsAdapter;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.FrontCardView;
@@ -37,22 +35,16 @@ import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
-import com.mercadopago.android.px.preferences.PaymentPreference;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class InstallmentsActivity extends MercadoPagoBaseActivity
-    implements InstallmentsActivityView {
+public class InstallmentsActivity extends MercadoPagoBaseActivity implements InstallmentsView {
 
-    protected InstallmentsPresenter presenter;
+    private InstallmentsPresenter presenter;
+    private RecyclerView installmentsRecyclerView;
 
     //Local vars
     protected boolean mActivityActive;
-
-    //View controls
-    protected InstallmentsAdapter mInstallmentsAdapter;
-    protected RecyclerView mInstallmentsRecyclerView;
 
     //ViewMode
     protected boolean mLowResActive;
@@ -69,6 +61,10 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     protected FrontCardView mFrontCardView;
     protected MPTextView mTimerTextView;
 
+    private static final int TOOLBAR_TEXT_SIZE = 19;
+    private static final int TIMER_TEXT_SIZE = 17;
+    private static final String CARD_INFO_KEY = "cardInfo";
+
     private AmountView amountView;
     private PaymentSettingRepository configuration;
 
@@ -80,16 +76,14 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         final ConfigurationModule configurationModule = session.getConfigurationModule();
         configuration = configurationModule.getPaymentSettings();
         presenter = new InstallmentsPresenter(session.getAmountRepository(), configuration,
-            configurationModule.getUserSelectionRepository(),
-            session.getDiscountRepository(),
-            session.getSummaryAmountRepository());
+            configurationModule.getUserSelectionRepository(), session.getDiscountRepository(),
+            session.getSummaryAmountRepository(), session.getPayerCostRepository(), session.providePayerCostSolver());
 
         getActivityParameters();
         presenter.attachView(this);
-        presenter.attachResourcesProvider(new InstallmentsProviderImpl(this));
 
         mActivityActive = true;
-        analyzeLowRes();
+        mLowResActive = ScaleUtil.isLowRes(this);
         setContentView();
         initializeControls();
         initializeView();
@@ -99,29 +93,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
     private void getActivityParameters() {
         final Intent intent = getIntent();
-
-        presenter.setCardInfo(JsonUtil.getInstance().fromJson(intent.getStringExtra("cardInfo"), CardInfo.class));
-
-        List<PayerCost> payerCosts;
-        try {
-            final Type listType = new TypeToken<List<PayerCost>>() {
-            }.getType();
-            payerCosts = JsonUtil.getInstance().getGson().fromJson(intent.getStringExtra("payerCosts"), listType);
-        } catch (final Exception ex) {
-            payerCosts = null;
-        }
-
-        presenter.setPayerCosts(payerCosts);
-        presenter.setPaymentPreference(
-            JsonUtil.getInstance().fromJson(intent.getStringExtra("paymentPreference"), PaymentPreference.class));
-    }
-
-    public void analyzeLowRes() {
-        if (presenter.isRequiredCardDrawn()) {
-            mLowResActive = ScaleUtil.isLowRes(this);
-        } else {
-            mLowResActive = true;
-        }
+        presenter.setCardInfo(JsonUtil.getInstance().fromJson(intent.getStringExtra(CARD_INFO_KEY), CardInfo.class));
     }
 
     public void setContentView() {
@@ -141,9 +113,12 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
     }
 
     private void initializeControls() {
-        mInstallmentsRecyclerView = findViewById(R.id.mpsdkActivityInstallmentsView);
+        installmentsRecyclerView = findViewById(R.id.mpsdkActivityInstallmentsView);
+        final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        installmentsRecyclerView.setLayoutManager(linearLayoutManager);
+        installmentsRecyclerView
+            .addItemDecoration(new DividerItemDecoration(this, linearLayoutManager.getOrientation()));
         mTimerTextView = findViewById(R.id.mpsdkTimerTextView);
-
         amountView = findViewById(R.id.amount_view);
 
         if (mLowResActive) {
@@ -162,8 +137,8 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
                 new Toolbar.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             marginParams.setMargins(0, 0, 0, 6);
             mLowResTitleToolbar.setLayoutParams(marginParams);
-            mLowResTitleToolbar.setTextSize(19);
-            mTimerTextView.setTextSize(17);
+            mLowResTitleToolbar.setTextSize(TOOLBAR_TEXT_SIZE);
+            mTimerTextView.setTextSize(TIMER_TEXT_SIZE);
         }
 
         mLowResToolbar.setVisibility(View.VISIBLE);
@@ -266,8 +241,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         }
     }
 
-    @Override
-    public void showHeader() {
+    private void showHeader() {
         if (mLowResActive) {
             mLowResToolbar.setVisibility(View.VISIBLE);
         } else {
@@ -276,63 +250,41 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
         }
     }
 
-    private void initializeAdapter(final OnSelectedCallback<Integer> onSelectedCallback) {
-        mInstallmentsAdapter =
-            new InstallmentsAdapter(configuration.getCheckoutPreference().getSite(), onSelectedCallback);
-        initializeAdapterListener(mInstallmentsAdapter, mInstallmentsRecyclerView);
-    }
-
-    private void initializeAdapterListener(final RecyclerView.Adapter adapter, final RecyclerView view) {
-        view.setAdapter(adapter);
-        view.setLayoutManager(new LinearLayoutManager(this));
-        view.addOnItemTouchListener(new RecyclerItemClickListener(this,
-            new RecyclerItemClickListener.OnItemClickListener() {
-                @Override
-                public void onItemClick(final View view, final int position) {
-                    presenter.onItemSelected(position);
-                }
-            }));
+    @Override
+    public void showApiErrorScreen(final ApiException apiException, final String requestOrigin) {
+        ErrorUtil.showApiExceptionError(this, apiException, requestOrigin);
     }
 
     @Override
-    public void showError(final MercadoPagoError error, final String requestOrigin) {
-        if (error.isApiException()) {
-            showApiException(error.getApiException(), requestOrigin);
-        } else {
-            ErrorUtil.startErrorActivity(this, error);
-        }
-    }
-
-    @Override
-    public void showApiException(final ApiException apiException, final String requestOrigin) {
-        if (mActivityActive) {
-            ErrorUtil.showApiExceptionError(this, apiException, requestOrigin);
-        }
-    }
-
-    @Override
-    public void showInstallments(final List<PayerCost> payerCostList,
-        final OnSelectedCallback<Integer> onSelectedCallback) {
-        initializeAdapter(onSelectedCallback);
-        mInstallmentsAdapter.addResults(payerCostList);
+    public void showInstallments(final List<PayerCost> payerCostList) {
+        showHeader();
+        final InstallmentsAdapter installmentsAdapter =
+            new InstallmentsAdapter(configuration.getCheckoutPreference().getSite(),
+                payerCostList, presenter);
+        installmentsRecyclerView.setAdapter(installmentsAdapter);
     }
 
     @Override
     public void showLoadingView() {
-        mInstallmentsRecyclerView.setVisibility(View.GONE);
+        installmentsRecyclerView.setVisibility(View.GONE);
         ViewUtils.showProgressLayout(this);
     }
 
     @Override
     public void hideLoadingView() {
-        mInstallmentsRecyclerView.setVisibility(View.VISIBLE);
+        installmentsRecyclerView.setVisibility(View.VISIBLE);
         ViewUtils.showRegularLayout(this);
     }
 
     @Override
-    public void finishWithResult(final PayerCost payerCost) {
+    public void showErrorNoPayerCost() {
+        ErrorUtil.startErrorActivity(this, new MercadoPagoError(getString(R.string.px_standard_error_message),
+            getString(R.string.px_error_message_detail_no_payer_cost_found), false));
+    }
+
+    @Override
+    public void finishWithResult() {
         final Intent returnIntent = new Intent();
-        returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(payerCost));
         setResult(RESULT_OK, returnIntent);
         finish();
         animateTransitionSlideInSlideOut();
@@ -344,10 +296,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
 
     @Override
     public void onBackPressed() {
-        showInstallmentsRecyclerView();
-        final Intent returnIntent = new Intent();
-        returnIntent.putExtra("backButtonPressed", true);
-        setResult(RESULT_CANCELED, returnIntent);
+        setResult(RESULT_CANCELED);
         finish();
     }
 
@@ -365,11 +314,6 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity
             setResult(resultCode, data);
             finish();
         }
-    }
-
-    @Override
-    public void showInstallmentsRecyclerView() {
-        mInstallmentsRecyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override

@@ -8,7 +8,7 @@ import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.SummaryAmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.internal.services.PaymentService;
+import com.mercadopago.android.px.internal.services.InstallmentService;
 import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -18,16 +18,16 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 
 public class SummaryAmountService implements SummaryAmountRepository {
 
-    @NonNull private final PaymentService paymentService;
+    @NonNull private final InstallmentService installmentService;
     @NonNull private final PaymentSettingRepository paymentSettingRepository;
     @NonNull private final AdvancedConfiguration advancedConfiguration;
     @NonNull private final UserSelectionRepository userSelectionRepository;
 
-    public SummaryAmountService(@NonNull final PaymentService paymentService,
+    public SummaryAmountService(@NonNull final InstallmentService installmentService,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
         @NonNull final AdvancedConfiguration advancedConfiguration,
         @NonNull final UserSelectionRepository userSelectionRepository) {
-        this.paymentService = paymentService;
+        this.installmentService = installmentService;
         this.paymentSettingRepository = paymentSettingRepository;
         this.advancedConfiguration = advancedConfiguration;
         this.userSelectionRepository = userSelectionRepository;
@@ -37,7 +37,6 @@ public class SummaryAmountService implements SummaryAmountRepository {
     @Override
     public MPCall<SummaryAmount> getSummaryAmount(@NonNull final String bin) {
         final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
-
         final DifferentialPricing differentialPricing = checkoutPreference.getDifferentialPricing();
         final Integer differentialPricingId = differentialPricing == null ? null : differentialPricing.getId();
         final PaymentMethod paymentMethod = userSelectionRepository.getPaymentMethod();
@@ -53,7 +52,7 @@ public class SummaryAmountService implements SummaryAmountRepository {
                 checkoutPreference.getDefaultInstallments(),
                 differentialPricingId, ProcessingModes.AGGREGATOR);
 
-        return paymentService.createSummaryAmount(Settings.servicesVersion, summaryAmountBody,
+        return installmentService.createSummaryAmount(Settings.servicesVersion, summaryAmountBody,
             paymentSettingRepository.getPublicKey(), paymentSettingRepository.getPrivateKey());
     }
 }

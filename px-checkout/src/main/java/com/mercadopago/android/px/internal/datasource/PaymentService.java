@@ -110,7 +110,7 @@ public class PaymentService implements PaymentRepository {
     @Override
     public PaymentRecovery createRecoveryForInvalidESC() {
         return new PaymentRecovery(paymentSettingRepository.getToken(), userSelectionRepository.getPaymentMethod(),
-            userSelectionRepository.getPayerCost(), userSelectionRepository.getIssuer(),
+            userSelectionRepository.getIssuer(),
             Payment.StatusCodes.STATUS_REJECTED,
             Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
     }
@@ -120,7 +120,6 @@ public class PaymentService implements PaymentRepository {
     public PaymentRecovery createPaymentRecovery() {
         return new PaymentRecovery(paymentSettingRepository.getToken(),
             userSelectionRepository.getPaymentMethod(),
-            userSelectionRepository.getPayerCost(),
             userSelectionRepository.getIssuer(), getPayment().getPaymentStatus(),
             getPayment().getPaymentStatusDetail());
     }

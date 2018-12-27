@@ -2,8 +2,10 @@ package com.mercadopago.android.px.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PayerCostModel implements Serializable, Parcelable {
@@ -23,8 +25,9 @@ public class PayerCostModel implements Serializable, Parcelable {
         payerCosts = in.createTypedArrayList(PayerCost.CREATOR);
     }
 
+    @NonNull
     public List<PayerCost> getPayerCosts() {
-        return payerCosts;
+        return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
     }
 
     public int getDefaultPayerCostIndex() {

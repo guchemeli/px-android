@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PayerCostRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.PayerCostModel;
@@ -33,7 +34,7 @@ public class PayerCostRepositoryImpl implements PayerCostRepository {
 
             @Override
             public void failure(final ApiException apiException) {
-                configurationSolver = new ConfigurationSolverImpl("", new ArrayList<CustomSearchItem>());
+                configurationSolver = new ConfigurationSolverImpl(TextUtil.EMPTY, new ArrayList<CustomSearchItem>());
             }
         });
     }

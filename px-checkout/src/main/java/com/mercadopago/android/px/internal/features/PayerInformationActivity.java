@@ -478,7 +478,7 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
             @Override
             public void onClick(View v) {
                 if (mCurrentEditingEditText.equals(IDENTIFICATION_NUMBER_INPUT)) {
-                    finishWithCancelResult();
+                    onBackPressed();
                 } else {
                     checkIsEmptyOrValid();
                 }
@@ -486,18 +486,9 @@ public class PayerInformationActivity extends MercadoPagoBaseActivity implements
         });
     }
 
-    /* default */ void finishWithCancelResult() {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("backButtonPressed", true);
-        setResult(RESULT_CANCELED, returnIntent);
-        finish();
-    }
-
     @Override
     public void onBackPressed() {
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("backButtonPressed", true);
-        setResult(RESULT_CANCELED, returnIntent);
+        setResult(RESULT_CANCELED);
         finish();
     }
 

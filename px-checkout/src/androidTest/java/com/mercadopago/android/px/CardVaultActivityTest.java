@@ -15,7 +15,7 @@ import com.mercadopago.android.px.internal.datasource.MercadoPagoPaymentConfigur
 import com.mercadopago.android.px.internal.datasource.UserSelectionService;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.features.ErrorActivity;
-import com.mercadopago.android.px.internal.features.InstallmentsActivity;
+import com.mercadopago.android.px.internal.features.installments.InstallmentsActivity;
 import com.mercadopago.android.px.internal.features.IssuersActivity;
 import com.mercadopago.android.px.internal.features.cardvault.CardVaultActivity;
 import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardActivity;

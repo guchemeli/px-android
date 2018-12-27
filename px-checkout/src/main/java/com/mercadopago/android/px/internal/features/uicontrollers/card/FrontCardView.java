@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -80,7 +81,7 @@ public class FrontCardView {
         mSecurityCodeLength = CARD_SECURITY_CODE_DEFAULT_LENGTH;
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
+    public void setPaymentMethod(@Nullable PaymentMethod paymentMethod) {
         mPaymentMethod = paymentMethod;
     }
 

@@ -2,6 +2,7 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.PayerCostModel;
 import java.util.List;
@@ -27,7 +28,7 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
                 return customSearchItem.getSelectedAmountConfiguration();
             }
         }
-        return "";
+        return TextUtil.EMPTY;
     }
 
     @Override

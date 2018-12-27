@@ -16,7 +16,7 @@ public abstract class TaggedCallback<T> extends Callback<T> {
 
     private final String tag;
 
-    public TaggedCallback(String tag) {
+    public TaggedCallback(final String tag) {
         this.tag = tag;
     }
 

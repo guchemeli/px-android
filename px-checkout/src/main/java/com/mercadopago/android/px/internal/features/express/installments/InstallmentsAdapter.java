@@ -10,7 +10,7 @@ import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Site;
 import java.util.List;
 
-//TODO unify with normal installments.
+import static com.mercadopago.android.px.model.PayerCostModel.NO_SELECTED;
 
 public class InstallmentsAdapter extends RecyclerView.Adapter<InstallmentRowHolder> {
 
@@ -21,6 +21,14 @@ public class InstallmentsAdapter extends RecyclerView.Adapter<InstallmentRowHold
 
     public interface ItemListener {
         void onClick(final PayerCost payerCostSelected);
+    }
+
+    public InstallmentsAdapter(@NonNull final Site site,
+        @NonNull final List<PayerCost> payerCosts, @NonNull final ItemListener itemListener) {
+        this.site = site;
+        this.payerCosts = payerCosts;
+        this.itemListener = itemListener;
+        payerCostSelected = NO_SELECTED;
     }
 
     public InstallmentsAdapter(@NonNull final Site site,

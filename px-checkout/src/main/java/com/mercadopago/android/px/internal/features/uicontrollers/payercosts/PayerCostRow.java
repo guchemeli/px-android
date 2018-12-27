@@ -9,7 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.util.InstallmentsUtil;
+import com.mercadopago.android.px.internal.util.CountyInstallmentsUtils;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.internal.util.CurrenciesUtil;
@@ -41,7 +41,7 @@ public class PayerCostRow {
         final BigDecimal totalAmount,
         final BigDecimal installmentAmount) {
         setInstallmentsText(installments, installmentAmount);
-        if (!InstallmentsUtil.shouldWarnAboutBankInterests(mSite.getId())) {
+        if (!CountyInstallmentsUtils.shouldWarnAboutBankInterests(mSite.getId())) {
             if (installmentsRate.compareTo(BigDecimal.ZERO) == 0) {
                 mTotalText.setVisibility(View.GONE);
                 if (installments > 1) {

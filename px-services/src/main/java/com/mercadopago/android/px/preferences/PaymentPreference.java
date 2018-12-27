@@ -108,7 +108,6 @@ public class PaymentPreference implements Serializable {
     }
 
     public List<PayerCost> getInstallmentsBelowMax(final List<PayerCost> payerCosts) {
-
         final List<PayerCost> validPayerCosts = new ArrayList<>();
 
         if (maxInstallments != null) {

@@ -7,12 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.internal.features.cardvault.CardVaultActivity;
+import com.mercadopago.android.px.internal.features.installments.InstallmentsActivity;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
-import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentType;
@@ -198,8 +198,6 @@ public final class Constants {
         public static class InstallmentsActivityBuilder {
             private Activity activity;
             private CardInfo cardInfo;
-            private List<PayerCost> payerCosts;
-            private PaymentPreference paymentPreference;
 
             public InstallmentsActivityBuilder setActivity(final Activity activity) {
                 this.activity = activity;
@@ -208,16 +206,6 @@ public final class Constants {
 
             public InstallmentsActivityBuilder setCardInfo(final CardInfo cardInformation) {
                 cardInfo = cardInformation;
-                return this;
-            }
-
-            public InstallmentsActivityBuilder setPaymentPreference(final PaymentPreference paymentPreference) {
-                this.paymentPreference = paymentPreference;
-                return this;
-            }
-
-            public InstallmentsActivityBuilder setPayerCosts(final List<PayerCost> payerCosts) {
-                this.payerCosts = payerCosts;
                 return this;
             }
 
@@ -230,8 +218,6 @@ public final class Constants {
 
             private void startInstallmentsActivity() {
                 final Intent intent = new Intent(activity, InstallmentsActivity.class);
-                intent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCosts));
-                intent.putExtra("paymentPreference", JsonUtil.getInstance().toJson(paymentPreference));
                 intent.putExtra("cardInfo", JsonUtil.getInstance().toJson(cardInfo));
                 activity.startActivityForResult(intent, INSTALLMENTS_REQUEST_CODE);
             }

@@ -2,8 +2,6 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.DiscountParamsConfiguration;
-import com.mercadopago.android.px.configuration.PaymentConfiguration;
-import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.constants.ProcessingModes;
 import com.mercadopago.android.px.internal.core.Settings;
@@ -87,7 +85,7 @@ public class GroupsService implements GroupsRepository {
     }
 
     @NonNull
-    /* default */ MPCall<PaymentMethodSearch> newRequest() {
+        /* default */ MPCall<PaymentMethodSearch> newRequest() {
         //TODO add preference service.
         final boolean expressPaymentEnabled =
             paymentSettingRepository.getAdvancedConfiguration().isExpressPaymentEnabled();
@@ -99,7 +97,8 @@ public class GroupsService implements GroupsRepository {
 
         final String excludedPaymentTypesAppended =
             getListAsString(new ArrayList<>(excludedPaymentTypesSet), SEPARATOR);
-        final String supportedPluginsAppended = getListAsString(getPluginIds(), SEPARATOR);
+
+//        final String supportedPluginsAppended = getListAsString(getPluginIds(), SEPARATOR);
 
         final String excludedPaymentMethodsAppended =
             getListAsString(checkoutPreference.getExcludedPaymentMethods(), SEPARATOR);
@@ -125,24 +124,24 @@ public class GroupsService implements GroupsRepository {
                 language, paymentSettingRepository.getPublicKey(),
                 checkoutPreference.getTotalAmount(), excludedPaymentTypesAppended, excludedPaymentMethodsAppended,
                 checkoutPreference.getSite().getId(), ProcessingModes.AGGREGATOR, cardsWithEscAppended,
-                supportedPluginsAppended, differentialPricingId, defaultInstallments, expressPaymentEnabled, body);
+                differentialPricingId, defaultInstallments, expressPaymentEnabled, body);
     }
 
-    @NonNull
-    private List<String> getPluginIds() {
-        final PaymentConfiguration paymentConfiguration = paymentSettingRepository.getPaymentConfiguration();
-        if (paymentConfiguration != null) {
-            final Collection<PaymentMethodPlugin> paymentMethodPluginList =
-                paymentConfiguration.getPaymentMethodPluginList();
-            final List<String> ids = new ArrayList<>();
-            for (final PaymentMethodPlugin plugin : paymentMethodPluginList) {
-                ids.add(plugin.getId());
-            }
-            return ids;
-        } else {
-            return new ArrayList<>();
-        }
-    }
+//    @NonNull
+//    private List<String> getPluginIds() {
+//        final PaymentConfiguration paymentConfiguration = paymentSettingRepository.getPaymentConfiguration();
+//        if (paymentConfiguration != null) {
+//            final Collection<PaymentMethodPlugin> paymentMethodPluginList =
+//                paymentConfiguration.getPaymentMethodPluginList();
+//            final List<String> ids = new ArrayList<>();
+//            for (final PaymentMethodPlugin plugin : paymentMethodPluginList) {
+//                ids.add(plugin.getId());
+//            }
+//            return ids;
+//        } else {
+//            return new ArrayList<>();
+//        }
+//    }
 
     private Collection<String> getUnsupportedPaymentTypes(@NonNull final Site site) {
         final Collection<String> unsupportedTypesForSite = new ArrayList<>();

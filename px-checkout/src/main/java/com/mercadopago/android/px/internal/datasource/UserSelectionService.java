@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.JsonUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
@@ -106,19 +107,20 @@ public class UserSelectionService implements UserSelectionRepository {
     @Override
     @Nullable
     public PaymentMethod getPaymentMethod() {
-        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_PM, ""), PaymentMethod.class);
+        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_PM, TextUtil.EMPTY), PaymentMethod.class);
     }
 
     @Override
     @Nullable
     public PayerCost getPayerCost() {
-        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_PAYER_COST, ""), PayerCost.class);
+        return jsonUtil.fromJson(
+            sharedPreferences.getString(PREF_SELECTED_PAYER_COST, TextUtil.EMPTY), PayerCost.class);
     }
 
     @Nullable
     @Override
     public Issuer getIssuer() {
-        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_ISSUER, ""), Issuer.class);
+        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_ISSUER, TextUtil.EMPTY), Issuer.class);
     }
 
     @Nullable
@@ -130,7 +132,7 @@ public class UserSelectionService implements UserSelectionRepository {
     @NonNull
     @Override
     public String getPaymentType() {
-        return sharedPreferences.getString(PREF_PAYMENT_TYPE, "");
+        return sharedPreferences.getString(PREF_PAYMENT_TYPE, TextUtil.EMPTY);
     }
 
     @Override

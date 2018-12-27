@@ -52,7 +52,8 @@ public final class ApiUtil {
             try {
                 boolean haveConnectedWifi = false;
                 boolean haveConnectedMobile = false;
-                final ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                final ConnectivityManager cm =
+                    (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
                 final NetworkInfo ni = cm.getActiveNetworkInfo();
                 if (ni != null && ni.isConnected()) {
                     if (ni.getType() == ConnectivityManager.TYPE_WIFI) {
@@ -97,18 +98,11 @@ public final class ApiUtil {
         }
 
         public static final String GET_PREFERENCE = "GET_PREFERENCE";
-        public static final String PAYMENT_METHOD_SEARCH = "PAYMENT_METHOD_SEARCH";
-        public static final String GET_INSTALLMENTS = "GET_INSTALLMENTS";
         public static final String POST_SUMMARY_AMOUNT = "POST_SUMMARY_AMOUNT";
         public static final String GET_ISSUERS = "GET_ISSUERS";
-        public static final String GET_DIRECT_DISCOUNT = "GET_DIRECT_DISCOUNT";
-        public static final String GET_MERCHANT_DIRECT_DISCOUNT = "GET_MERCHANT_DIRECT_DISCOUNT";
         public static final String CREATE_PAYMENT = "CREATE_PAYMENT";
         public static final String CREATE_TOKEN = "CREATE_TOKEN";
         public static final String ASSOCIATE_CARD = "ASSOCIATE_CARD";
-        public static final String GET_CUSTOMER = "GET_CUSTOMER";
-        public static final String GET_CODE_DISCOUNT = "GET_CODE_DISCOUNT";
-        public static final String GET_CAMPAIGNS = "GET_CAMPAIGNS";
         public static final String GET_PAYMENT_METHODS = "GET_PAYMENT_METHODS";
         public static final String GET_CARD_PAYMENT_METHODS = "GET_CARD_PAYMENT_METHODS";
         public static final String GET_IDENTIFICATION_TYPES = "GET_IDENTIFICATION_TYPES";

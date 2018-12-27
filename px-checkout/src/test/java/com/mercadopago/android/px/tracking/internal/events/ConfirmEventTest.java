@@ -30,7 +30,7 @@ public class ConfirmEventTest {
 
     @Test
     public void whenGetEventPathVerifyIsCorrect() {
-        final ConfirmEvent event = ConfirmEvent.from(cardIdsWithEsc, expressMetadata, 0);
+        final ConfirmEvent event = ConfirmEvent.from(cardIdsWithEsc, expressMetadata, mock(PayerCost.class));
         assertEquals(EXPECTED_PATH, event.getEventPath());
     }
 
@@ -42,13 +42,12 @@ public class ConfirmEventTest {
         when(expressMetadata.getAccountMoney()).thenReturn(am);
         when(am.getBalance()).thenReturn(BigDecimal.TEN);
         when(am.isInvested()).thenReturn(true);
-        final ConfirmEvent event = ConfirmEvent.from(cardIdsWithEsc, expressMetadata, 0);
+        final ConfirmEvent event = ConfirmEvent.from(cardIdsWithEsc, expressMetadata, mock(PayerCost.class));
         assertEquals(EXPECTED_JUST_AM, event.getEventData().toString());
     }
 
     @Test
     public void whenExpressMetadataHasSavedCardThenShowItInMetadata() {
-        final int selected = 0;
         final CardMetadata card = mock(CardMetadata.class);
         final PayerCost payerCost = mock(PayerCost.class);
         final CardDisplayInfo cardDisplayInfo = mock(CardDisplayInfo.class);
@@ -57,7 +56,6 @@ public class ConfirmEventTest {
         when(payerCost.getInstallmentAmount()).thenReturn(BigDecimal.TEN);
         when(payerCost.getInstallments()).thenReturn(1);
         when(payerCost.getInstallmentRate()).thenReturn(BigDecimal.TEN);
-        when(card.getPayerCost(selected)).thenReturn(payerCost);
         when(card.getId()).thenReturn("123");
         when(card.getDisplayInfo()).thenReturn(cardDisplayInfo);
 
@@ -66,7 +64,7 @@ public class ConfirmEventTest {
         when(expressMetadata.getCard()).thenReturn(card);
         when(expressMetadata.isCard()).thenReturn(true);
 
-        final ConfirmEvent event = ConfirmEvent.from(cardIdsWithEsc, expressMetadata, selected);
+        final ConfirmEvent event = ConfirmEvent.from(cardIdsWithEsc, expressMetadata, payerCost);
 
         assertEquals(EXPECTED_JUST_CARD, event.getEventData().toString());
     }

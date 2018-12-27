@@ -10,7 +10,7 @@ public class SummaryAmount implements Parcelable {
     private Map<String, DiscountConfigurationModel> discountConfigurations;
     private Map<String, PayerCostConfigurationModel> payerCostConfigurations;
 
-    protected SummaryAmount(final Parcel in) {
+    /* default */ SummaryAmount(final Parcel in) {
         selectedAmountConfiguration = in.readString();
     }
 

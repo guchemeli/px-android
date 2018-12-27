@@ -18,6 +18,7 @@ import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.datasource.PayerCostRepositoryImpl;
+import com.mercadopago.android.px.internal.datasource.PaymentService;
 import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.datasource.SummaryAmountService;
 import com.mercadopago.android.px.internal.datasource.TokenizeService;
@@ -25,6 +26,7 @@ import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCacheCoordinator;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsDiskCache;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsMemCache;
+import com.mercadopago.android.px.internal.features.installments.PayerCostSolver;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -38,12 +40,13 @@ import com.mercadopago.android.px.internal.repository.TokenRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.services.GatewayService;
+import com.mercadopago.android.px.internal.services.InstallmentService;
 import com.mercadopago.android.px.internal.services.InstructionsClient;
-import com.mercadopago.android.px.internal.datasource.PaymentService;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
+import com.mercadopago.android.px.internal.util.RetrofitUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
-import com.mercadopago.android.px.model.Device;
 import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper;
+import com.mercadopago.android.px.model.Device;
 
 public final class Session extends ApplicationModule
     implements AmountComponent {
@@ -125,14 +128,15 @@ public final class Session extends ApplicationModule
         internalConfiguration = null;
         instructionsRepository = null;
         summaryAmountRepository = null;
+        payerCostRepository = null;
     }
 
     public GroupsRepository getGroupsRepository() {
         if (groupsRepository == null) {
             final PaymentSettingRepository paymentSettings = getConfigurationModule().getPaymentSettings();
             groupsRepository = new GroupsService(paymentSettings, getMercadoPagoESC(),
-                //TODO replace getRetrofitClientGroup() by getRetrofitClient() when wrapper is OK
-                getRetrofitClientGroup().create(CheckoutService.class),
+                //TODO : Remove fake client
+                RetrofitUtil.getFakeClient(getContext()).create(CheckoutService.class),
                 LocaleUtil.getLanguage(getContext()),
                 getGroupsCache());
         }
@@ -145,9 +149,9 @@ public final class Session extends ApplicationModule
             final AdvancedConfiguration advancedConfiguration = paymentSettings.getAdvancedConfiguration();
             final UserSelectionRepository userSelectionRepository =
                 getConfigurationModule().getUserSelectionRepository();
-            final com.mercadopago.android.px.internal.services.PaymentService paymentService =
-                getRetrofitClientSummaryAmount()
-                    .create(com.mercadopago.android.px.internal.services.PaymentService.class);
+            //TODO : Remove fake client
+            final InstallmentService paymentService =
+                RetrofitUtil.getFakeClient(getContext()).create(InstallmentService.class);
 
             summaryAmountRepository = new SummaryAmountService(paymentService, paymentSettings,
                 advancedConfiguration, userSelectionRepository);
@@ -298,5 +302,13 @@ public final class Session extends ApplicationModule
                     LocaleUtil.getLanguage(getContext()));
         }
         return instructionsRepository;
+    }
+
+    @NonNull
+    public PayerCostSolver providePayerCostSolver() {
+        final ConfigurationModule configurationModule = getConfigurationModule();
+        return new PayerCostSolver(
+            configurationModule.getPaymentSettings().getCheckoutPreference().getPaymentPreference(),
+            configurationModule.getUserSelectionRepository());
     }
 }

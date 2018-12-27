@@ -1408,7 +1408,6 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     public void finishCardFlow(final PaymentMethod paymentMethod, final Token token,
         final Issuer issuer, final List<PayerCost> payerCosts) {
         final Intent returnIntent = new Intent();
-        returnIntent.putExtra("payerCosts", JsonUtil.getInstance().toJson(payerCosts));
         setResult(RESULT_OK, returnIntent);
         finish();
         overridePendingTransition(R.anim.px_slide_right_to_left_in, R.anim.px_slide_right_to_left_out);
@@ -1441,9 +1440,7 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     @Override
     public void onBackPressed() {
         checkFlipCardToFront();
-        final Intent returnIntent = new Intent();
-        returnIntent.putExtra("backButtonPressed", true);
-        setResult(RESULT_CANCELED, returnIntent);
+        setResult(RESULT_CANCELED);
         finish();
     }
 

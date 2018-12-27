@@ -7,27 +7,25 @@ import java.util.Set;
 
 public class SummaryAmountBody {
 
-    @NonNull private String siteId;
-    @NonNull private BigDecimal transactionAmount;
-    @NonNull private String marketplace;
-    @NonNull private String email;
-    @NonNull private String productId;
-    @NonNull private String paymentMethodId;
-    @NonNull private String paymentType;
-    @NonNull private String bin;
-    @NonNull private Long issuerId;
-    @NonNull private Set<String> labels;
-    @NonNull private Integer defaultInstallments;
-    @Nullable private Integer differentialPricingId;
-    @Nullable private String processingMode;
+    @NonNull private final String siteId;
+    @NonNull private final BigDecimal transactionAmount;
+    @NonNull private final String marketplace;
+    @NonNull private final String email;
+    @NonNull private final String paymentMethodId;
+    @NonNull private final String paymentType;
+    @NonNull private final String bin;
+    @NonNull private final Long issuerId;
+    @NonNull private final Set<String> labels;
+    @Nullable private final String productId;
+    @Nullable private final Integer defaultInstallments;
+    @Nullable private final Integer differentialPricingId;
+    @Nullable private final String processingMode;
 
     public SummaryAmountBody(@NonNull final String siteId, @NonNull final BigDecimal transactionAmount,
-        @NonNull final String marketplace, @NonNull final String email, @NonNull final String productId,
-        @NonNull final String paymentMethodId,
-        @NonNull final String paymentType, @NonNull final String bin, @NonNull final Long issuerId,
-        @NonNull final Set<String> labels,
-        @NonNull final Integer defaultInstallments, @Nullable final Integer differentialPricingId,
-        @Nullable final String processingMode) {
+        @NonNull final String marketplace, @NonNull final String email, @Nullable final String productId,
+        @NonNull final String paymentMethodId, @NonNull final String paymentType, @NonNull final String bin,
+        @NonNull final Long issuerId, @NonNull final Set<String> labels, @Nullable final Integer defaultInstallments,
+        @Nullable final Integer differentialPricingId, @Nullable final String processingMode) {
         this.siteId = siteId;
         this.transactionAmount = transactionAmount;
         this.marketplace = marketplace;

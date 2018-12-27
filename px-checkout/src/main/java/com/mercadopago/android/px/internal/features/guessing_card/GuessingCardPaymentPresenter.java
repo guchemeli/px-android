@@ -41,10 +41,9 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     @NonNull private final GroupsRepository groupsRepository;
     @NonNull private final AdvancedConfiguration advancedConfiguration;
     @NonNull private final SummaryAmountRepository summaryAmountRepository;
-    protected PaymentRecovery paymentRecovery;
-    //Extra info
     @Nullable private List<BankDeal> bankDealList;
-    //Discount
+
+    protected PaymentRecovery paymentRecovery;
     private Issuer issuer;
 
     public GuessingCardPaymentPresenter(@NonNull final UserSelectionRepository userSelectionRepository,

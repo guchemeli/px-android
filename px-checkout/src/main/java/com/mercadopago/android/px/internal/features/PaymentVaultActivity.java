@@ -42,7 +42,6 @@ import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.Issuer;
-import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodInfo;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
@@ -71,7 +70,6 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     protected boolean mActivityActive;
     protected Token mToken;
     protected Issuer mSelectedIssuer;
-    protected PayerCost mSelectedPayerCost;
     protected Card mSelectedCard;
     protected Context mContext;
 
@@ -251,7 +249,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     private List<PaymentMethodSearchViewController> createPluginItemsViewControllers(
-        final List<PaymentMethodInfo> infoItems) {
+        final Iterable<PaymentMethodInfo> infoItems) {
         final PluginRepository pluginRepository = Session.getSession(this).getPluginRepository();
         final List<PaymentMethodSearchViewController> controllers = new ArrayList<>();
         for (final PaymentMethodInfo infoItem : infoItems) {
@@ -354,7 +352,6 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
             showProgress();
             mToken = JsonUtil.getInstance().fromJson(data.getStringExtra("token"), Token.class);
             mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
-            mSelectedPayerCost = JsonUtil.getInstance().fromJson(data.getStringExtra("payerCost"), PayerCost.class);
             mSelectedCard = JsonUtil.getInstance().fromJson(data.getStringExtra("card"), Card.class);
             finishWithCardResult();
         } else {
@@ -412,7 +409,6 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         if (mSelectedIssuer != null) {
             returnIntent.putExtra("issuer", JsonUtil.getInstance().toJson(mSelectedIssuer));
         }
-        returnIntent.putExtra("payerCost", JsonUtil.getInstance().toJson(mSelectedPayerCost));
         returnIntent.putExtra("card", JsonUtil.getInstance().toJson(mSelectedCard));
         finishWithResult(returnIntent);
     }

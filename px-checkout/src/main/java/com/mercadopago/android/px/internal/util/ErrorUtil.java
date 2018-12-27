@@ -3,6 +3,7 @@ package com.mercadopago.android.px.internal.util;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.ErrorActivity;
@@ -37,7 +38,7 @@ public final class ErrorUtil {
         startErrorActivity(launcherActivity, mercadoPagoError);
     }
 
-    public static void startErrorActivity(final Activity launcherActivity, final MercadoPagoError mercadoPagoError) {
+    public static void startErrorActivity(final Activity launcherActivity, @Nullable final MercadoPagoError mercadoPagoError) {
         final String publicKey =
             Session.getSession(launcherActivity)
                 .getConfigurationModule()

@@ -268,7 +268,7 @@ public class PaymentMethodSearch implements Serializable {
      * @return boolean that represents if there is express information.
      */
     public boolean hasExpressCheckoutMetadata() {
-        return express != null && !express.isEmpty();
+        return getExpress() != null && !getExpress().isEmpty();
     }
 
     public boolean hasCustomSearchItems() {

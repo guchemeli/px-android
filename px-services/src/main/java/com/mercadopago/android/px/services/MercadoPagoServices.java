@@ -10,6 +10,7 @@ import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.services.DiscountService;
 import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.internal.services.IdentificationService;
+import com.mercadopago.android.px.internal.services.InstallmentService;
 import com.mercadopago.android.px.internal.services.InstructionsClient;
 import com.mercadopago.android.px.internal.services.PaymentService;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
@@ -49,8 +50,7 @@ public class MercadoPagoServices {
 
     /**
      * @param context context to obtain connection interceptor and cache.
-     * @param publicKey merchant public key / collector public key
-     * {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
+     * @param publicKey merchant public key / collector public key {@see <a href="https://www.mercadopago.com/mla/account/credentials">credentials</a>}
      * @param privateKey user private key / access_token if you have it.
      */
     public MercadoPagoServices(@NonNull final Context context,
@@ -82,17 +82,16 @@ public class MercadoPagoServices {
      * @param excludedPaymentTypes
      * @param excludedPaymentMethods
      * @param cardsWithEsc
-     * @param supportedPlugins
-     * @param payer
      * @param site
      * @param differentialPricing
      * @param callback
-     * @deprecated please use {{@link #getPaymentMethodSearch(BigDecimal, List, List, List, List, Payer, Site, Integer, Integer, boolean, String, String, Set, Callback)}
+     * @deprecated please use {@link #getPaymentMethodSearch(BigDecimal, List, List, List, Payer, Site, Integer,
+     * Integer, boolean, String, String, Set, Callback)}
      */
     @Deprecated
     public void getPaymentMethodSearch(final BigDecimal amount, final List<String> excludedPaymentTypes,
-        final List<String> excludedPaymentMethods, final List<String> cardsWithEsc, final List<String> supportedPlugins,
-        final Payer payer, final Site site, @Nullable final Integer differentialPricing,
+        final List<String> excludedPaymentMethods, final List<String> cardsWithEsc,
+        final Site site, @Nullable final Integer differentialPricing,
         final Callback<PaymentMethodSearch> callback) {
         final CheckoutService service = RetrofitUtil.getRetrofitClient(context).create(CheckoutService.class);
 
@@ -100,13 +99,12 @@ public class MercadoPagoServices {
         final String excludedPaymentTypesAppended = getListAsString(excludedPaymentTypes, separator);
         final String excludedPaymentMethodsAppended = getListAsString(excludedPaymentMethods, separator);
         final String cardsWithEscAppended = getListAsString(cardsWithEsc, separator);
-        final String supportedPluginsAppended = getListAsString(supportedPlugins, separator);
 
         service.getPaymentMethodSearch(
 //            Settings.servicesVersion,
             LocaleUtil.getLanguage(context), publicKey, amount,
             excludedPaymentTypesAppended, excludedPaymentMethodsAppended, site.getId(),
-            processingMode, cardsWithEscAppended, supportedPluginsAppended,
+            processingMode, cardsWithEscAppended,
             differentialPricing, null, false,
             privateKey).
             enqueue(callback);
@@ -117,7 +115,6 @@ public class MercadoPagoServices {
      * @param excludedPaymentTypes
      * @param excludedPaymentMethods
      * @param cardsWithEsc
-     * @param supportedPlugins
      * @param payer
      * @param site
      * @param differentialPricing
@@ -129,7 +126,7 @@ public class MercadoPagoServices {
      * @param callback
      */
     public void getPaymentMethodSearch(final BigDecimal amount, final List<String> excludedPaymentTypes,
-        final List<String> excludedPaymentMethods, final List<String> cardsWithEsc, final List<String> supportedPlugins,
+        final List<String> excludedPaymentMethods, final List<String> cardsWithEsc,
         final Payer payer, final Site site, @Nullable final Integer differentialPricing,
         @Nullable final Integer defaultInstallments, final boolean expressEnabled,
         final String marketplace, final String flow, final Set<String> labels,
@@ -140,7 +137,7 @@ public class MercadoPagoServices {
         final String excludedPaymentTypesAppended = getListAsString(excludedPaymentTypes, separator);
         final String excludedPaymentMethodsAppended = getListAsString(excludedPaymentMethods, separator);
         final String cardsWithEscAppended = getListAsString(cardsWithEsc, separator);
-        final String supportedPluginsAppended = getListAsString(supportedPlugins, separator);
+
         final PaymentMethodSearchBody body = new PaymentMethodSearchBody.Builder()
             .setPrivateKey(privateKey)
             .setPayerEmail(payer.getEmail())
@@ -152,7 +149,7 @@ public class MercadoPagoServices {
             //Settings.servicesVersion,
             LocaleUtil.getLanguage(context), publicKey, amount, excludedPaymentTypesAppended,
             excludedPaymentMethodsAppended,
-            site.getId(), processingMode, cardsWithEscAppended, supportedPluginsAppended, differentialPricing,
+            site.getId(), processingMode, cardsWithEscAppended, differentialPricing,
             defaultInstallments, expressEnabled, body).enqueue(callback);
     }
 
@@ -209,7 +206,7 @@ public class MercadoPagoServices {
         final String paymentMethodId,
         @Nullable final Integer differentialPricingId,
         final Callback<List<Installment>> callback) {
-        final PaymentService service = RetrofitUtil.getRetrofitClient(context).create(PaymentService.class);
+        final InstallmentService service = RetrofitUtil.getRetrofitClient(context).create(InstallmentService.class);
         service.getInstallments(Settings.servicesVersion, publicKey, privateKey, bin, amount, issuerId,
             paymentMethodId, LocaleUtil.getLanguage(context), processingMode, differentialPricingId).enqueue(callback);
     }
