@@ -23,20 +23,20 @@ import com.mercadopago.android.px.model.PayerCostConfigurationModel;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.SummaryAmount;
 import com.mercadopago.android.px.model.exceptions.ApiException;
-import com.mercadopago.android.px.tracking.internal.views.InstallmentsViewTrack;
 import com.mercadopago.android.px.services.Callback;
+import com.mercadopago.android.px.tracking.internal.views.InstallmentsViewTrack;
 import java.util.List;
 
 public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, DefaultProvider> implements
     AmountView.OnClick, InstallmentsAdapter.ItemListener, PayerCostListener {
 
-    @NonNull private final AmountRepository amountRepository;
-    @NonNull private final DiscountRepository discountRepository;
     @NonNull private final SummaryAmountRepository summaryAmountRepository;
     @NonNull private final PayerCostRepository payerCostRepository;
+    @NonNull /* default */ final AmountRepository amountRepository;
     @NonNull /* default */ final PaymentSettingRepository configuration;
     @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
     @NonNull /* default */ final PayerCostSolver payerCostSolver;
+    @NonNull /* default */ final DiscountRepository discountRepository;
 
     private FailureRecovery failureRecovery;
 
@@ -62,16 +62,8 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
     }
 
     public void initialize() {
-        initializeAmountRow();
         showSiteRelatedInformation();
         resolvePayerCosts();
-    }
-
-    private void initializeAmountRow() {
-        if (isViewAttached()) {
-            getView().showAmount(discountRepository.getCurrentConfiguration(),
-                amountRepository.getItemsPlusCharges(), configuration.getCheckoutPreference().getSite());
-        }
     }
 
     private void showSiteRelatedInformation() {
@@ -84,6 +76,8 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
     private void resolvePayerCosts() {
         if (userSelectionRepository.hasCardSelected()) {
             resolvePayerCostsForSavedCard();
+            getView().showAmount(discountRepository.getCurrentConfiguration(),
+                amountRepository.getItemsPlusCharges(), configuration.getCheckoutPreference().getSite());
         } else {
             resolvePayerCostsForGuessedCard();
         }
@@ -99,12 +93,15 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
         summaryAmountRepository.getSummaryAmount(bin).enqueue(new Callback<SummaryAmount>() {
             @Override
             public void success(final SummaryAmount summaryAmount) {
+                final PayerCostConfigurationModel payerCostConfiguration =
+                    summaryAmount.getPayerCostConfiguration(summaryAmount.getSelectedAmountConfiguration());
+                discountRepository.addConfigurations(summaryAmount);
+                payerCostSolver.solve(InstallmentsPresenter.this, payerCostConfiguration.getPayerCosts());
+
                 if (isViewAttached()) {
-                    final PayerCostConfigurationModel payerCostConfiguration =
-                        summaryAmount.getPayerCostConfiguration(summaryAmount.getSelectedAmountConfiguration());
-                    // TODO: save discount hidden on summary amount, injecting discount rep
+                    getView().showAmount(discountRepository.getCurrentConfiguration(),
+                        amountRepository.getItemsPlusCharges(), configuration.getCheckoutPreference().getSite());
                     getView().hideLoadingView();
-                    payerCostSolver.solve(InstallmentsPresenter.this, payerCostConfiguration.getPayerCosts());
                 }
             }
 

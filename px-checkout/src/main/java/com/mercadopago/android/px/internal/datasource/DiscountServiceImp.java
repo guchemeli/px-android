@@ -9,10 +9,11 @@ import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
+import com.mercadopago.android.px.model.PaymentTypes;
+import com.mercadopago.android.px.model.SummaryAmount;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.services.Callback;
 import java.util.Map;
-import javax.annotation.Nonnull;
 
 public class DiscountServiceImp implements DiscountRepository {
 
@@ -20,6 +21,7 @@ public class DiscountServiceImp implements DiscountRepository {
     /* default */ Map<String, DiscountConfigurationModel> discountConfigurations;
     @NonNull private final GroupsRepository groupsRepository;
     private final UserSelectionRepository userSelectionRepository;
+    @Nullable private String defaultGuessingConfiguration;
 
     private static final DiscountConfigurationModel WITHOUT_DISCOUNT;
 
@@ -36,18 +38,25 @@ public class DiscountServiceImp implements DiscountRepository {
     @Nullable
     @Override
     public DiscountConfigurationModel getCurrentConfiguration() {
+        // TODO: remove
         init();
+
+        final PaymentMethod paymentMethod = userSelectionRepository.getPaymentMethod();
         final Card card = userSelectionRepository.getCard();
         // Remember to prioritize the selected discount over the rest when the selector feature is added.
-
+        // TODO: refactor with solver.
         if (card == null) {
-            final PaymentMethod paymentMethod = userSelectionRepository.getPaymentMethod();
             if (paymentMethod == null) {
                 // The user did not select any payment method, thus the dominant discount is the general config
                 return getConfiguration(configurationSolver.getGenericConfigurationHash());
             } else {
-                // The user select account money or an off payment method
-                return getConfiguration(configurationSolver.getConfigurationHashFor(paymentMethod.getId()));
+                if (PaymentTypes.isCardPaymentType(paymentMethod.getPaymentTypeId())) {
+                    // Guessing card config
+                    return getConfiguration(defaultGuessingConfiguration);
+                } else {
+                    // The user select account money or an off payment method / everything else.
+                    return getConfiguration(configurationSolver.getConfigurationHashFor(paymentMethod.getId()));
+                }
             }
         } else {
             // The user has already selected a payment method, thus the dominant discount is the best between the
@@ -63,8 +72,10 @@ public class DiscountServiceImp implements DiscountRepository {
         return getConfiguration(hashConfiguration);
     }
 
-    private DiscountConfigurationModel getConfiguration(@Nonnull final String hash) {
+    private DiscountConfigurationModel getConfiguration(@Nullable final String hash) {
+        // TODO: remove
         init();
+
         final DiscountConfigurationModel discountModel = discountConfigurations.get(hash);
 
         if (discountModel == null) {
@@ -74,6 +85,7 @@ public class DiscountServiceImp implements DiscountRepository {
         return discountModel;
     }
 
+    //TODO: remove init call.
     private void init() {
         if (configurationSolver != null && discountConfigurations != null) {
             return;
@@ -98,5 +110,14 @@ public class DiscountServiceImp implements DiscountRepository {
     @Override
     public DiscountConfigurationModel getWithoutDiscountConfiguration() {
         return WITHOUT_DISCOUNT;
+    }
+
+    @Override
+    public void addConfigurations(@NonNull final SummaryAmount summaryAmount) {
+        // TODO: remove
+        init();
+
+        discountConfigurations.putAll(summaryAmount.getDiscountConfigurations());
+        defaultGuessingConfiguration = summaryAmount.getSelectedAmountConfiguration();
     }
 }

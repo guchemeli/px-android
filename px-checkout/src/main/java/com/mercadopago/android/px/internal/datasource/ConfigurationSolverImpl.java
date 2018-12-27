@@ -22,6 +22,12 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
 
     @Override
     @NonNull
+    public String getGenericConfigurationHash() {
+        return selectedAmountConfiguration;
+    }
+
+    @Override
+    @NonNull
     public String getConfigurationHashFor(@Nonnull final String customOptionId) {
         for (final CustomSearchItem customSearchItem : customSearchItems) {
             if (customSearchItem.getId() != null && customSearchItem.getId().equals(customOptionId)) {
@@ -29,12 +35,6 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
             }
         }
         return TextUtil.EMPTY;
-    }
-
-    @Override
-    @NonNull
-    public String getGenericConfigurationHash() {
-        return selectedAmountConfiguration;
     }
 
     @Override
@@ -59,5 +59,6 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
         }
         return null;
     }
+
 }
 

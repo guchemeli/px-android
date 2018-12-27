@@ -2,6 +2,8 @@ package com.mercadopago.android.px.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import java.util.HashMap;
 import java.util.Map;
 
 public class SummaryAmount implements Parcelable {
@@ -44,7 +46,9 @@ public class SummaryAmount implements Parcelable {
         return payerCostConfigurations.get(key);
     }
 
-    public DiscountConfigurationModel getDiscountConfiguration(final String key) {
-        return discountConfigurations.get(key);
+    @NonNull
+    public Map<String, DiscountConfigurationModel> getDiscountConfigurations() {
+        return discountConfigurations == null
+            ? new HashMap<String, DiscountConfigurationModel>() : discountConfigurations;
     }
 }
