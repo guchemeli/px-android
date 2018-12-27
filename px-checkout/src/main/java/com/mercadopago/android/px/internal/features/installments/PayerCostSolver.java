@@ -27,6 +27,7 @@ public class PayerCostSolver {
      * Dispatches all payer costs possible scenarios.
      *
      * @param listener The entity that will handle all possible flows.
+     * @param payerCosts The list of payer costs.
      */
     public void solve(@NonNull final PayerCostListener listener, @NonNull final List<PayerCost> payerCosts) {
         final PayerCost defaultPayerCost = paymentPreference.getDefaultInstallments(payerCosts);
@@ -36,7 +37,7 @@ public class PayerCostSolver {
             if (filteredPayerCosts == null || filteredPayerCosts.isEmpty()) {
                 listener.onEmptyOptions();
             } else if (filteredPayerCosts.size() == 1) {
-                userSelectionRepository.select(payerCosts.get(0));
+                userSelectionRepository.select(filteredPayerCosts.get(0));
                 listener.onSelectedPayerCost();
             } else {
                 listener.displayInstallments(filteredPayerCosts);

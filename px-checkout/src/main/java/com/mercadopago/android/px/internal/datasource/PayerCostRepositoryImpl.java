@@ -1,7 +1,6 @@
 package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PayerCostRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
@@ -39,7 +38,7 @@ public class PayerCostRepositoryImpl implements PayerCostRepository {
         });
     }
 
-    @Nullable
+    @NonNull
     @Override
     public PayerCostModel getCurrentConfiguration() {
         final Card card = userSelectionRepository.getCard();
@@ -47,16 +46,29 @@ public class PayerCostRepositoryImpl implements PayerCostRepository {
 
         if (card == null) {
             // Account money was selected, neither plugins nor off methods should apply payer costs
-            return null;
+            throw new IllegalStateException("Payer costs shouldn't be requested without a selected card");
         } else {
-            return configurationSolver.getPayerCostConfigurationFor(card.getId());
+            final PayerCostModel result = configurationSolver.getPayerCostConfigurationFor(card.getId());
+
+            if (result == null) {
+                throw new IllegalStateException("Payer costs shouldn't be requested without a selected card");
+            }
+
+            return result;
         }
     }
 
+    @NonNull
     @Override
-    @Nullable
     public PayerCostModel getConfigurationFor(@NonNull final String customOptionId) {
         final String configurationHash = configurationSolver.getConfigurationHashFor(customOptionId);
-        return configurationSolver.getPayerCostConfigurationFor(customOptionId, configurationHash);
+        final PayerCostModel result =
+            configurationSolver.getPayerCostConfigurationFor(customOptionId, configurationHash);
+
+        if (result == null) {
+            throw new IllegalStateException("Payer costs shouldn't be requested without a selected card");
+        }
+
+        return result;
     }
 }
