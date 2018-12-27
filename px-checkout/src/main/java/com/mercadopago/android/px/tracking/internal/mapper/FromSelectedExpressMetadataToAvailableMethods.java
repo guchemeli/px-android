@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.tracking.internal.mapper;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.viewmodel.mappers.Mapper;
 import com.mercadopago.android.px.model.AccountMoneyMetadata;
 import com.mercadopago.android.px.model.CardMetadata;
@@ -14,10 +15,10 @@ import java.util.Set;
 public class FromSelectedExpressMetadataToAvailableMethods extends Mapper<ExpressMetadata, AvailableMethod> {
 
     @NonNull private final Set<String> cardsWithEsc;
-    private final PayerCost selectedPayerCost;
+    @Nullable private final PayerCost selectedPayerCost;
 
     public FromSelectedExpressMetadataToAvailableMethods(@NonNull final Set<String> cardsWithEsc,
-        final PayerCost selectedPayerCost) {
+        @Nullable final PayerCost selectedPayerCost) {
         this.cardsWithEsc = cardsWithEsc;
         this.selectedPayerCost = selectedPayerCost;
     }
