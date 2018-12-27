@@ -107,8 +107,7 @@ public class PaymentVaultPresenterTest {
         presenter.attachView(mockView);
         presenter.attachResourcesProvider(mockProvider);
         presenter.setSelectedSearchItem(mockPaymentOptions);
-        presenter.trackChildrenScreen();
-
+        presenter.trackScreen();
         verifyNoMoreInteractions(mockProvider);
         verifyNoMoreInteractions(mockView);
     }

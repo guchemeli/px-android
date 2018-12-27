@@ -162,7 +162,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     private void showSelectedItemChildren() {
-        trackChildrenScreen();
+        trackScreen();
         getView().setTitle(selectedSearchItem.getChildrenHeader());
         getView().showSearchItems(selectedSearchItem.getChildren(), getPaymentMethodSearchItemSelectionCallback());
         getView().hideProgress();
@@ -219,7 +219,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
             getView().showSearchItems(paymentMethodSearch.getGroups(), getPaymentMethodSearchItemSelectionCallback());
         }
 
-        trackInitialScreen();
+        trackScreen();
 
         getView().showPluginOptions(paymentMethodPluginList, PaymentMethodPlugin.PluginPosition.BOTTOM);
     }
@@ -405,12 +405,20 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         return false;
     }
 
-    /* default */ void trackInitialScreen() {
+    public void trackScreen() {
+        if (selectedSearchItem == null) {
+            trackInitialScreen();
+        } else {
+            trackChildScreen();
+        }
+    }
+
+    private void trackInitialScreen() {
         new SelectMethodView(paymentMethodSearch, mercadoPagoESC.getESCCardIds(),
             paymentSettingRepository.getCheckoutPreference()).track();
     }
 
-    public void trackChildrenScreen() {
+    private void trackChildScreen() {
         new SelectMethodChildView(paymentMethodSearch, selectedSearchItem,
             paymentSettingRepository.getCheckoutPreference()).track();
     }

@@ -337,7 +337,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
             finish();
         } else {
             //When it comes back from payment vault "children" view
-            presenter.trackInitialScreen();
+            presenter.trackScreen();
 
             if (shouldFinishOnBack(data)) {
                 setResult(Activity.RESULT_CANCELED, data);
@@ -355,7 +355,7 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
             mSelectedCard = JsonUtil.getInstance().fromJson(data.getStringExtra("card"), Card.class);
             finishWithCardResult();
         } else {
-            presenter.trackChildrenScreen();
+            presenter.trackScreen();
 
             if (shouldFinishOnBack(data)) {
                 setResult(Activity.RESULT_CANCELED, data);
