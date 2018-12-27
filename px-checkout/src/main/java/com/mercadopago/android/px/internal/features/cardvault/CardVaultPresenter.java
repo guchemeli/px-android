@@ -253,7 +253,6 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     /* default */ void createESCToken() {
-
         getView().showProgressLayout();
 
         final SavedESCCardToken escCardToken = SavedESCCardToken.createWithEsc(card.getId(), esc);

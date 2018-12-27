@@ -1,9 +1,6 @@
-package com.mercadopago.android.px.installments;
+package com.mercadopago.android.px.internal.features.installments;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.features.installments.InstallmentsPresenter;
-import com.mercadopago.android.px.internal.features.installments.InstallmentsView;
-import com.mercadopago.android.px.internal.features.installments.PayerCostSolver;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PayerCostRepository;
@@ -20,6 +17,7 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.utils.StubFailMpCall;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
+import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -121,7 +120,6 @@ public class InstallmentsPresenterTest {
         verify(view).hideLoadingView();
     }
 
-
     @Test
     public void verifyIsGuessingAndSolverIsCalled() {
         when(userSelectionRepository.hasCardSelected()).thenReturn(false);
@@ -138,26 +136,39 @@ public class InstallmentsPresenterTest {
 
     @Test
     public void verifyIsSavedCardAndSolverIsCalled() {
-        // TODO: make this
-        assert true;
+        when(userSelectionRepository.hasCardSelected()).thenReturn(true);
+        when(payerCostRepository.getCurrentConfiguration()).thenReturn(mock(PayerCostModel.class));
+
+        presenter.initialize();
+
+        verify(payerCostSolver).solve(presenter, payerCostRepository.getCurrentConfiguration().getPayerCosts());
     }
 
     @Test
     public void verifyResolvesEmptyPayerCostList() {
-        // TODO: waiting for solver
-        assert true;
+        presenter.onEmptyOptions();
+
+        verify(view).showErrorNoPayerCost();
+        verifyNoMoreInteractions(view);
     }
 
     @Test
     public void verifyResolvesOnSelectedPayerCostPayerCostList() {
-        // TODO: waiting for solver
-        assert true;
+        presenter.onSelectedPayerCost();
+
+        verify(view).finishWithResult();
+        verifyNoMoreInteractions(view);
     }
 
     @Test
     public void verifyResolvesDisplayInstallments() {
-        // TODO: waiting for solver
-        assert true;
+        final List<PayerCost> payerCosts = Collections.singletonList(mock(PayerCost.class));
+
+        presenter.displayInstallments(payerCosts);
+
+        verify(view).showInstallments(payerCosts);
+        verifyNoMoreInteractions(view);
+
     }
 
     @NonNull

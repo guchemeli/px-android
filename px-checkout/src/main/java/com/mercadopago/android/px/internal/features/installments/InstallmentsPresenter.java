@@ -64,7 +64,7 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
     public void initialize() {
         initializeAmountRow();
         showSiteRelatedInformation();
-        loadPayerCosts();
+        resolvePayerCosts();
     }
 
     private void initializeAmountRow() {
@@ -81,21 +81,20 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
         }
     }
 
-    //TODO refactor.
-    private void loadPayerCosts() {
-        if (!userSelectionRepository.hasCardSelected()) {
-            getPayerCosts();
+    private void resolvePayerCosts() {
+        if (userSelectionRepository.hasCardSelected()) {
+            resolvePayerCostsForSavedCard();
         } else {
-            resolvePayerCosts();
+            resolvePayerCostsForGuessedCard();
         }
     }
 
-    /* default */ void resolvePayerCosts() {
+    /* default */ void resolvePayerCostsForSavedCard() {
         getView().hideLoadingView();
         payerCostSolver.solve(this, payerCostRepository.getCurrentConfiguration().getPayerCosts());
     }
 
-    /* default */ void getPayerCosts() {
+    /* default */ void resolvePayerCostsForGuessedCard() {
         getView().showLoadingView();
         summaryAmountRepository.getSummaryAmount(bin).enqueue(new Callback<SummaryAmount>() {
             @Override
@@ -117,7 +116,7 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
                     setFailureRecovery(new FailureRecovery() {
                         @Override
                         public void recover() {
-                            getPayerCosts();
+                            resolvePayerCostsForGuessedCard();
                         }
                     });
                 }

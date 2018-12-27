@@ -13,10 +13,13 @@ import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
+import com.mercadopago.android.px.model.PayerCostModel;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.preferences.PaymentPreference;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +28,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -77,6 +81,7 @@ public class CardVaultPresenterTest {
     @Test
     public void whenTokenIsRecoverableThenStartTokenRecoveryFlow() {
         presenter.setPaymentRecovery(providePaymentRecoveryMock());
+
         presenter.initialize();
 
         verify(view).askForSecurityCodeFromTokenRecovery();
@@ -147,38 +152,57 @@ public class CardVaultPresenterTest {
         verify(view).startIssuersActivity();
     }
 
-    @Test
-    public void verifyIsGuessingAndSolverIsCalled() {
-        // TODO: test
-        assert true;
-    }
-
     /**
      * Saved card
      */
 
     @Test
     public void verifyResolvesEmptyPayerCostList() {
-        // TODO: waiting for solver
-        assert true;
+        presenter.onEmptyOptions();
+
+        verify(view).showEmptyPayerCostScreen();
+        verifyNoMoreInteractions(view);
     }
 
     @Test
-    public void verifyResolvesOnSelectedPayerCostPayerCostList() {
-        // TODO: waiting for solver
-        assert true;
+    public void verifyResolvesOnSelectedPayerCostPayerCostListWithoutESC() {
+        configureMockedCardWith();
+        when(mercadoPagoESC.getESC(userSelectionRepository.getCard().getId())).thenReturn(TextUtil.EMPTY);
+
+        presenter.onSelectedPayerCost();
+
+        verify(view).startSecurityCodeActivity();
+        verifyNoMoreInteractions(view);
+    }
+
+    @Test
+    public void verifyResolvesOnSelectedPayerCostPayerCostListWithESC() {
+        configureMockedCardWith();
+        when(mercadoPagoESC.getESC(userSelectionRepository.getCard().getId())).thenReturn("1");
+
+        presenter.onSelectedPayerCost();
+
+        verify(view).showProgressLayout();
     }
 
     @Test
     public void verifyResolvesDisplayInstallments() {
-        // TODO: waiting for solver
-        assert true;
+        final List<PayerCost> payerCosts = Collections.singletonList(mock(PayerCost.class));
+
+        presenter.displayInstallments(payerCosts);
+
+        verify(view).askForInstallments();
+        verifyNoMoreInteractions(view);
     }
 
     @Test
     public void verifyIsSavedCardAndSolverIsCalled() {
-        // TODO: test
-        assert true;
+        configureMockedCardWith();
+        when(payerCostRepository.getCurrentConfiguration()).thenReturn(mock(PayerCostModel.class));
+
+        presenter.initialize();
+
+        verify(payerCostSolver).solve(presenter, payerCostRepository.getCurrentConfiguration().getPayerCosts());
     }
 
     /*
