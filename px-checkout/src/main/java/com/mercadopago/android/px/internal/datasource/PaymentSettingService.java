@@ -103,6 +103,12 @@ public class PaymentSettingService implements PaymentSettingRepository {
     @NonNull
     @Override
     public PaymentConfiguration getPaymentConfiguration() {
+        if (paymentConfiguration == null) {
+            // Hotfix - We will persist the paymentConfiguration instance on disk
+            // in future releases
+            // TODO: add disk cache for payment processor.
+            return new MercadoPagoPaymentConfiguration();
+        }
         return paymentConfiguration;
     }
 
