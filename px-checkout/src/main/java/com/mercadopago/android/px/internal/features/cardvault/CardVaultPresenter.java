@@ -224,7 +224,12 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setCardInfo(new CardInfo(card));
         setPaymentMethod(card.getPaymentMethod());
 
-        payerCostSolver.solve(this, payerCostRepository.getCurrentConfiguration().getPayerCosts());
+        if (userSelectionRepository.getPayerCost() == null) {
+            payerCostSolver.solve(this, payerCostRepository.getCurrentConfiguration().getPayerCosts());
+        } else {
+            // This could happen on one tap flows
+            onSelectedPayerCost();
+        }
     }
 
     private void startNewCardFlow() {
