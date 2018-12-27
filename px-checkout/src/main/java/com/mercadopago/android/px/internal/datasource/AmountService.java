@@ -7,6 +7,7 @@ import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Discount;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import java.math.BigDecimal;
 
 public class AmountService implements AmountRepository {
@@ -78,8 +79,20 @@ public class AmountService implements AmountRepository {
             .subtract(getDiscountAmount());
     }
 
+    @NonNull
+    @Override
+    public BigDecimal getAmountWithDiscount(@NonNull final DiscountConfigurationModel discountModel) {
+        return paymentSetting.getCheckoutPreference()
+            .getTotalAmount()
+            .subtract(getDiscountAmount(discountModel));
+    }
+
     private BigDecimal getDiscountAmount() {
-        final Discount discount = discountRepository.getCurrentConfiguration().getDiscount();
+        return getDiscountAmount(discountRepository.getCurrentConfiguration());
+    }
+
+    private BigDecimal getDiscountAmount(@NonNull final DiscountConfigurationModel discountModel) {
+        final Discount discount = discountModel.getDiscount();
         return discount == null ? BigDecimal.ZERO : discount.getCouponAmount();
     }
 
