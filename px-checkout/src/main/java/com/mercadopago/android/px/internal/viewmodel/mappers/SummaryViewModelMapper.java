@@ -61,7 +61,7 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
 
         final AmountDescriptorView.Model totalRow = new AmountDescriptorView.Model(
             new TotalLocalized(),
-            new AmountLocalized(amountRepository.getAmountWithDiscount(),
+            new AmountLocalized(amountRepository.getAmountWithDiscount(discountModel),
                 checkoutPreference.getSite().getCurrencyId()),
             new TotalDetailColor());
 

@@ -30,6 +30,7 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
     private final Animation logoAppearAnimation;
     private final Animation logoDisappearAnimation;
     private boolean showingBigLogo = false;
+    private boolean animating = false;
 
     public SummaryView(final Context context) {
         this(context, null);
@@ -50,6 +51,23 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
         detailAdapter = new DetailAdapter();
         detailRecyclerView.setAdapter(detailAdapter);
         listAppearAnimation = AnimationUtils.loadAnimation(context, R.anim.px_summary_list_appear);
+        listAppearAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(final Animation animation) {
+                detailRecyclerView.setAlpha(1.0f);
+                animating = true;
+            }
+
+            @Override
+            public void onAnimationEnd(final Animation animation) {
+                animating = false;
+            }
+
+            @Override
+            public void onAnimationRepeat(final Animation animation) {
+
+            }
+        });
         logoAppearAnimation = AnimationUtils.loadAnimation(context, R.anim.px_summary_logo_appear);
         logoDisappearAnimation = AnimationUtils.loadAnimation(context, R.anim.px_summary_logo_disappear);
     }
@@ -68,7 +86,9 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
     }
 
     public void animateElementList(final float positionOffset) {
-        detailRecyclerView.setAlpha(1.0f - positionOffset);
+        if (!animating) {
+            detailRecyclerView.setAlpha(1.0f - positionOffset);
+        }
     }
 
     public void update(@NonNull final Model model) {
