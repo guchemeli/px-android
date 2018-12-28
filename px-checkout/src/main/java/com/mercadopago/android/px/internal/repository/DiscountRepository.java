@@ -29,13 +29,6 @@ public interface DiscountRepository extends ResourcesProvider {
     DiscountConfigurationModel getConfigurationFor(@Nonnull final String id);
 
     /**
-     * Retrieve the configuration for a no-discount scenario
-     *
-     * @return The discount configuration model
-     */
-    DiscountConfigurationModel getWithoutDiscountConfiguration();
-
-    /**
      * Adds to the repository the discount configurations to be consumed.
      *
      * @param summaryAmount new discount configurations for guessing.

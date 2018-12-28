@@ -7,6 +7,7 @@ import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PayerCostRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
@@ -74,10 +75,10 @@ public class ExpressPaymentPresenterTest {
     @Mock
     private PayerCostModel payerCostModel;
 
-    private ExpressPaymentPresenter expressPaymentPresenter;
+    @Mock
+    private DiscountConfigurationModel discountConfigurationModel;
 
-    private static final DiscountConfigurationModel WITHOUT_DISCOUNT =
-        new DiscountConfigurationModel(null, null, false);
+    private ExpressPaymentPresenter expressPaymentPresenter;
 
     @Before
     public void setUp() {
@@ -92,8 +93,8 @@ public class ExpressPaymentPresenterTest {
         when(expressMetadata.getCard()).thenReturn(cardMetadata);
         when(expressMetadata.isCard()).thenReturn(true);
         when(cardMetadata.getId()).thenReturn("123");
-        when(discountRepository.getConfigurationFor("123")).thenReturn(WITHOUT_DISCOUNT);
-        when(discountRepository.getWithoutDiscountConfiguration()).thenReturn(WITHOUT_DISCOUNT);
+        when(discountRepository.getConfigurationFor("123")).thenReturn(discountConfigurationModel);
+        when(discountRepository.getConfigurationFor(TextUtil.EMPTY)).thenReturn(discountConfigurationModel);
         when(payerCostRepository.getConfigurationFor("123")).thenReturn(payerCostModel);
 
         expressPaymentPresenter = new ExpressPaymentPresenter(paymentRepository, configuration, discountRepository,

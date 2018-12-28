@@ -19,15 +19,10 @@ public class DiscountServiceImp implements DiscountRepository {
 
     /* default */ ConfigurationSolver configurationSolver;
     /* default */ Map<String, DiscountConfigurationModel> discountConfigurations;
+
     @NonNull private final GroupsRepository groupsRepository;
     private final UserSelectionRepository userSelectionRepository;
     @Nullable private String defaultGuessingConfiguration;
-
-    private static final DiscountConfigurationModel WITHOUT_DISCOUNT;
-
-    static {
-        WITHOUT_DISCOUNT = new DiscountConfigurationModel(null, null, false);
-    }
 
     public DiscountServiceImp(@NonNull final GroupsRepository groupsRepository,
         @NonNull final UserSelectionRepository userSelectionRepository) {
@@ -75,11 +70,10 @@ public class DiscountServiceImp implements DiscountRepository {
     private DiscountConfigurationModel getConfiguration(@Nullable final String hash) {
         // TODO: remove
         init();
-
         final DiscountConfigurationModel discountModel = discountConfigurations.get(hash);
 
         if (discountModel == null) {
-            return WITHOUT_DISCOUNT;
+            return discountConfigurations.get(configurationSolver.getGenericConfigurationHash());
         }
 
         return discountModel;
@@ -105,11 +99,6 @@ public class DiscountServiceImp implements DiscountRepository {
                 //TODO
             }
         });
-    }
-
-    @Override
-    public DiscountConfigurationModel getWithoutDiscountConfiguration() {
-        return WITHOUT_DISCOUNT;
     }
 
     @Override

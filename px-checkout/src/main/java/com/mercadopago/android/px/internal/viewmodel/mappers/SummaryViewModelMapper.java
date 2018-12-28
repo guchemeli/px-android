@@ -3,6 +3,7 @@ package com.mercadopago.android.px.internal.viewmodel.mappers;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.AmountDescriptorView;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.view.SummaryDetailDescriptorFactory;
@@ -49,7 +50,7 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
                     elementDescriptorModel));
         }
 
-        models.add(createModel(discountRepository.getWithoutDiscountConfiguration(), elementDescriptorModel));
+        models.add(createModel(discountRepository.getConfigurationFor(TextUtil.EMPTY), elementDescriptorModel));
 
         return models;
     }
