@@ -19,7 +19,7 @@ public interface EscManager {
     /**
      * Resolve ESC for transaction - delete it if needed
      *
-     * @param paymentData the payment information
+     * @param paymentDataList list of payment data
      * @param paymentStatus the payment status
      * @param paymentStatusDetail the payment detail related with the status
      * @return isInvalidEsc

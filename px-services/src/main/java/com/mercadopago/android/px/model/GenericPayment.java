@@ -13,6 +13,7 @@ public class GenericPayment implements IPayment, Parcelable {
     public final String statusDetail;
     @Nullable public final String statementDescription;
     @Nullable public final String paymentMethodId;
+    @Nullable public final String paymentTypeId;
 
     /**
      * Constructor for non-splited payment ; where is not neccessary to say which payment method have failed.
@@ -25,6 +26,7 @@ public class GenericPayment implements IPayment, Parcelable {
         this.statusDetail = processStatusDetail(status, statusDetail);
         statementDescription = null;
         paymentMethodId = null;
+        paymentTypeId = null;
     }
 
     public GenericPayment(final Long paymentId,
@@ -36,23 +38,26 @@ public class GenericPayment implements IPayment, Parcelable {
         this.statusDetail = processStatusDetail(status, statusDetail);
         this.statementDescription = statementDescription;
         paymentMethodId = null;
+        paymentTypeId = null;
     }
 
     private GenericPayment(final Long id, final String status, final String statusDetail,
         @Nullable final String statementDescription,
-        @NonNull final String paymentMethodId) {
+        @NonNull final String paymentMethodId,
+        @NonNull final String paymentTypeId) {
         this.id = id;
         this.status = status;
         this.statusDetail = processStatusDetail(status, statusDetail);
         this.statementDescription = statementDescription;
         this.paymentMethodId = paymentMethodId;
+        this.paymentTypeId = paymentTypeId;
     }
 
-    public static GenericPayment forSplittedPayment(@NonNull final GenericPayment genericPayment,
-        @NonNull final String paymentMethodId) {
+    public static GenericPayment forSplitPayment(@NonNull final GenericPayment genericPayment,
+        @NonNull final String paymentMethodId, @NonNull final String paymentTypeId) {
         return new GenericPayment(genericPayment.id, genericPayment.status, genericPayment.statusDetail,
             genericPayment.statementDescription,
-            paymentMethodId);
+            paymentMethodId, paymentTypeId);
     }
 
     public static GenericPayment from(final IPayment payment) {
@@ -141,6 +146,7 @@ public class GenericPayment implements IPayment, Parcelable {
         dest.writeString(statusDetail);
         dest.writeString(statementDescription);
         dest.writeString(paymentMethodId);
+        dest.writeString(paymentTypeId);
     }
 
     protected GenericPayment(final Parcel in) {
@@ -153,5 +159,6 @@ public class GenericPayment implements IPayment, Parcelable {
         statusDetail = in.readString();
         statementDescription = in.readString();
         paymentMethodId = in.readString();
+        paymentTypeId = in.readString();
     }
 }

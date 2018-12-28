@@ -13,6 +13,7 @@ import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
+import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.services.Callback;
@@ -93,7 +94,14 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
 
     @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        if (handleEsc(genericPayment)) {
+
+        boolean shouldRecoverEsc = false;
+
+        if (genericPayment.paymentTypeId == null || PaymentTypes.isCardPaymentType(genericPayment.paymentTypeId)) {
+            shouldRecoverEsc = handleEsc(genericPayment);
+        }
+
+        if (shouldRecoverEsc) {
             onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
         } else {
             paymentRepository.storePayment(genericPayment);
