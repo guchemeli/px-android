@@ -73,16 +73,10 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
     }
 
     private boolean isViewOverlapping(final View firstView, final View secondView) {
-        final int[] firstPosition = new int[2];
-        final int[] secondPosition = new int[2];
+        final int yFirstViewEnd = firstView.getTop() + firstView.getHeight();
+        final int ySecondViewInit = secondView.getTop();
 
-        firstView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        firstView.getLocationOnScreen(firstPosition);
-        secondView.getLocationOnScreen(secondPosition);
-
-        final int yFirstViewEnd = firstPosition[1] + firstView.getMeasuredHeight();
-        final int ySecondViewInit = secondPosition[1];
-        return yFirstViewEnd >= ySecondViewInit;
+        return yFirstViewEnd > ySecondViewInit;
     }
 
     public void animateElementList(final float positionOffset) {
@@ -125,6 +119,7 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
                 listener.onBigHeaderDoesNotOverlaps();
             }
         }
+        getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
     public void setOnAmountDescriptorListener(final AmountDescriptorView.OnClickListener listener) {

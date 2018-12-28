@@ -19,6 +19,8 @@ import com.squareup.picasso.RequestCreator;
 
 public class ElementDescriptorView extends LinearLayout {
 
+    private static final int DEFAULT_MAX_LINES = -1;
+
     private TextView label;
     private ImageView icon;
 
@@ -41,6 +43,7 @@ public class ElementDescriptorView extends LinearLayout {
         float iconWidth;
         float labelSize;
         int textColor;
+        int textMaxLines;
         try {
             iconHeight =
                 a.getDimension(R.styleable.PXElementDescriptorView_px_element_icon_height, LayoutParams.WRAP_CONTENT);
@@ -48,14 +51,13 @@ public class ElementDescriptorView extends LinearLayout {
                 a.getDimension(R.styleable.PXElementDescriptorView_px_element_icon_width, LayoutParams.WRAP_CONTENT);
             labelSize = a.getDimensionPixelSize(R.styleable.PXElementDescriptorView_px_element_label_size,
                 (int) context.getResources().getDimension(R.dimen.px_l_text));
-
             textColor = a.getColor(R.styleable.PXElementDescriptorView_px_element_label_text_color, Color.BLACK);
-
+            textMaxLines = a.getInt(R.styleable.PXElementDescriptorView_px_element_label_max_lines, DEFAULT_MAX_LINES);
         } finally {
             a.recycle();
         }
 
-        init(iconWidth, iconHeight, labelSize, textColor);
+        init(iconWidth, iconHeight, labelSize, textColor, textMaxLines);
     }
 
     public void setTextSize(final float textSize) {
@@ -73,13 +75,17 @@ public class ElementDescriptorView extends LinearLayout {
         icon.setLayoutParams(layoutParams);
     }
 
-    private void init(final float iconWidth, final float iconHeight, final float labelSize, final int textColor) {
+    private void init(final float iconWidth, final float iconHeight, final float labelSize, final int textColor,
+        final int textMaxLines) {
         inflate(getContext(), R.layout.px_view_element_descriptor, this);
         label = findViewById(R.id.label);
         icon = findViewById(R.id.icon);
         setIconSize((int) iconWidth, (int) iconHeight);
         label.setTextSize(TypedValue.COMPLEX_UNIT_PX, labelSize);
         label.setTextColor(textColor);
+        if (textMaxLines != DEFAULT_MAX_LINES) {
+            label.setMaxLines(textMaxLines);
+        }
     }
 
     public void update(@NonNull final ElementDescriptorView.Model model) {

@@ -32,12 +32,14 @@
                 android:id="@+id/element_descriptor_toolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/px_m_margin"
                 android:background="@color/px_background"
                 android:orientation="horizontal"
                 app:px_element_icon_height="@dimen/px_s_height"
                 app:px_element_icon_width="@dimen/px_s_height"
                 app:px_element_label_size="@dimen/px_l_text"
                 app:px_element_label_text_color="@color/px_expressCheckoutTextColor"
+                app:px_element_label_max_lines="1"
                 tools:visibility="visible"/>
 
         </android.support.v7.widget.Toolbar>

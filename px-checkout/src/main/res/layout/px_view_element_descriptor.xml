@@ -23,6 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:gravity="center_horizontal"
         android:layout_marginBottom="@dimen/px_xxxs_margin"
         android:layout_marginLeft="@dimen/px_xxs_margin"
         android:layout_marginRight="@dimen/px_xxs_margin"
@@ -35,6 +36,7 @@
         android:textSize="@dimen/px_l_text"
         android:lineSpacingExtra="0sp"
         app:font_style="bold"
+        android:maxLines="2"
         tools:text="@string/loading_message"/>
 
 </merge>
