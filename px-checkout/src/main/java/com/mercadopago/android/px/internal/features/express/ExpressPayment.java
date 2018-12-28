@@ -66,8 +66,6 @@ public interface ExpressPayment {
 
         void trackExpressView();
 
-        void trackConfirmButton(final int paymentMethodSelectedIndex);
-
         void confirmPayment(final int paymentMethodSelectedIndex);
 
         void cancel();

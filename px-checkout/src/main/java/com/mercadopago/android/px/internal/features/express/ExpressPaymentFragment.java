@@ -165,7 +165,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                presenter.trackConfirmButton(paymentMethodPager.getCurrentItem());
                 if (ApiUtil.checkConnection(getContext())) {
                     presenter.confirmPayment(paymentMethodPager.getCurrentItem());
                 } else {

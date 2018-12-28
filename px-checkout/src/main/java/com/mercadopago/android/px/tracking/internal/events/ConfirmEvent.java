@@ -1,6 +1,7 @@
 package com.mercadopago.android.px.tracking.internal.events;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.model.PayerCost;
@@ -29,10 +30,9 @@ public final class ConfirmEvent extends EventTracker {
 
     @NonNull
     public static ConfirmEvent from(@NonNull final Set<String> cardsWithEsc,
-        @NonNull final ExpressMetadata expressMetadata, final PayerCost selectedPayerCost) {
+        @NonNull final ExpressMetadata expressMetadata, @Nullable final PayerCost selectedPayerCost) {
         return new ConfirmEvent(new ConfirmData(ReviewType.ONE_TAP,
-            new FromSelectedExpressMetadataToAvailableMethods(cardsWithEsc,
-                selectedPayerCost).map(expressMetadata)));
+            new FromSelectedExpressMetadataToAvailableMethods(cardsWithEsc, selectedPayerCost).map(expressMetadata)));
     }
 
     @NonNull
