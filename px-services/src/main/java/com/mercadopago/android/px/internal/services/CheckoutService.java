@@ -34,7 +34,7 @@ public interface CheckoutService {
         @Nullable @Query("access_token") String accessToken);
 
     //TODO remove "mercadopago/" from path when wrapper is OK
-    @POST("mercadopago/{version}/px_mobile_api/payment_methods?api_version=" + GROUPS_VERSION)
+    @POST("mercadopago/am/{version}/px_mobile_api/payment_methods?api_version=" + GROUPS_VERSION)
     MPCall<PaymentMethodSearch> getPaymentMethodSearch(
 //        @Path(value = "version", encoded = true) String version,
         @Header("Accept-Language") String locale,
