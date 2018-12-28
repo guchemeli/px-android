@@ -3,9 +3,9 @@ package com.mercadopago.android.px.internal.services;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
-import com.mercadopago.android.px.model.requests.PaymentMethodSearchBody;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.math.BigDecimal;
+import java.util.Map;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -19,7 +19,7 @@ public interface CheckoutService {
 
     @GET("/beta/px_mobile_api/payment_methods?api_version=" + GROUPS_VERSION)
     MPCall<PaymentMethodSearch> getPaymentMethodSearch(
-//        @Path(value = "version", encoded = true) String version,
+        //@Path(value = "version", encoded = true) String version,
         @Header("Accept-Language") String locale,
         @Query("public_key") String publicKey,
         @Query("amount") BigDecimal amount,
@@ -36,7 +36,7 @@ public interface CheckoutService {
     //TODO remove "mercadopago/" from path when wrapper is OK
     @POST("mercadopago/{version}/px_mobile_api/payment_methods?api_version=" + GROUPS_VERSION)
     MPCall<PaymentMethodSearch> getPaymentMethodSearch(
-//        @Path(value = "version", encoded = true) String version,
+        //@Path(value = "version", encoded = true) String version,
         @Header("Accept-Language") String locale,
         @Query("public_key") String publicKey,
         @Query("amount") BigDecimal amount,
@@ -48,7 +48,7 @@ public interface CheckoutService {
         @Nullable @Query("differential_pricing_id") Integer differentialPricingId,
         @Nullable @Query("default_installments") final Integer defaultInstallments,
         @Query("express_enabled") final boolean expressEnabled,
-        @Body PaymentMethodSearchBody paymentMethodSearchBody);
+        @Body Map<String, Object> body);
 
     @GET("/{version}/checkout/preferences/{preference_id}")
     MPCall<CheckoutPreference> getPreference(@Path(value = "version", encoded = true) String version,

@@ -30,7 +30,6 @@ import com.mercadopago.android.px.model.SavedCardToken;
 import com.mercadopago.android.px.model.SavedESCCardToken;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Token;
-import com.mercadopago.android.px.model.requests.PaymentMethodSearchBody;
 import com.mercadopago.android.px.model.requests.SecurityCodeIntent;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.math.BigDecimal;
@@ -101,56 +100,13 @@ public class MercadoPagoServices {
         final String cardsWithEscAppended = getListAsString(cardsWithEsc, separator);
 
         service.getPaymentMethodSearch(
-//            Settings.servicesVersion,
+            //Settings.servicesVersion,
             LocaleUtil.getLanguage(context), publicKey, amount,
             excludedPaymentTypesAppended, excludedPaymentMethodsAppended, site.getId(),
             processingMode, cardsWithEscAppended,
             differentialPricing, null, false,
             privateKey).
             enqueue(callback);
-    }
-
-    /**
-     * @param amount amount to pay
-     * @param excludedPaymentTypes
-     * @param excludedPaymentMethods
-     * @param cardsWithEsc
-     * @param payer
-     * @param site
-     * @param differentialPricing
-     * @param defaultInstallments
-     * @param expressEnabled if your preference is compatible with express checkout.
-     * @param marketplace
-     * @param flow
-     * @param labels
-     * @param callback
-     */
-    public void getPaymentMethodSearch(final BigDecimal amount, final List<String> excludedPaymentTypes,
-        final List<String> excludedPaymentMethods, final List<String> cardsWithEsc,
-        final Payer payer, final Site site, @Nullable final Integer differentialPricing,
-        @Nullable final Integer defaultInstallments, final boolean expressEnabled,
-        final String marketplace, final String flow, final Set<String> labels,
-        final Callback<PaymentMethodSearch> callback) {
-
-        final CheckoutService service = RetrofitUtil.getRetrofitClient(context).create(CheckoutService.class);
-        final String separator = ",";
-        final String excludedPaymentTypesAppended = getListAsString(excludedPaymentTypes, separator);
-        final String excludedPaymentMethodsAppended = getListAsString(excludedPaymentMethods, separator);
-        final String cardsWithEscAppended = getListAsString(cardsWithEsc, separator);
-
-        final PaymentMethodSearchBody body = new PaymentMethodSearchBody.Builder()
-            .setPrivateKey(privateKey)
-            .setPayerEmail(payer.getEmail())
-            .setMarketplace(marketplace)
-            .setProductId(flow)
-            .setLabels(labels).build();
-
-        service.getPaymentMethodSearch(
-            //Settings.servicesVersion,
-            LocaleUtil.getLanguage(context), publicKey, amount, excludedPaymentTypesAppended,
-            excludedPaymentMethodsAppended,
-            site.getId(), processingMode, cardsWithEscAppended, differentialPricing,
-            defaultInstallments, expressEnabled, body).enqueue(callback);
     }
 
     public void createToken(final SavedCardToken savedCardToken, final Callback<Token> callback) {

@@ -29,7 +29,6 @@ public final class JsonUtil {
     }
 
     public <T> T fromJson(@NonNull final String json, @NonNull final Class<T> classOfT) {
-
         return mGson.fromJson(json, classOfT);
     }
 
@@ -49,12 +48,10 @@ public final class JsonUtil {
     }
 
     public String toJson(final Object src) {
-
         return mGson.toJson(src);
     }
 
     public Gson getGson() {
-
         return mGson;
     }
 }
