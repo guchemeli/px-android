@@ -205,6 +205,16 @@ public class CardVaultPresenterTest {
         verify(payerCostSolver).solve(presenter, payerCostRepository.getCurrentConfiguration().getPayerCosts());
     }
 
+    @Test
+    public void whenIsOneTapFlowThenDontAskForInstallmentsAndContinueFlow() {
+        configureMockedCardWith();
+        when(userSelectionRepository.getPayerCost()).thenReturn(mock(PayerCost.class));
+
+        presenter.initialize();
+
+        verifyNoMoreInteractions(payerCostSolver);
+    }
+
     /*
 
     @Test

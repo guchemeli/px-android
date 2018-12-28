@@ -8,13 +8,16 @@ import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.SummaryAmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.internal.services.PaymentService;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.services.InstallmentService;
 import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.SummaryAmount;
-import com.mercadopago.android.px.model.SummaryAmountBody;
+import com.mercadopago.android.px.internal.request.SummaryAmountBody;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import java.util.Map;
 
 public class SummaryAmountService implements SummaryAmountRepository {
 
@@ -50,9 +53,12 @@ public class SummaryAmountService implements SummaryAmountRepository {
                 paymentMethod.getPaymentTypeId(), bin, issuer.getId(),
                 advancedConfiguration.getDiscountParamsConfiguration().getLabels(),
                 checkoutPreference.getDefaultInstallments(),
-                differentialPricingId, ProcessingModes.AGGREGATOR);
+                differentialPricingId, ProcessingModes.AGGREGATOR,
+                paymentSettingRepository.getPaymentConfiguration().getCharges());
 
-        return installmentService.createSummaryAmount(Settings.servicesVersion, summaryAmountBody,
+        final Map<String, Object> body = JsonUtil.getInstance().getMapFromObject(summaryAmountBody);
+
+        return installmentService.createSummaryAmount(Settings.servicesVersion, body,
             paymentSettingRepository.getPublicKey(), paymentSettingRepository.getPrivateKey());
     }
 }

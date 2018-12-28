@@ -11,8 +11,6 @@ import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
 
-import static com.mercadopago.android.px.utils.PaymentUtils.getBusinessPaymentApproved;
-
 public class SamplePaymentProcessorNoView implements PaymentProcessor {
 
     private static final int CONSTANT_DELAY_MILLIS = 20000;
@@ -22,10 +20,6 @@ public class SamplePaymentProcessorNoView implements PaymentProcessor {
 
     public SamplePaymentProcessorNoView(final IPayment iPayment) {
         this.iPayment = iPayment;
-    }
-
-    public SamplePaymentProcessorNoView() {
-        iPayment = getBusinessPaymentApproved();
     }
 
     @Override
@@ -57,13 +51,13 @@ public class SamplePaymentProcessorNoView implements PaymentProcessor {
     @Nullable
     @Override
     public Bundle getFragmentBundle(@NonNull final CheckoutData data, @NonNull final Context context) {
-        return null;
+        throw new IllegalStateException("this should never happen, is not a visual payment processor");
     }
 
     @Nullable
     @Override
     public Fragment getFragment(@NonNull final CheckoutData data,
         @NonNull final Context context) {
-        return null;
+        throw new IllegalStateException("this should never happen, is not a visual payment processor");
     }
 }

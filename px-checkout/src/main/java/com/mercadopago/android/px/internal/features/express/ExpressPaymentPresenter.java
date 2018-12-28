@@ -93,16 +93,6 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     }
 
     @Override
-    public void trackConfirmButton(final int paymentMethodSelectedIndex) {
-        //Track event: confirm one tap
-        final ExpressMetadata expressMetadata = expressMetadataList.get(paymentMethodSelectedIndex);final PayerCostModel payerCostModel =
-            payerCostRepository.getConfigurationFor(expressMetadata.getCard().getId());
-        final PayerCost payerCost = payerCostModel.getPayerCost(payerCostSelection.get(paymentMethodSelectedIndex));
-        //TODO fill cards with esc
-        ConfirmEvent.from(Collections.<String>emptySet(), expressMetadata, payerCost).track();
-    }
-
-    @Override
     public void trackExpressView() {
         new OneTapViewTracker(expressMetadataList,
             paymentConfiguration.getCheckoutPreference(),
@@ -121,11 +111,15 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         paymentRepository.attach(this);
 
         final ExpressMetadata expressMetadata = expressMetadataList.get(paymentMethodSelectedIndex);
-        final PayerCostModel payerCostModel =
-            payerCostRepository.getConfigurationFor(expressMetadata.getCard().getId());
-        final PayerCost payerCost =
-            expressMetadata.isCard() ? payerCostModel.getPayerCost(payerCostSelection.get(paymentMethodSelectedIndex))
-                : null;
+        PayerCost payerCost = null;
+        if (expressMetadata.isCard()) {
+            final PayerCostModel payerCostModel =
+                payerCostRepository.getConfigurationFor(expressMetadata.getCard().getId());
+            payerCost = payerCostModel.getPayerCost(payerCostSelection.get(paymentMethodSelectedIndex));
+        }
+
+        //TODO fill cards with esc
+        ConfirmEvent.from(Collections.<String>emptySet(), expressMetadata, payerCost).track();
 
         paymentRepository.startExpressPayment(expressMetadata, payerCost);
     }

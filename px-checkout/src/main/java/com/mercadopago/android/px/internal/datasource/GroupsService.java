@@ -4,23 +4,25 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.DiscountParamsConfiguration;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.constants.ProcessingModes;
-import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.services.CheckoutService;
+import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.ApiException;
-import com.mercadopago.android.px.model.requests.PaymentMethodSearchBody;
+import com.mercadopago.android.px.internal.request.PaymentMethodSearchBody;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
+import com.mercadopago.android.px.tracking.internal.Settings;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class GroupsService implements GroupsRepository {
 
@@ -111,12 +113,15 @@ public class GroupsService implements GroupsRepository {
         final DiscountParamsConfiguration discountParamsConfiguration =
             paymentSettingRepository.getAdvancedConfiguration().getDiscountParamsConfiguration();
 
-        final PaymentMethodSearchBody body = new PaymentMethodSearchBody.Builder()
+        final PaymentMethodSearchBody paymentMethodSearchBody = new PaymentMethodSearchBody.Builder()
             .setPrivateKey(paymentSettingRepository.getPrivateKey())
             .setPayerEmail(paymentSettingRepository.getCheckoutPreference().getPayer().getEmail())
             .setMarketplace(checkoutPreference.getMarketplace())
             .setProductId(discountParamsConfiguration.getProductId())
-            .setLabels(discountParamsConfiguration.getLabels()).build();
+            .setLabels(discountParamsConfiguration.getLabels())
+            .setCharges(paymentSettingRepository.getPaymentConfiguration().getCharges()).build();
+
+        final Map<String, Object> body = JsonUtil.getInstance().getMapFromObject(paymentMethodSearchBody);
 
         return checkoutService
             .getPaymentMethodSearch(
