@@ -13,6 +13,7 @@ import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.NoConnectivityException;
+import com.mercadopago.android.px.internal.view.AmountDescriptorView;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.view.SummaryView;
@@ -24,6 +25,7 @@ import com.mercadopago.android.px.internal.viewmodel.mappers.SummaryViewModelMap
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardMetadata;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
@@ -225,7 +227,12 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
 
         final List<SummaryView.Model> summaryModels =
             new SummaryViewModelMapper(paymentConfiguration.getCheckoutPreference(), discountRepository,
-                amountRepository, elementDescriptorModel).map(expressMetadataList);
+                amountRepository, elementDescriptorModel, new AmountDescriptorView.OnClickListenerWithDiscount() {
+                @Override
+                public void onAmountDescriptorClicked(@NonNull final DiscountConfigurationModel discountModel) {
+                    getView().showDiscountDetailDialog(discountModel);
+                }
+            }).map(expressMetadataList);
 
         final List<PaymentMethodDescriptorView.Model> paymentModels =
             new PaymentMethodDescriptorMapper(paymentConfiguration, payerCostRepository).map(expressMetadataList);

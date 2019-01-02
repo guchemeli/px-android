@@ -18,6 +18,7 @@ import com.mercadopago.android.px.internal.util.CountyInstallmentsUtils;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.AmountView;
 import com.mercadopago.android.px.model.CardInfo;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PayerCostConfigurationModel;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -161,8 +162,8 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
     }
 
     @Override
-    public void onDetailClicked() {
-        getView().showDetailDialog();
+    public void onDetailClicked(@NonNull final DiscountConfigurationModel discountModel) {
+        getView().showDetailDialog(discountModel);
     }
 
     @Override

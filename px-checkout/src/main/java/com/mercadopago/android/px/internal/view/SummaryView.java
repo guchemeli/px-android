@@ -97,6 +97,7 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
         totalAmountDescriptor.setBold(AmountDescriptorView.Position.RIGHT);
         totalAmountDescriptor.update(model.total);
 
+        detailAdapter.setOnAmountDescriptorListener(model.listener);
         detailAdapter.updateItems(model.elements);
         detailRecyclerView.startAnimation(listAppearAnimation);
     }
@@ -122,10 +123,6 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
         getViewTreeObserver().removeOnGlobalLayoutListener(this);
     }
 
-    public void setOnAmountDescriptorListener(final AmountDescriptorView.OnClickListener listener) {
-        detailAdapter.setOnAmountDescriptorListener(listener);
-    }
-
     public interface OnFitListener {
 
         void onBigHeaderOverlaps();
@@ -145,18 +142,22 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
 
         /* default */ @NonNull final AmountDescriptorView.Model total;
 
+        /* default */ @NonNull final AmountDescriptorView.OnClickListener listener;
+
         public Model(@Nullable final ElementDescriptorView.Model headerDescriptor,
             @NonNull final List<AmountDescriptorView.Model> elements,
-            @NonNull final AmountDescriptorView.Model total) {
+            @NonNull final AmountDescriptorView.Model total,
+            @NonNull final AmountDescriptorView.OnClickListener listener) {
             this.elements = elements;
             this.headerDescriptor = headerDescriptor;
             this.total = total;
+            this.listener = listener;
         }
     }
 
     /* default */ static final class DetailAdapter extends RecyclerView.Adapter<AmountViewHolder> {
-        /* default */ @NonNull List<AmountDescriptorView.Model> items;
-        /* default */ AmountDescriptorView.OnClickListener listener;
+        @NonNull private List<AmountDescriptorView.Model> items;
+        private AmountDescriptorView.OnClickListener listener;
 
         /* default */ DetailAdapter() {
             items = new ArrayList<>();
@@ -171,12 +172,13 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
             final View view =
                 LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.px_viewholder_amountdescription, parent, false);
-            return new AmountViewHolder(view, listener);
+            return new AmountViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(final AmountViewHolder holder, final int position) {
             holder.populate(items.get(position));
+            holder.setListener(listener);
         }
 
         @Override
@@ -194,14 +196,17 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
 
         private final AmountDescriptorView amountDescView;
 
-        public AmountViewHolder(final View itemView, final AmountDescriptorView.OnClickListener listener) {
+        public AmountViewHolder(final View itemView) {
             super(itemView);
             amountDescView = (AmountDescriptorView) itemView;
-            amountDescView.setOnDescriptorClickListener(listener);
         }
 
         public void populate(@NonNull final AmountDescriptorView.Model model) {
             amountDescView.update(model);
+        }
+
+        public void setListener(@NonNull final AmountDescriptorView.OnClickListener listener) {
+            amountDescView.setOnDescriptorClickListener(listener);
         }
     }
 }

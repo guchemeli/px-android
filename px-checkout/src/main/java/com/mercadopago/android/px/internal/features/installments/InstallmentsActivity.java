@@ -324,7 +324,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity implements Ins
     }
 
     @Override
-    public void showDetailDialog() {
-        DiscountDetailDialog.showDialog(getSupportFragmentManager());
+    public void showDetailDialog(@NonNull final DiscountConfigurationModel discountModel) {
+        DiscountDetailDialog.showDialog(getSupportFragmentManager(), discountModel);
     }
 }

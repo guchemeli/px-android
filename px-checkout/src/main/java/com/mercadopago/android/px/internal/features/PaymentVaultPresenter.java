@@ -19,6 +19,7 @@ import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.view.AmountView;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CustomSearchItem;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
@@ -424,8 +425,8 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     @Override
-    public void onDetailClicked() {
-        getView().showDetailDialog();
+    public void onDetailClicked(@NonNull final DiscountConfigurationModel discountModel) {
+        getView().showDetailDialog(discountModel);
     }
 
     public void selectPluginPaymentMethod(final PaymentMethodPlugin plugin) {

@@ -564,8 +564,8 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
     }
 
     @Override
-    public void showDetailDialog() {
-        DiscountDetailDialog.showDialog(getSupportFragmentManager());
+    public void showDetailDialog(@NonNull final DiscountConfigurationModel discountModel) {
+        DiscountDetailDialog.showDialog(getSupportFragmentManager(), discountModel);
     }
 
     @Override

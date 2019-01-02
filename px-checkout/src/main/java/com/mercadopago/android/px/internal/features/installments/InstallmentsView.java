@@ -25,7 +25,7 @@ public interface InstallmentsView extends MvpView {
 
     void warnAboutBankInterests();
 
-    void showDetailDialog();
+    void showDetailDialog(@NonNull final DiscountConfigurationModel discountModel);
 
     void showAmount(@NonNull final DiscountConfigurationModel discountModel, @NonNull final BigDecimal itemsPlusCharges,
         @NonNull final Site site);

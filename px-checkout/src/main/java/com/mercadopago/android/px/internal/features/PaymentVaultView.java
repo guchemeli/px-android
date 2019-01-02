@@ -57,5 +57,5 @@ public interface PaymentVaultView extends MvpView {
 
     void showHook(final Hook hook, final int code);
 
-    void showDetailDialog();
+    void showDetailDialog(@NonNull final DiscountConfigurationModel discountModel);
 }

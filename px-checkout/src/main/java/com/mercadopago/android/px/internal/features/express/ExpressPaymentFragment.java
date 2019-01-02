@@ -46,7 +46,6 @@ import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ScaleUtil;
 import com.mercadopago.android.px.internal.util.StatusBarDecorator;
 import com.mercadopago.android.px.internal.util.VibrationUtils;
-import com.mercadopago.android.px.internal.view.AmountDescriptorView;
 import com.mercadopago.android.px.internal.view.DiscountDetailDialog;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.view.FixedAspectRatioFrameLayout;
@@ -56,9 +55,9 @@ import com.mercadopago.android.px.internal.view.SummaryView;
 import com.mercadopago.android.px.internal.view.TitlePager;
 import com.mercadopago.android.px.internal.viewmodel.PayerCostSelection;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
-import com.mercadopago.android.px.internal.viewmodel.mappers.ElementDescriptorMapper;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.PayerCost;
@@ -75,8 +74,7 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 public class ExpressPaymentFragment extends Fragment implements ExpressPayment.View, ViewPager.OnPageChangeListener,
-    InstallmentsAdapter.ItemListener, SummaryView.OnFitListener, AmountDescriptorView.OnClickListener,
-    ExplodingFragment.ExplodingAnimationListener {
+    InstallmentsAdapter.ItemListener, SummaryView.OnFitListener, ExplodingFragment.ExplodingAnimationListener {
 
     private static final String TAG_EXPLODING_FRAGMENT = "TAG_EXPLODING_FRAGMENT";
     private static final int REQ_CODE_CARD_VAULT = 0x999;
@@ -158,7 +156,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
         //Add interaction listeners.
         summaryView.setOnFitListener(this);
-        summaryView.setOnAmountDescriptorListener(this);
         toolbarAppearAnimation = AnimationUtils.loadAnimation(view.getContext(), R.anim.px_toolbar_appear);
         toolbarDisappearAnimation = AnimationUtils.loadAnimation(view.getContext(), R.anim.px_toolbar_disappear);
 
@@ -577,8 +574,8 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     }
 
     @Override
-    public void onAmountDescriptorClicked() {
-        DiscountDetailDialog.showDialog(getFragmentManager());
+    public void showDiscountDetailDialog(@NonNull final DiscountConfigurationModel discountModel) {
+        DiscountDetailDialog.showDialog(getFragmentManager(), discountModel);
     }
 
     @Override
