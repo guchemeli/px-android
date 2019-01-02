@@ -12,23 +12,16 @@ import java.util.Collection;
 public class PaymentConfiguration {
 
     @NonNull private final PaymentProcessor paymentProcessor;
-    //TODO remove payment method plugin code on future version.
-    @NonNull private final ArrayList<PaymentMethodPlugin> paymentMethodPluginList;
     @NonNull private final ArrayList<ChargeRule> charges;
-    @Nullable private final DiscountConfiguration discountConfiguration;
 
     protected PaymentConfiguration(@NonNull final PaymentProcessor paymentProcessor) {
         this.paymentProcessor = paymentProcessor;
-        paymentMethodPluginList = new ArrayList<>();
         charges = new ArrayList<>();
-        discountConfiguration = null;
     }
 
     /* default */ PaymentConfiguration(@NonNull final Builder builder) {
         paymentProcessor = builder.paymentProcessor;
-        paymentMethodPluginList = builder.paymentMethodPluginList;
         charges = builder.charges;
-        discountConfiguration = builder.discountConfiguration;
     }
 
     @NonNull
@@ -37,18 +30,20 @@ public class PaymentConfiguration {
     }
 
     @NonNull
-    public Collection<PaymentMethodPlugin> getPaymentMethodPluginList() {
-        return paymentMethodPluginList;
-    }
-
-    @NonNull
     public ArrayList<ChargeRule> getCharges() {
         return charges;
     }
 
+    @Deprecated
     @Nullable
     public DiscountConfiguration getDiscountConfiguration() {
-        return discountConfiguration;
+        return null;
+    }
+
+    @Deprecated
+    @NonNull
+    public Collection<PaymentMethodPlugin> getPaymentMethodPluginList() {
+        return new ArrayList<>();
     }
 
     public static final class Builder {
@@ -56,7 +51,6 @@ public class PaymentConfiguration {
         /* default */ @NonNull final PaymentProcessor paymentProcessor;
         /* default */ @NonNull final ArrayList<PaymentMethodPlugin> paymentMethodPluginList;
         /* default */ @NonNull ArrayList<ChargeRule> charges;
-        /* default */ @Nullable DiscountConfiguration discountConfiguration;
 
         /**
          * @param paymentProcessor your custom payment processor.
@@ -65,19 +59,6 @@ public class PaymentConfiguration {
             this.paymentProcessor = paymentProcessor;
             paymentMethodPluginList = new ArrayList<>();
             charges = new ArrayList<>();
-        }
-
-        /**
-         * Add your own payment method option to pay.
-         * Deprecated on version 4.5.0 due to native support of account money feature.
-         * This method is now NOOP.
-         *
-         * @param paymentMethodPlugin your payment method plugin.
-         * @return builder
-         */
-        @Deprecated
-        public Builder addPaymentMethodPlugin(@NonNull final PaymentMethodPlugin paymentMethodPlugin) {
-            return this;
         }
 
         /**
@@ -92,16 +73,29 @@ public class PaymentConfiguration {
         }
 
         /**
-         * {@link DiscountConfiguration} is an object that represents
-         * the discount to be applied or error information to present to the user.
+         * Add your own payment method option to pay. Deprecated on version 4.5.0 due to native support of account money
+         * feature. This method is now NOOP.
+         *
+         * @param paymentMethodPlugin your payment method plugin.
+         * @return builder
+         */
+        @Deprecated
+        public Builder addPaymentMethodPlugin(@NonNull final PaymentMethodPlugin paymentMethodPlugin) {
+            return this;
+        }
+
+        /**
+         * {@link DiscountConfiguration} is an object that represents the discount to be applied or error information to
+         * present to the user.
          * <p>
          * it's mandatory to handle your discounts by hand if you set a payment processor.
          *
          * @param discountConfiguration your custom discount configuration
          * @return builder to keep operating
+         * @deprecated this configuration is not longer valid - NOOP method
          */
+        @Deprecated
         public Builder setDiscountConfiguration(@NonNull final DiscountConfiguration discountConfiguration) {
-            this.discountConfiguration = discountConfiguration;
             return this;
         }
 

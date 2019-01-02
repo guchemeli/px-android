@@ -60,10 +60,10 @@ public class PayerCostRepositoryImpl implements PayerCostRepository {
 
     @NonNull
     @Override
-    public PayerCostModel getConfigurationFor(@NonNull final String customOptionId) {
-        final String configurationHash = configurationSolver.getConfigurationHashFor(customOptionId);
+    public PayerCostModel getConfigurationFor(@NonNull final String cardId) {
+        final String configurationHash = configurationSolver.getConfigurationHashFor(cardId);
         final PayerCostModel result =
-            configurationSolver.getPayerCostConfigurationFor(customOptionId, configurationHash);
+            configurationSolver.getPayerCostConfigurationFor(cardId, configurationHash);
 
         if (result == null) {
             throw new IllegalStateException("Payer costs shouldn't be requested without a selected card");

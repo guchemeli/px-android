@@ -10,20 +10,20 @@ import javax.annotation.Nonnull;
 
 public class ConfigurationSolverImpl implements ConfigurationSolver {
 
-    @NonNull private final String selectedAmountConfiguration;
+    @NonNull private final String defaultSelectedAmountConfiguration;
     @NonNull private final List<CustomSearchItem> customSearchItems;
 
     public ConfigurationSolverImpl(
-        @NonNull final String selectedAmountConfiguration,
+        @NonNull final String defaultSelectedAmountConfiguration,
         @NonNull final List<CustomSearchItem> customSearchItems) {
-        this.selectedAmountConfiguration = selectedAmountConfiguration;
+        this.defaultSelectedAmountConfiguration = defaultSelectedAmountConfiguration;
         this.customSearchItems = customSearchItems;
     }
 
     @Override
     @NonNull
-    public String getGenericConfigurationHash() {
-        return selectedAmountConfiguration;
+    public String getDefaultSelectedAmountConfiguration() {
+        return defaultSelectedAmountConfiguration;
     }
 
     @Override
@@ -59,6 +59,5 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
         }
         return null;
     }
-
 }
 

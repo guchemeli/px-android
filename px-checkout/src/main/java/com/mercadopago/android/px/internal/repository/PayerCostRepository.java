@@ -12,8 +12,7 @@ public interface PayerCostRepository extends ResourcesProvider {
      * <p>
      * In the future, with a discount selector feature, the selected discount will define the associated payer cost.
      *
-     * @return The current dominant configuration, null if there is no installments configuration (e.g. for account
-     * money)
+     * @return The current dominant configuration.
      */
     @NonNull
     PayerCostModel getCurrentConfiguration();
@@ -21,9 +20,9 @@ public interface PayerCostRepository extends ResourcesProvider {
     /**
      * Obtains the complete payer cost configuration for a specif custom option.
      *
-     * @param customOptionId The {@link com.mercadopago.android.px.model.CustomSearchItem} ID.
+     * @param cardId The {@link com.mercadopago.android.px.model.CustomSearchItem} ID.
      * @return The payer cost configuration, returns null if don't have a configuration or ID is invalid.
      */
     @NonNull
-    PayerCostModel getConfigurationFor(@Nonnull final String customOptionId);
+    PayerCostModel getConfigurationFor(@Nonnull final String cardId);
 }

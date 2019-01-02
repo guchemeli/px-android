@@ -59,13 +59,13 @@ public class ConfigurationSolverTest {
 
     @Test
     public void whenIdIsNullThenReturnGeneralConfiguration() {
-        assertEquals(HASH_SAMPLE_GENERAL_CONFIGURATION, discountConfigurationSolver.getGenericConfigurationHash());
+        assertEquals(HASH_SAMPLE_GENERAL_CONFIGURATION, discountConfigurationSolver.getDefaultSelectedAmountConfiguration());
     }
 
     @Test
     public void whenIdIsNullAndHasNotGeneralConfigurationThenReturnEmptyHash() {
         discountConfigurationSolver = new ConfigurationSolverImpl("", customSearchItems);
-        assertEquals("", discountConfigurationSolver.getGenericConfigurationHash());
+        assertEquals("", discountConfigurationSolver.getDefaultSelectedAmountConfiguration());
     }
 
     @Test

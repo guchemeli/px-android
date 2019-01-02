@@ -21,8 +21,8 @@ public interface ConfigurationSolver {
      *
      * @return The hash associated to the general discount configuration.
      */
-    @Nonnull
-    String getGenericConfigurationHash();
+    @NonNull
+    String getDefaultSelectedAmountConfiguration();
 
     /**
      * Retrieves the dominant payer cost model for a custom option.

@@ -20,9 +20,9 @@ public class DiscountServiceImp implements DiscountRepository {
     /* default */ ConfigurationSolver configurationSolver;
     /* default */ Map<String, DiscountConfigurationModel> discountConfigurations;
 
+    @Nullable private String defaultSelectedGuessingConfiguration;
     @NonNull private final GroupsRepository groupsRepository;
     private final UserSelectionRepository userSelectionRepository;
-    @Nullable private String defaultGuessingConfiguration;
 
     public DiscountServiceImp(@NonNull final GroupsRepository groupsRepository,
         @NonNull final UserSelectionRepository userSelectionRepository) {
@@ -43,11 +43,11 @@ public class DiscountServiceImp implements DiscountRepository {
         if (card == null) {
             if (paymentMethod == null) {
                 // The user did not select any payment method, thus the dominant discount is the general config
-                return getConfiguration(configurationSolver.getGenericConfigurationHash());
+                return getConfiguration(configurationSolver.getDefaultSelectedAmountConfiguration());
             } else {
                 if (PaymentTypes.isCardPaymentType(paymentMethod.getPaymentTypeId())) {
                     // Guessing card config
-                    return getConfiguration(defaultGuessingConfiguration);
+                    return getConfiguration(defaultSelectedGuessingConfiguration);
                 } else {
                     // The user select account money or an off payment method / everything else.
                     return getConfiguration(configurationSolver.getConfigurationHashFor(paymentMethod.getId()));
@@ -63,20 +63,19 @@ public class DiscountServiceImp implements DiscountRepository {
     @Override
     public DiscountConfigurationModel getConfigurationFor(@NonNull final String customOptionId) {
         init();
-        final String hashConfiguration = configurationSolver.getConfigurationHashFor(customOptionId);
-        return getConfiguration(hashConfiguration);
+        return getConfiguration(configurationSolver.getConfigurationHashFor(customOptionId));
     }
 
+    /**
+     * @param hash
+     * @return
+     */
     private DiscountConfigurationModel getConfiguration(@Nullable final String hash) {
         // TODO: remove
         init();
         final DiscountConfigurationModel discountModel = discountConfigurations.get(hash);
-
-        if (discountModel == null) {
-            return discountConfigurations.get(configurationSolver.getGenericConfigurationHash());
-        }
-
-        return discountModel;
+        return discountModel == null ? discountConfigurations
+            .get(configurationSolver.getDefaultSelectedAmountConfiguration()) : discountModel;
     }
 
     //TODO: remove init call.
@@ -105,8 +104,7 @@ public class DiscountServiceImp implements DiscountRepository {
     public void addConfigurations(@NonNull final SummaryAmount summaryAmount) {
         // TODO: remove
         init();
-
         discountConfigurations.putAll(summaryAmount.getDiscountConfigurations());
-        defaultGuessingConfiguration = summaryAmount.getSelectedAmountConfiguration();
+        defaultSelectedGuessingConfiguration = summaryAmount.getSelectedAmountConfiguration();
     }
 }
