@@ -35,7 +35,7 @@ public class AmountView extends LinearLayoutCompat {
     private View mainContainer;
 
     public interface OnClick {
-        void onDetailClicked();
+        void onDetailClicked(@NonNull final DiscountConfigurationModel discountModel);
     }
 
     public AmountView(@NonNull final Context context) {
@@ -57,12 +57,12 @@ public class AmountView extends LinearLayoutCompat {
         init();
     }
 
-    public void show(@NonNull final DiscountConfigurationModel discountModel,
-        @NonNull final BigDecimal totalAmount, @NonNull final Site site) {
+    public void show(@NonNull final DiscountConfigurationModel discountModel, @NonNull final BigDecimal totalAmount,
+        @NonNull final Site site) {
         if (!discountModel.isAvailable()) {
-            showNotAvailableDiscount(totalAmount, site);
+            showNotAvailableDiscount(discountModel, totalAmount, site);
         } else if (discountModel.hasValidDiscount()) {
-            show(discountModel.getDiscount(), discountModel.getCampaign(), totalAmount, site);
+            showWithDiscount(discountModel, totalAmount, site);
         } else {
             show(totalAmount, site);
         }
@@ -91,18 +91,15 @@ public class AmountView extends LinearLayoutCompat {
         }
     }
 
-    private void show(@NonNull final Discount discount,
-        @NonNull final Campaign campaign,
-        @NonNull final BigDecimal totalAmount,
-        @NonNull final Site site) {
-
-        showDiscount(discount, campaign, totalAmount, site);
-        showEffectiveAmount(totalAmount.subtract(discount.getCouponAmount()), site);
+    private void showWithDiscount(@NonNull final DiscountConfigurationModel discountModel,
+        @NonNull final BigDecimal totalAmount, @NonNull final Site site) {
+        showDiscount(discountModel, totalAmount, site);
+        showEffectiveAmount(totalAmount.subtract(discountModel.getDiscount().getCouponAmount()), site);
     }
 
-    private void showNotAvailableDiscount(@NonNull final BigDecimal totalAmount,
-        @NonNull final Site site) {
-        configureViewsVisibilityWhenNotAvailableDiscount();
+    private void showNotAvailableDiscount(@NonNull final DiscountConfigurationModel discountModel,
+        @NonNull final BigDecimal totalAmount, @NonNull final Site site) {
+        configureViewsVisibilityWhenNotAvailableDiscount(discountModel);
         amountDescription.setText(R.string.px_used_up_discount_row);
         amountDescription.setTextColor(getResources().getColor(R.color.px_form_text));
         showEffectiveAmount(totalAmount, site);
@@ -116,11 +113,12 @@ public class AmountView extends LinearLayoutCompat {
         showEffectiveAmount(totalAmount, site);
     }
 
-    private void configureViewsVisibilityWhenNotAvailableDiscount() {
+    private void configureViewsVisibilityWhenNotAvailableDiscount(
+        @NonNull final DiscountConfigurationModel discountModel) {
         amountBeforeDiscount.setVisibility(GONE);
         maxCouponAmount.setVisibility(GONE);
         arrow.setVisibility(VISIBLE);
-        configureOnOnDetailClickedEvent();
+        configureOnOnDetailClickedEvent(discountModel);
     }
 
     private void configureViewsVisibilityDefault() {
@@ -138,21 +136,19 @@ public class AmountView extends LinearLayoutCompat {
         arrow.setVisibility(GONE);
     }
 
-    private void showDiscount(@NonNull final Discount discount,
-        @NonNull final Campaign campaign,
-        @NonNull final BigDecimal totalAmount,
-        @NonNull final Site site) {
-        configureDiscountAmountDescription(discount, campaign);
+    private void showDiscount(@NonNull final DiscountConfigurationModel discountModel,
+        @NonNull final BigDecimal totalAmount, @NonNull final Site site) {
+        configureDiscountAmountDescription(discountModel.getDiscount(), discountModel.getCampaign());
         configureViewsVisibilityWhenDiscount(totalAmount, site);
-        configureOnOnDetailClickedEvent();
+        configureOnOnDetailClickedEvent(discountModel);
     }
 
-    private void configureOnOnDetailClickedEvent() {
+    private void configureOnOnDetailClickedEvent(@NonNull final DiscountConfigurationModel discountModel) {
         mainContainer.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(final View v) {
                 if (callback != null) {
-                    callback.onDetailClicked();
+                    callback.onDetailClicked(discountModel);
                 }
             }
         });

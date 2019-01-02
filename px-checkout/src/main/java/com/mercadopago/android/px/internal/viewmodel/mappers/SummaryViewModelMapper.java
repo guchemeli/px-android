@@ -23,16 +23,19 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
     @NonNull private final DiscountRepository discountRepository;
     @NonNull private final AmountRepository amountRepository;
     @NonNull private final ElementDescriptorView.Model elementDescriptorModel;
+    @NonNull private final AmountDescriptorView.OnClickListenerWithDiscount listener;
 
     private static final String ACCOUNT_MONEY_ID = "account_money";
 
     public SummaryViewModelMapper(@NonNull final CheckoutPreference checkoutPreference,
         @NonNull final DiscountRepository discountRepository, @NonNull final AmountRepository amountRepository,
-        @NonNull final ElementDescriptorView.Model elementDescriptorModel) {
+        @NonNull final ElementDescriptorView.Model elementDescriptorModel,
+        @NonNull final AmountDescriptorView.OnClickListenerWithDiscount listener) {
         this.checkoutPreference = checkoutPreference;
         this.discountRepository = discountRepository;
         this.amountRepository = amountRepository;
         this.elementDescriptorModel = elementDescriptorModel;
+        this.listener = listener;
     }
 
     @Override
@@ -46,17 +49,15 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
             } else {
                 customOptionId = ACCOUNT_MONEY_ID;
             }
-            models.add(createModel(discountRepository.getConfigurationFor(customOptionId),
-                    elementDescriptorModel));
+            models.add(createModel(discountRepository.getConfigurationFor(customOptionId)));
         }
 
-        models.add(createModel(discountRepository.getConfigurationFor(TextUtil.EMPTY), elementDescriptorModel));
+        models.add(createModel(discountRepository.getConfigurationFor(TextUtil.EMPTY)));
 
         return models;
     }
 
-    private SummaryView.Model createModel(final DiscountConfigurationModel discountModel,
-        final ElementDescriptorView.Model elementDescriptorModel) {
+    private SummaryView.Model createModel(final DiscountConfigurationModel discountModel) {
         final List<AmountDescriptorView.Model> summaryDetailList =
             new SummaryDetailDescriptorFactory(discountModel, checkoutPreference).create();
 
@@ -66,6 +67,12 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
                 checkoutPreference.getSite().getCurrencyId()),
             new TotalDetailColor());
 
-        return new SummaryView.Model(elementDescriptorModel, summaryDetailList, totalRow);
+        return new SummaryView.Model(elementDescriptorModel, summaryDetailList, totalRow,
+            new AmountDescriptorView.OnClickListener() {
+                @Override
+                public void onAmountDescriptorClicked() {
+                    listener.onAmountDescriptorClicked(discountModel);
+                }
+            });
     }
 }

@@ -631,7 +631,7 @@ public class PaymentVaultPresenterTest {
         }
 
         @Override
-        public void showDetailDialog() {
+        public void showDetailDialog(@NonNull final DiscountConfigurationModel discountModel) {
             //Do nothing
         }
 

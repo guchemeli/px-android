@@ -15,6 +15,7 @@ import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.viewmodel.IDetailColor;
 import com.mercadopago.android.px.internal.viewmodel.IDetailDrawable;
 import com.mercadopago.android.px.internal.viewmodel.ILocalizedCharSequence;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 
 public class AmountDescriptorView extends LinearLayout {
 
@@ -39,8 +40,11 @@ public class AmountDescriptorView extends LinearLayout {
     }
 
     public interface OnClickListener {
-
         void onAmountDescriptorClicked();
+    }
+
+    public interface OnClickListenerWithDiscount {
+        void onAmountDescriptorClicked(@NonNull final DiscountConfigurationModel discountModel);
     }
 
     private void init() {
@@ -121,7 +125,6 @@ public class AmountDescriptorView extends LinearLayout {
     }
 
     public static class Model {
-
         /* default */ @NonNull final ILocalizedCharSequence left;
         /* default */ @NonNull final ILocalizedCharSequence right;
         /* default */ @NonNull final IDetailColor detailColor;

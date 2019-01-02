@@ -8,6 +8,7 @@ import com.mercadopago.android.px.internal.features.express.slider.PaymentMethod
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.model.Card;
+import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentRecovery;
@@ -60,6 +61,7 @@ public interface ExpressPayment {
 
         void collapseInstallmentsSelection();
 
+        void showDiscountDetailDialog(@NonNull final DiscountConfigurationModel discountModel);
     }
 
     interface Actions extends PaymentServiceHandler {
