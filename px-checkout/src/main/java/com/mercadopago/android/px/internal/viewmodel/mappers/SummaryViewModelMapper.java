@@ -57,13 +57,13 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
         return models;
     }
 
-    private SummaryView.Model createModel(final DiscountConfigurationModel discountModel) {
+    private SummaryView.Model createModel(@NonNull final DiscountConfigurationModel discountModel) {
         final List<AmountDescriptorView.Model> summaryDetailList =
             new SummaryDetailDescriptorFactory(discountModel, checkoutPreference).create();
 
         final AmountDescriptorView.Model totalRow = new AmountDescriptorView.Model(
             new TotalLocalized(),
-            new AmountLocalized(amountRepository.getAmountWithDiscount(discountModel),
+            new AmountLocalized(discountModel.getAmountWithDiscount(amountRepository.getItemsAmount()),
                 checkoutPreference.getSite().getCurrencyId()),
             new TotalDetailColor());
 

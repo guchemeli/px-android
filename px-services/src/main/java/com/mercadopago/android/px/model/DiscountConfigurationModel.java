@@ -3,6 +3,7 @@ package com.mercadopago.android.px.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import java.math.BigDecimal;
 
 public class DiscountConfigurationModel implements Parcelable {
 
@@ -49,6 +50,14 @@ public class DiscountConfigurationModel implements Parcelable {
 
     public boolean hasValidDiscount() {
         return discount != null && campaign != null;
+    }
+
+    public BigDecimal getAmountWithDiscount(final BigDecimal amount) {
+        if (discount == null) {
+            return amount;
+        } else {
+            return discount.getAmountWithDiscount(amount);
+        }
     }
 
     @Override
