@@ -7,12 +7,10 @@ import com.mercadopago.android.px.internal.features.providers.SecurityCodeProvid
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.mocks.Cards;
-import com.mercadopago.android.px.mocks.Issuers;
 import com.mercadopago.android.px.mocks.PaymentMethods;
 import com.mercadopago.android.px.mocks.Tokens;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
-import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
@@ -26,8 +24,8 @@ import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.utils.MVPStructure;
-import org.junit.Before;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -141,7 +139,7 @@ public class SecurityCodePresenterTest {
 
         mvp.getPresenter().setCard(Cards.getCard());
         mvp.getPresenter().setToken(Tokens.getTokenWithESC());
-        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForESC(mockedPM));
+        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForESC());
         mvp.getPresenter().setPaymentMethod(mockedPM);
         mvp.getPresenter().setCardInfo(new CardInfo(Cards.getCard()));
 
@@ -161,7 +159,7 @@ public class SecurityCodePresenterTest {
 
         mvp.getPresenter().setCard(Cards.getCard());
         mvp.getPresenter().setToken(Tokens.getTokenWithESC());
-        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForESC(mockedPaymentMethod));
+        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForESC());
         mvp.getPresenter().setPaymentMethod(mockedPaymentMethod);
         mvp.getPresenter().setCardInfo(new CardInfo(Cards.getCard()));
 
@@ -180,7 +178,7 @@ public class SecurityCodePresenterTest {
 
         mvp.getPresenter().setCard(mockedCard);
         mvp.getPresenter().setToken(Tokens.getTokenWithESC());
-        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForESC(mockedPaymentMethod));
+        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForESC());
         mvp.getPresenter().setPaymentMethod(mockedPaymentMethod);
         mvp.getPresenter().setCardInfo(new CardInfo(mockedCard));
 
@@ -198,7 +196,7 @@ public class SecurityCodePresenterTest {
         Token mockedToken = Tokens.getToken();
 
         mvp.getPresenter().setToken(mockedToken);
-        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth(mockedPaymentMethod));
+        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth());
         mvp.getPresenter().setPaymentMethod(mockedPaymentMethod);
         mvp.getPresenter().setCardInfo(new CardInfo(mockedToken));
 
@@ -222,7 +220,7 @@ public class SecurityCodePresenterTest {
         Token mockedToken = Tokens.getToken();
 
         mvp.getPresenter().setToken(mockedToken);
-        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth(mockedPaymentMethod));
+        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth());
         mvp.getPresenter().setPaymentMethod(mockedPaymentMethod);
         mvp.getPresenter().setCardInfo(new CardInfo(mockedToken));
 
@@ -248,7 +246,7 @@ public class SecurityCodePresenterTest {
         final Token mockedToken = Tokens.getToken();
 
         mvp.getPresenter().setToken(mockedToken);
-        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth(mockedPaymentMethod));
+        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth());
         mvp.getPresenter().setPaymentMethod(mockedPaymentMethod);
         mvp.getPresenter().setCardInfo(new CardInfo(mockedToken));
 
@@ -275,7 +273,7 @@ public class SecurityCodePresenterTest {
         final Token mockedToken = Tokens.getToken();
 
         mvp.getPresenter().setToken(mockedToken);
-        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth(mockedPaymentMethod));
+        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth());
         mvp.getPresenter().setPaymentMethod(mockedPaymentMethod);
         mvp.getPresenter().setCardInfo(new CardInfo(mockedToken));
 
@@ -305,7 +303,7 @@ public class SecurityCodePresenterTest {
         Token mockedToken = Tokens.getToken();
 
         mvp.getPresenter().setToken(mockedToken);
-        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth(mockedPaymentMethod));
+        mvp.getPresenter().setPaymentRecovery(getPaymentRecoveryForCallForAuth());
         mvp.getPresenter().setPaymentMethod(mockedPaymentMethod);
         mvp.getPresenter().setCardInfo(new CardInfo(mockedToken));
 
@@ -386,7 +384,7 @@ public class SecurityCodePresenterTest {
         PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnMaster();
         Token mockedToken = Tokens.getTokenWithESC();
         Card mockedCard = Cards.getCard();
-        PaymentRecovery paymentRecovery = getPaymentRecoveryForESC(mockedPaymentMethod);
+        PaymentRecovery paymentRecovery = getPaymentRecoveryForESC();
 
         mvp.getPresenter().setCard(mockedCard);
         mvp.getPresenter().setPaymentMethod(mockedPaymentMethod);
@@ -468,7 +466,7 @@ public class SecurityCodePresenterTest {
 
         final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnMaster();
         final Token mockedToken = Tokens.getTokenWithESC();
-        final PaymentRecovery paymentRecovery = getPaymentRecoveryForESC(mockedPaymentMethod);
+        final PaymentRecovery paymentRecovery = getPaymentRecoveryForESC();
 
         //With wallet integration, with payment result with invalid esc in payment
         //we dont have a card, we only have a token in payment data
@@ -494,18 +492,12 @@ public class SecurityCodePresenterTest {
         return !TextUtil.isEmpty(view.errorMessage);
     }
 
-    private PaymentRecovery getPaymentRecoveryForESC(final PaymentMethod paymentMethod) {
-        final Token mockedToken = Tokens.getTokenWithESC();
-        final Issuer mockedIssuer = Issuers.getIssuerMLA();
-        return new PaymentRecovery(mockedToken, paymentMethod, mockedIssuer,
-            Payment.StatusCodes.STATUS_REJECTED, Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
+    private PaymentRecovery getPaymentRecoveryForESC() {
+        return new PaymentRecovery(Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
     }
 
-    private PaymentRecovery getPaymentRecoveryForCallForAuth(final PaymentMethod paymentMethod) {
-        final Token mockedToken = Tokens.getToken();
-        final Issuer mockedIssuer = Issuers.getIssuerMLA();
-        return new PaymentRecovery(mockedToken, paymentMethod, mockedIssuer,
-            Payment.StatusCodes.STATUS_REJECTED, Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE);
+    private PaymentRecovery getPaymentRecoveryForCallForAuth() {
+        return new PaymentRecovery(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE);
     }
 
     private MVPStructure<SecurityCodePresenter, SecurityCodeMockedProvider, SecurityCodeMockedView, SecurityCode> getMVPStructure() {
@@ -671,7 +663,8 @@ public class SecurityCodePresenterTest {
         }
 
         @Override
-        public void validateSecurityCodeFromToken(final SavedCardToken savedCardToken, final Card card) throws CardTokenException {
+        public void validateSecurityCodeFromToken(final SavedCardToken savedCardToken, final Card card)
+            throws CardTokenException {
             if (shouldFailSecurityCodeValidation) {
                 throw new CardTokenException(CARD_TOKEN_INVALID_SECURITY_CODE);
             }

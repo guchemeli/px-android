@@ -109,19 +109,13 @@ public class PaymentService implements PaymentRepository {
     @NonNull
     @Override
     public PaymentRecovery createRecoveryForInvalidESC() {
-        return new PaymentRecovery(paymentSettingRepository.getToken(), userSelectionRepository.getPaymentMethod(),
-            userSelectionRepository.getIssuer(),
-            Payment.StatusCodes.STATUS_REJECTED,
-            Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
+        return new PaymentRecovery(Payment.StatusDetail.STATUS_DETAIL_INVALID_ESC);
     }
 
     @NonNull
     @Override
     public PaymentRecovery createPaymentRecovery() {
-        return new PaymentRecovery(paymentSettingRepository.getToken(),
-            userSelectionRepository.getPaymentMethod(),
-            userSelectionRepository.getIssuer(), getPayment().getPaymentStatus(),
-            getPayment().getPaymentStatusDetail());
+        return new PaymentRecovery(getPayment().getPaymentStatusDetail());
     }
 
     /**
@@ -255,8 +249,7 @@ public class PaymentService implements PaymentRepository {
     }
 
     /**
-     * Payment data is a dynamic non-mutable object that represents
-     * the payment state of the checkout exp.
+     * Payment data is a dynamic non-mutable object that represents the payment state of the checkout exp.
      *
      * @return payment data at the moment is called.
      */

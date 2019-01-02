@@ -8,10 +8,8 @@ import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardAc
 import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardPaymentPresenter;
 import com.mercadopago.android.px.internal.features.providers.GuessingCardProvider;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
-import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
-import com.mercadopago.android.px.internal.repository.SummaryAmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.BankDeals;
 import com.mercadopago.android.px.mocks.Cards;
@@ -24,6 +22,7 @@ import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.CardToken;
+import com.mercadopago.android.px.model.Cardholder;
 import com.mercadopago.android.px.model.Identification;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Issuer;
@@ -43,6 +42,7 @@ import com.mercadopago.android.px.preferences.PaymentPreference;
 import com.mercadopago.android.px.utils.CardTestUtils;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
@@ -58,6 +58,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("PMD.ExcessiveClassLength")
@@ -68,7 +69,6 @@ public class GuessingCardPaymentPresenterTest {
     private final MockedProvider provider = new MockedProvider();
     private GuessingCardPaymentPresenter presenter;
 
-    @Mock private AmountRepository amountRepository;
     @Mock private UserSelectionRepository userSelectionRepository;
     @Mock private GroupsRepository groupsRepository;
     @Mock private PaymentMethodSearch paymentMethodSearch;
@@ -77,7 +77,8 @@ public class GuessingCardPaymentPresenterTest {
     @Mock private CheckoutPreference checkoutPreference;
     @Mock private PaymentPreference paymentPreference;
     @Mock private Site site;
-    @Mock private SummaryAmountRepository summaryAmountRepository;
+
+    @Mock private GuessingCardActivityView view;
 
     @Before
     public void setUp() {
@@ -91,7 +92,8 @@ public class GuessingCardPaymentPresenterTest {
         when(advancedConfiguration.isBankDealsEnabled()).thenReturn(true);
         presenter =
             new GuessingCardPaymentPresenter(userSelectionRepository, paymentSettingRepository,
-                groupsRepository, advancedConfiguration, buildMockedPaymentRecovery()
+                groupsRepository, advancedConfiguration,
+                new PaymentRecovery(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE)
             );
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
@@ -106,18 +108,19 @@ public class GuessingCardPaymentPresenterTest {
     @Test
     public void ifPaymentRecoverySetThenSaveCardholderNameAndIdentification() {
 
-        final PaymentRecovery mockedPaymentRecovery = buildMockedPaymentRecovery();
-        presenter.setPaymentRecovery(mockedPaymentRecovery);
+        final Cardholder cardHolder = mock(Cardholder.class);
+        final Token token = mock(Token.class);
+        when(paymentSettingRepository.getToken()).thenReturn(token);
+        when(token.getCardHolder()).thenReturn(cardHolder);
+        when(cardHolder.getIdentification()).thenReturn(mock(Identification.class));
 
+        presenter
+            .setPaymentRecovery(new PaymentRecovery(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE));
+        presenter.attachView(view);
         presenter.initialize();
 
-        assertTrue(mockedView.validStart);
-        assertEquals(presenter.getCardholderName(), mockedPaymentRecovery.getToken().getCardHolder().getName());
-        assertEquals(presenter.getIdentificationNumber(),
-            mockedPaymentRecovery.getToken().getCardHolder().getIdentification().getNumber());
-        assertEquals(mockedView.savedCardholderName, mockedPaymentRecovery.getToken().getCardHolder().getName());
-        assertEquals(mockedView.savedIdentificationNumber,
-            mockedPaymentRecovery.getToken().getCardHolder().getIdentification().getNumber());
+        verify(view).setCardholderName(cardHolder.getName());
+        verify(view).setIdentificationNumber(cardHolder.getIdentification().getNumber());
     }
 
     @Test
@@ -654,7 +657,7 @@ public class GuessingCardPaymentPresenterTest {
         provider.setIdentificationTypesResponse(identificationTypesList);
 
         //We exclude master
-        final List<String> excludedPaymentMethodIds = new ArrayList<>();
+        final Collection<String> excludedPaymentMethodIds = new ArrayList<>();
         excludedPaymentMethodIds.add("master");
 
         when(userSelectionRepository.getPaymentType()).thenReturn(PaymentTypes.CREDIT_CARD);
@@ -663,7 +666,8 @@ public class GuessingCardPaymentPresenterTest {
             .thenReturn(Collections.singletonList(paymentMethodList.get(0)));
 
         presenter = new GuessingCardPaymentPresenter(userSelectionRepository, paymentSettingRepository,
-            groupsRepository, advancedConfiguration, buildMockedPaymentRecovery());
+            groupsRepository, advancedConfiguration,
+            new PaymentRecovery(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE));
 
         presenter.attachView(mockedView);
         presenter.attachResourcesProvider(provider);
@@ -733,17 +737,6 @@ public class GuessingCardPaymentPresenterTest {
         final List<PaymentMethod> paymentMethodList = new ArrayList<>();
         paymentMethodList.add(creditCard);
         assertFalse(presenter.shouldAskPaymentType(paymentMethodList));
-    }
-
-    private PaymentRecovery buildMockedPaymentRecovery() {
-        final Token mockedToken = Tokens.getToken();
-        final PaymentMethod mockedPaymentMethod = PaymentMethods.getPaymentMethodOnVisa();
-        final Issuer mockedIssuer = Issuers.getIssuerMLA();
-        final String paymentStatus = Payment.StatusCodes.STATUS_REJECTED;
-        final String paymentStatusDetail = Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE;
-
-        return new PaymentRecovery(mockedToken, mockedPaymentMethod, mockedIssuer, paymentStatus,
-            paymentStatusDetail);
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -212,9 +212,9 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     }
 
     private void startTokenRecoveryFlow() {
-        setCardInfo(new CardInfo(getPaymentRecovery().getToken()));
-        setPaymentMethod(getPaymentRecovery().getPaymentMethod());
-        setToken(getPaymentRecovery().getToken());
+        setCardInfo(new CardInfo(paymentSettingRepository.getToken()));
+        setPaymentMethod(userSelectionRepository.getPaymentMethod());
+        setToken(paymentSettingRepository.getToken());
         getView().askForSecurityCodeFromTokenRecovery();
     }
 

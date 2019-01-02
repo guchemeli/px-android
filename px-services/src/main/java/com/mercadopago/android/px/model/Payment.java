@@ -412,7 +412,7 @@ public class Payment implements IPayment {
         public static final String STATUS_DETAIL_REJECTED_REJECTED_BY_BANK = "rejected_by_bank";
         public static final String STATUS_DETAIL_REJECTED_REJECTED_INSUFFICIENT_DATA = "rejected_insufficient_data";
 
-        public static boolean isKnownErrorDetail(String statusDetail) {
+        public static boolean isKnownErrorDetail(final String statusDetail) {
             return STATUS_DETAIL_CC_REJECTED_BAD_FILLED_OTHER.equals(statusDetail)
                 || STATUS_DETAIL_CC_REJECTED_BAD_FILLED_SECURITY_CODE.equals(statusDetail)
                 || STATUS_DETAIL_CC_REJECTED_BAD_FILLED_DATE.equals(statusDetail)
@@ -438,13 +438,13 @@ public class Payment implements IPayment {
                 STATUS_DETAIL_CC_REJECTED_CARD_DISABLED.equals(statusDetail);
         }
 
-        public static boolean isStatusDetailRecoverable(String statusDetail) {
-            return statusDetail != null && (STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE.equals(statusDetail) ||
+        public static boolean isStatusDetailRecoverable(final String statusDetail) {
+            return (STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE.equals(statusDetail) ||
                 STATUS_DETAIL_INVALID_ESC.equals(statusDetail) ||
                 STATUS_DETAIL_CC_REJECTED_CARD_DISABLED.equals(statusDetail));
         }
 
-        public static boolean isRecoverablePaymentStatus(String paymentStatus, String paymentStatusDetail) {
+        public static boolean isRecoverablePaymentStatus(final String paymentStatus, final String paymentStatusDetail) {
             return Payment.StatusCodes.STATUS_REJECTED.equals(paymentStatus)
                 && isPaymentStatusRecoverable(paymentStatusDetail);
         }

@@ -14,7 +14,6 @@ import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PayerCostModel;
-import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.preferences.PaymentPreference;
@@ -65,9 +64,6 @@ public class CardVaultPresenterTest {
     private PaymentRecovery providePaymentRecoveryMock() {
         final PaymentRecovery paymentRecovery = mock(PaymentRecovery.class);
         when(paymentRecovery.isTokenRecoverable()).thenReturn(true);
-        when(paymentRecovery.getToken()).thenReturn(mock(Token.class));
-        when(paymentRecovery.getPaymentMethod()).thenReturn(mock(PaymentMethod.class));
-
         return paymentRecovery;
     }
 
@@ -80,6 +76,9 @@ public class CardVaultPresenterTest {
 
     @Test
     public void whenTokenIsRecoverableThenStartTokenRecoveryFlow() {
+
+        when(paymentSettingRepository.getToken()).thenReturn(mock(Token.class));
+
         presenter.setPaymentRecovery(providePaymentRecoveryMock());
 
         presenter.initialize();

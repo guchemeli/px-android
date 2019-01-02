@@ -66,9 +66,9 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     }
 
     private void fillRecoveryFields() {
-        getView().setCardholderName(paymentRecovery.getToken().getCardHolder().getName());
-        getView()
-            .setIdentificationNumber(paymentRecovery.getToken().getCardHolder().getIdentification().getNumber());
+        getView().setCardholderName(paymentSettingRepository.getToken().getCardHolder().getName());
+        getView().setIdentificationNumber(
+            paymentSettingRepository.getToken().getCardHolder().getIdentification().getNumber());
     }
 
     @Nullable
@@ -297,14 +297,15 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     public void setPaymentRecovery(final PaymentRecovery paymentRecovery) {
         this.paymentRecovery = paymentRecovery;
         if (recoverWithCardHolder()) {
-            saveCardholderName(paymentRecovery.getToken().getCardHolder().getName());
-            saveIdentificationNumber(paymentRecovery.getToken().getCardHolder().getIdentification().getNumber());
+            saveCardholderName(paymentSettingRepository.getToken().getCardHolder().getName());
+            saveIdentificationNumber(
+                paymentSettingRepository.getToken().getCardHolder().getIdentification().getNumber());
         }
     }
 
     private boolean recoverWithCardHolder() {
-        return paymentRecovery != null && paymentRecovery.getToken() != null &&
-            paymentRecovery.getToken().getCardHolder() != null;
+        return paymentRecovery != null && paymentSettingRepository.getToken() != null &&
+            paymentSettingRepository.getToken().getCardHolder() != null;
     }
 
     @Override
