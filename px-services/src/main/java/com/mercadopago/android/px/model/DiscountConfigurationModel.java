@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 
 public class DiscountConfigurationModel implements Parcelable {
 
+    public static final DiscountConfigurationModel NONE = new DiscountConfigurationModel(null, null, true);
+
     private final Discount discount;
     private final Campaign campaign;
     private final boolean isAvailable;

@@ -16,10 +16,6 @@ import retrofit2.http.QueryMap;
 
 public interface PaymentService {
 
-    @GET("/v1/payment_methods")
-    MPCall<List<PaymentMethod>> getPaymentMethods(@Query("public_key") String publicKey,
-        @Query("access_token") String privateKey);
-
     @GET("/{version}/px_mobile_api/payment_methods/cards")
     MPCall<List<PaymentMethod>> getCardPaymentMethods(@Path(value = "version", encoded = true) String version,
         @Query("access_token") String accessToken);

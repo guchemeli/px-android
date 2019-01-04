@@ -30,7 +30,7 @@ public class DiscountServiceImp implements DiscountRepository {
         this.userSelectionRepository = userSelectionRepository;
     }
 
-    @Nullable
+    @NonNull
     @Override
     public DiscountConfigurationModel getCurrentConfiguration() {
         // TODO: remove
@@ -66,16 +66,16 @@ public class DiscountServiceImp implements DiscountRepository {
         return getConfiguration(configurationSolver.getConfigurationHashFor(customOptionId));
     }
 
-    /**
-     * @param hash
-     * @return
-     */
+
+
     private DiscountConfigurationModel getConfiguration(@Nullable final String hash) {
         // TODO: remove
         init();
         final DiscountConfigurationModel discountModel = discountConfigurations.get(hash);
-        return discountModel == null ? discountConfigurations
-            .get(configurationSolver.getDefaultSelectedAmountConfiguration()) : discountModel;
+        final DiscountConfigurationModel defaultConfig =
+            discountConfigurations.get(configurationSolver.getDefaultSelectedAmountConfiguration());
+        if(discountModel  == null && defaultConfig == null) return DiscountConfigurationModel.NONE;
+        return discountModel == null ? defaultConfig : discountModel;
     }
 
     //TODO: remove init call.

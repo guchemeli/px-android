@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -248,7 +249,7 @@ public class PaymentMethodSearch implements Serializable {
                 return customSearchItem;
             }
         }
-        return  null;
+        return null;
     }
 
     @NonNull
@@ -298,6 +299,7 @@ public class PaymentMethodSearch implements Serializable {
 
     @NonNull
     public Map<String, DiscountConfigurationModel> getDiscountConfigurations() {
-        return discountConfigurations;
+        return discountConfigurations == null ? new HashMap<String, DiscountConfigurationModel>()
+            : discountConfigurations;
     }
 }

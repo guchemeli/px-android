@@ -2,11 +2,12 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
-import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.repository.CardPaymentMethodRepository;
 import com.mercadopago.android.px.internal.services.PaymentService;
 import com.mercadopago.android.px.model.PaymentMethod;
 import java.util.List;
+
+import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
 
 public class CardPaymentMethodService implements CardPaymentMethodRepository {
 
@@ -18,6 +19,6 @@ public class CardPaymentMethodService implements CardPaymentMethodRepository {
 
     @Override
     public MPCall<List<PaymentMethod>> getCardPaymentMethods(@NonNull final String accessToken) {
-        return mPaymentService.getCardPaymentMethods(Settings.servicesVersion, accessToken);
+        return mPaymentService.getCardPaymentMethods(API_ENVIRONMENT, accessToken);
     }
 }

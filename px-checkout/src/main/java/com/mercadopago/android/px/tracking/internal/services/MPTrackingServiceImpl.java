@@ -5,13 +5,14 @@ import android.util.Log;
 import com.mercadopago.android.px.internal.util.HttpClientUtil;
 import com.mercadopago.android.px.model.PaymentIntent;
 import com.mercadopago.android.px.model.TrackingIntent;
-import com.mercadopago.android.px.tracking.internal.Settings;
 import com.mercadopago.android.px.tracking.internal.utils.JsonConverter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
 
 public class MPTrackingServiceImpl implements MPTrackingService {
 
@@ -38,7 +39,7 @@ public class MPTrackingServiceImpl implements MPTrackingService {
     @Override
     public void trackToken(final TrackingIntent trackingIntent) {
 
-        final Call<Void> call = trackingAPI.trackToken(Settings.servicesVersion, trackingIntent);
+        final Call<Void> call = trackingAPI.trackToken(API_ENVIRONMENT, trackingIntent);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull final Call<Void> call, @NonNull final Response<Void> response) {
@@ -57,7 +58,7 @@ public class MPTrackingServiceImpl implements MPTrackingService {
     @Override
     public void trackPaymentId(final PaymentIntent paymentIntent) {
 
-        Call<Void> call = trackingAPI.trackPaymentId(Settings.servicesVersion, paymentIntent);
+        final Call<Void> call = trackingAPI.trackPaymentId(API_ENVIRONMENT, paymentIntent);
         call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(@NonNull final Call<Void> call, @NonNull final Response<Void> response) {

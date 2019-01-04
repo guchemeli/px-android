@@ -17,13 +17,16 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 
+import static com.mercadopago.android.px.services.BuildConfig.HTTP_CLIENT_LOG;
+
 public final class HttpClientUtil {
 
     private static OkHttpClient client;
     private static OkHttpClient customClient;
     private static final int CACHE_SIZE = 10 * 1024 * 1024; // 10 MB
     private static final String CACHE_DIR_NAME = "PX_OKHTTP_CACHE_SERVICES";
-    private static final HttpLoggingInterceptor.Level LOGGING_INTERCEPTOR = HttpLoggingInterceptor.Level.NONE;
+    private static final HttpLoggingInterceptor.Level LOGGING_INTERCEPTOR =
+        HTTP_CLIENT_LOG ? HttpLoggingInterceptor.Level.BODY : HttpLoggingInterceptor.Level.NONE;
 
     private HttpClientUtil() {
     }

@@ -3,7 +3,6 @@ package com.mercadopago.android.px.internal.datasource;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.adapters.MPCallWrapper;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
-import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.services.InstructionsClient;
@@ -16,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
 
 public class InstructionsService implements InstructionsRepository {
 
@@ -93,7 +94,7 @@ public class InstructionsService implements InstructionsRepository {
         return new MPCallWrapper<Instructions>() {
             @Override
             protected MPCall<Instructions> method() {
-                return instructionsClient.getInstructions(Settings.servicesVersion,
+                return instructionsClient.getInstructions(API_ENVIRONMENT,
                     locale, id,
                     paymentSettingRepository.getPublicKey(),
                     paymentSettingRepository.getPrivateKey(),

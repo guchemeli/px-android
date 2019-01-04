@@ -38,8 +38,8 @@ public class DiscountParamsConfiguration {
 
     public static class Builder {
 
-        /* default */ Set<String> labels;
-        /* default */ String productId;
+        /* default */ @NonNull Set<String> labels;
+        /* default */ @Nullable String productId;
 
         public Builder() {
             labels = new HashSet<>();

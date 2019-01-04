@@ -2,7 +2,6 @@ package com.mercadopago.android.px.core;
 
 import android.os.Handler;
 import android.os.Looper;
-import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.services.CheckoutService;
@@ -11,6 +10,8 @@ import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
+
+import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
 
 /* default */ class PrefetchService {
 
@@ -57,7 +58,7 @@ import com.mercadopago.android.px.services.Callback;
             session.getConfigurationModule().getPaymentSettings();
 
         session.getRetrofitClient().create(CheckoutService.class)
-            .getPreference(Settings.servicesVersion, paymentSettings.getCheckoutPreferenceId(),
+            .getPreference(API_ENVIRONMENT, paymentSettings.getCheckoutPreferenceId(),
                 paymentSettings.getPublicKey())
             .execute(
                 new Callback<CheckoutPreference>() {

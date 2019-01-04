@@ -4,13 +4,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.constants.ProcessingModes;
-import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.services.CardService;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Issuer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
 
 public class CardAssociationService {
     @NonNull private final CardService cardService;
@@ -30,12 +31,12 @@ public class CardAssociationService {
         body.put("payment_method", paymentMethodBody);
         body.put("issuer", issuerBody);
 
-        return cardService.assignCard(Settings.servicesVersion, accessToken, body);
+        return cardService.assignCard(API_ENVIRONMENT, accessToken, body);
     }
 
     public MPCall<List<Issuer>> getCardIssuers(@NonNull final String accessToken, @NonNull final String paymentMethodId,
         @NonNull final String bin) {
         return cardService
-            .getCardIssuers(Settings.servicesVersion, accessToken, paymentMethodId, bin, ProcessingModes.AGGREGATOR);
+            .getCardIssuers(API_ENVIRONMENT, accessToken, paymentMethodId, bin, ProcessingModes.AGGREGATOR);
     }
 }

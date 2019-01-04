@@ -23,6 +23,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
+
 public class GroupsService implements GroupsRepository {
 
     private static final String SEPARATOR = ",";
@@ -85,8 +87,7 @@ public class GroupsService implements GroupsRepository {
         };
     }
 
-    @NonNull
-        /* default */ MPCall<PaymentMethodSearch> newRequest() {
+    @NonNull /* default */ MPCall<PaymentMethodSearch> newRequest() {
         //TODO add preference service.
         final boolean expressPaymentEnabled =
             paymentSettingRepository.getAdvancedConfiguration().isExpressPaymentEnabled();
@@ -121,8 +122,7 @@ public class GroupsService implements GroupsRepository {
         final Map<String, Object> body = JsonUtil.getInstance().getMapFromObject(paymentMethodSearchBody);
 
         return checkoutService
-            .getPaymentMethodSearch(
-                //Settings.servicesVersion,
+            .getPaymentMethodSearch(API_ENVIRONMENT,
                 language, paymentSettingRepository.getPublicKey(),
                 checkoutPreference.getTotalAmount(), excludedPaymentTypesAppended, excludedPaymentMethodsAppended,
                 checkoutPreference.getSite().getId(), ProcessingModes.AGGREGATOR, cardsWithEscAppended,

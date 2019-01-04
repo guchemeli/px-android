@@ -18,6 +18,7 @@ public interface DiscountRepository extends ResourcesProvider {
      *
      * @return The current dominant configuration
      */
+    @NonNull
     DiscountConfigurationModel getCurrentConfiguration();
 
     /**

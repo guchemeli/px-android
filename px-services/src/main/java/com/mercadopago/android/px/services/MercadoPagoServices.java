@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.constants.ProcessingModes;
-import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.services.BankDealService;
 import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.services.DiscountService;
@@ -22,7 +21,6 @@ import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Installment;
 import com.mercadopago.android.px.model.Instructions;
 import com.mercadopago.android.px.model.Issuer;
-import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -35,7 +33,8 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
 
 /**
  * MercadoPagoServices provides an interface to access to our main API methods.
@@ -63,13 +62,13 @@ public class MercadoPagoServices {
 
     public void getCheckoutPreference(final String checkoutPreferenceId, final Callback<CheckoutPreference> callback) {
         final CheckoutService service = RetrofitUtil.getRetrofitClient(context).create(CheckoutService.class);
-        service.getPreference(Settings.servicesVersion, checkoutPreferenceId, publicKey).enqueue(callback);
+        service.getPreference(API_ENVIRONMENT, checkoutPreferenceId, publicKey).enqueue(callback);
     }
 
     public void getInstructions(final Long paymentId, final String paymentTypeId,
         final Callback<Instructions> callback) {
         final InstructionsClient service = RetrofitUtil.getRetrofitClient(context).create(InstructionsClient.class);
-        service.getInstructions(Settings.servicesVersion,
+        service.getInstructions(API_ENVIRONMENT,
             LocaleUtil.getLanguage(context),
             paymentId,
             publicKey, privateKey, paymentTypeId)
@@ -84,8 +83,7 @@ public class MercadoPagoServices {
      * @param site
      * @param differentialPricing
      * @param callback
-     * @deprecated please use {@link #getPaymentMethodSearch(BigDecimal, List, List, List, Payer, Site, Integer,
-     * Integer, boolean, String, String, Set, Callback)}
+     * @deprecated please use {@link #getPaymentMethods(Callback)}}
      */
     @Deprecated
     public void getPaymentMethodSearch(final BigDecimal amount, final List<String> excludedPaymentTypes,
@@ -100,7 +98,7 @@ public class MercadoPagoServices {
         final String cardsWithEscAppended = getListAsString(cardsWithEsc, separator);
 
         service.getPaymentMethodSearch(
-            //Settings.servicesVersion,
+            API_ENVIRONMENT,
             LocaleUtil.getLanguage(context), publicKey, amount,
             excludedPaymentTypesAppended, excludedPaymentMethodsAppended, site.getId(),
             processingMode, cardsWithEscAppended,
@@ -163,19 +161,19 @@ public class MercadoPagoServices {
         @Nullable final Integer differentialPricingId,
         final Callback<List<Installment>> callback) {
         final InstallmentService service = RetrofitUtil.getRetrofitClient(context).create(InstallmentService.class);
-        service.getInstallments(Settings.servicesVersion, publicKey, privateKey, bin, amount, issuerId,
+        service.getInstallments(API_ENVIRONMENT, publicKey, privateKey, bin, amount, issuerId,
             paymentMethodId, LocaleUtil.getLanguage(context), processingMode, differentialPricingId).enqueue(callback);
     }
 
     public void getIssuers(final String paymentMethodId, final String bin, final Callback<List<Issuer>> callback) {
         final PaymentService service = RetrofitUtil.getRetrofitClient(context).create(PaymentService.class);
         service
-            .getIssuers(Settings.servicesVersion, publicKey, privateKey, paymentMethodId, bin, processingMode)
+            .getIssuers(API_ENVIRONMENT, publicKey, privateKey, paymentMethodId, bin, processingMode)
             .enqueue(callback);
     }
 
     public void getPaymentMethods(final Callback<List<PaymentMethod>> callback) {
-        final PaymentService service = RetrofitUtil.getRetrofitClient(context).create(PaymentService.class);
+        final CheckoutService service = RetrofitUtil.getRetrofitClient(context).create(CheckoutService.class);
         service.getPaymentMethods(publicKey, privateKey).enqueue(callback);
     }
 

@@ -7,6 +7,18 @@ android {
     defaultConfig {
         buildConfigField "String", "USER_AGENT", "\"$user_agent\""
     }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "API_ENVIRONMENT", "\"beta\""
+            buildConfigField "boolean", "HTTP_CLIENT_LOG", "true"
+        }
+
+        release {
+            buildConfigField "String", "API_ENVIRONMENT", "\"v1\""
+            buildConfigField "boolean", "HTTP_CLIENT_LOG", "false"
+        }
+    }
 }
 
 dependencies {

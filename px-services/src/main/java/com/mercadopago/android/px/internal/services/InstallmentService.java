@@ -15,8 +15,7 @@ import retrofit2.http.Query;
 
 public interface InstallmentService {
 
-    //TODO remove "mercadopago/" from path when wrapper is OK
-    @POST("mercadopago/{version}/px_mobile_api/summary_amount")
+    @POST("/{version}/px_mobile_api/summary_amount")
     MPCall<SummaryAmount> createSummaryAmount(@Path(value = "version", encoded = true) String version,
         @Body Map<String, Object> body,
         @Query("public_key") String publicKey,

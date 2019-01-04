@@ -4,20 +4,19 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.constants.ProcessingModes;
-import com.mercadopago.android.px.internal.core.Settings;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.SummaryAmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
-import com.mercadopago.android.px.internal.services.PaymentService;
-import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.services.InstallmentService;
 import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.SummaryAmount;
-import com.mercadopago.android.px.internal.request.SummaryAmountBody;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
+import java.util.HashMap;
 import java.util.Map;
+
+import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
 
 public class SummaryAmountService implements SummaryAmountRepository {
 
@@ -45,20 +44,23 @@ public class SummaryAmountService implements SummaryAmountRepository {
         final PaymentMethod paymentMethod = userSelectionRepository.getPaymentMethod();
         final Issuer issuer = userSelectionRepository.getIssuer();
 
-        final SummaryAmountBody summaryAmountBody =
-            new SummaryAmountBody(checkoutPreference.getSite().getId(), checkoutPreference.getTotalAmount(),
-                checkoutPreference.getMarketplace(), checkoutPreference.getPayer().getEmail(),
-                advancedConfiguration.getDiscountParamsConfiguration().getProductId(),
-                paymentMethod.getId(),
-                paymentMethod.getPaymentTypeId(), bin, issuer.getId(),
-                advancedConfiguration.getDiscountParamsConfiguration().getLabels(),
-                checkoutPreference.getDefaultInstallments(),
-                differentialPricingId, ProcessingModes.AGGREGATOR,
-                paymentSettingRepository.getPaymentConfiguration().getCharges());
+        final Map<String, Object> body = new HashMap<>();
+        body.put("site_id", checkoutPreference.getSite().getId());
+        body.put("transaction_amount", checkoutPreference.getTotalAmount());
+        body.put("marketplace", checkoutPreference.getMarketplace());
+        body.put("email", checkoutPreference.getPayer().getEmail());
+        body.put("product_id", advancedConfiguration.getDiscountParamsConfiguration().getProductId());
+        body.put("payment_method_id", paymentMethod.getId());
+        body.put("payment_type", paymentMethod.getPaymentTypeId());
+        body.put("bin", bin);
+        body.put("issuer_id", issuer.getId());
+        body.put("labels", advancedConfiguration.getDiscountParamsConfiguration().getLabels());
+        body.put("default_installments", checkoutPreference.getDefaultInstallments());
+        body.put("differential_pricing_id", differentialPricingId);
+        body.put("processing_mode", ProcessingModes.AGGREGATOR);
+        body.put("charges", paymentSettingRepository.getPaymentConfiguration().getCharges());
 
-        final Map<String, Object> body = JsonUtil.getInstance().getMapFromObject(summaryAmountBody);
-
-        return installmentService.createSummaryAmount(Settings.servicesVersion, body,
+        return installmentService.createSummaryAmount(API_ENVIRONMENT, body,
             paymentSettingRepository.getPublicKey(), paymentSettingRepository.getPrivateKey());
     }
 }
