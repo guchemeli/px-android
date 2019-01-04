@@ -4,13 +4,13 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -18,7 +18,7 @@ public interface CheckoutService {
 
     String GROUPS_VERSION = "1.9";
 
-    @GET("/{version}/px_mobile_api/payment_methods?api_version=" + GROUPS_VERSION)
+    @POST("/{version}/px_mobile_api/payment_methods?api_version=" + GROUPS_VERSION)
     MPCall<PaymentMethodSearch> getPaymentMethodSearch(
         @Path(value = "version", encoded = true) String version,
         @Header("Accept-Language") String locale,

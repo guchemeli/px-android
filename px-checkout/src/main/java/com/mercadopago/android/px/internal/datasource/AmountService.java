@@ -72,11 +72,7 @@ public class AmountService implements AmountRepository {
     }
 
     private BigDecimal getDiscountAmount() {
-        return getDiscountAmount(discountRepository.getCurrentConfiguration());
-    }
-
-    private BigDecimal getDiscountAmount(@NonNull final DiscountConfigurationModel discountModel) {
-        final Discount discount = discountModel.getDiscount();
+        final Discount discount = discountRepository.getCurrentConfiguration().getDiscount();
         return discount == null ? BigDecimal.ZERO : discount.getCouponAmount();
     }
 
