@@ -55,10 +55,10 @@ public class DiscountConfigurationModel implements Parcelable {
     }
 
     public BigDecimal getAmountWithDiscount(final BigDecimal amount) {
-        if (discount == null) {
-            return amount;
-        } else {
+        if (hasValidDiscount()) {
             return discount.getAmountWithDiscount(amount);
+        } else {
+            return amount;
         }
     }
 

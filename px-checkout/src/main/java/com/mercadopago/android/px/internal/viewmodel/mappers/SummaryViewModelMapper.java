@@ -15,7 +15,9 @@ import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<SummaryView.Model>> {
 
@@ -25,7 +27,7 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
     @NonNull private final ElementDescriptorView.Model elementDescriptorModel;
     @NonNull private final AmountDescriptorView.OnClickListenerWithDiscount listener;
 
-    private static final String ACCOUNT_MONEY_ID = "account_money";
+    private Map<DiscountConfigurationModel, SummaryView.Model> modelCache;
 
     public SummaryViewModelMapper(@NonNull final CheckoutPreference checkoutPreference,
         @NonNull final DiscountRepository discountRepository, @NonNull final AmountRepository amountRepository,
@@ -40,6 +42,7 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
 
     @Override
     public List<SummaryView.Model> map(@NonNull final List<ExpressMetadata> expressMetadataList) {
+        modelCache = new HashMap<>();
         final List<SummaryView.Model> models = new ArrayList<>();
 
         for (final ExpressMetadata expressMetadata : expressMetadataList) {
@@ -47,7 +50,8 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
             if (expressMetadata.isCard()) {
                 customOptionId = expressMetadata.getCard().getId();
             } else {
-                customOptionId = ACCOUNT_MONEY_ID;
+                // Account money
+                customOptionId = expressMetadata.getPaymentMethodId();
             }
             models.add(createModel(discountRepository.getConfigurationFor(customOptionId)));
         }
@@ -58,21 +62,28 @@ public class SummaryViewModelMapper extends Mapper<List<ExpressMetadata>, List<S
     }
 
     private SummaryView.Model createModel(@NonNull final DiscountConfigurationModel discountModel) {
-        final List<AmountDescriptorView.Model> summaryDetailList =
-            new SummaryDetailDescriptorFactory(discountModel, checkoutPreference).create();
+        if (modelCache.containsKey(discountModel)) {
+            return modelCache.get(discountModel);
+        } else {
+            final List<AmountDescriptorView.Model> summaryDetailList =
+                new SummaryDetailDescriptorFactory(discountModel, checkoutPreference).create();
 
-        final AmountDescriptorView.Model totalRow = new AmountDescriptorView.Model(
-            new TotalLocalized(),
-            new AmountLocalized(discountModel.getAmountWithDiscount(amountRepository.getItemsAmount()),
-                checkoutPreference.getSite().getCurrencyId()),
-            new TotalDetailColor());
+            final AmountDescriptorView.Model totalRow = new AmountDescriptorView.Model(
+                new TotalLocalized(),
+                new AmountLocalized(discountModel.getAmountWithDiscount(amountRepository.getItemsAmount()),
+                    checkoutPreference.getSite().getCurrencyId()),
+                new TotalDetailColor());
 
-        return new SummaryView.Model(elementDescriptorModel, summaryDetailList, totalRow,
-            new AmountDescriptorView.OnClickListener() {
-                @Override
-                public void onAmountDescriptorClicked() {
-                    listener.onAmountDescriptorClicked(discountModel);
-                }
-            });
+            final SummaryView.Model model = new SummaryView.Model(elementDescriptorModel, summaryDetailList, totalRow,
+                new AmountDescriptorView.OnClickListener() {
+                    @Override
+                    public void onAmountDescriptorClicked() {
+                        listener.onAmountDescriptorClicked(discountModel);
+                    }
+                });
+
+            modelCache.put(discountModel, model);
+            return model;
+        }
     }
 }

@@ -49,7 +49,7 @@ import java.util.List;
 import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView.Model.SELECTED_PAYER_COST_NONE;
 
 /* default */ class ExpressPaymentPresenter extends MvpPresenter<ExpressPayment.View, ResourcesProvider>
-    implements ExpressPayment.Actions {
+    implements ExpressPayment.Actions, AmountDescriptorView.OnClickListenerWithDiscount {
 
     @NonNull private final PaymentRepository paymentRepository;
     @NonNull private final AmountRepository amountRepository;
@@ -227,12 +227,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
 
         final List<SummaryView.Model> summaryModels =
             new SummaryViewModelMapper(paymentConfiguration.getCheckoutPreference(), discountRepository,
-                amountRepository, elementDescriptorModel, new AmountDescriptorView.OnClickListenerWithDiscount() {
-                @Override
-                public void onAmountDescriptorClicked(@NonNull final DiscountConfigurationModel discountModel) {
-                    getView().showDiscountDetailDialog(discountModel);
-                }
-            }).map(expressMetadataList);
+                amountRepository, elementDescriptorModel, this).map(expressMetadataList);
 
         final List<PaymentMethodDescriptorView.Model> paymentModels =
             new PaymentMethodDescriptorMapper(paymentConfiguration, payerCostRepository).map(expressMetadataList);
@@ -343,5 +338,10 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
             mercadoPagoError)
             .track();
         getView().showErrorSnackBar(mercadoPagoError);
+    }
+
+    @Override
+    public void onAmountDescriptorClicked(@NonNull final DiscountConfigurationModel discountModel) {
+        getView().showDiscountDetailDialog(discountModel);
     }
 }

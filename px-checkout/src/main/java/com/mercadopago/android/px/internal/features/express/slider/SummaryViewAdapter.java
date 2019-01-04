@@ -12,6 +12,7 @@ public class SummaryViewAdapter implements PaymentMethodAdapter<List<SummaryView
     private List<SummaryView.Model> models;
     private final SummaryView summaryView;
     private int currentIndex = NO_SELECTED;
+    private SummaryView.Model currentModel;
 
     public SummaryViewAdapter(final SummaryView summaryView) {
         this.summaryView = summaryView;
@@ -28,10 +29,13 @@ public class SummaryViewAdapter implements PaymentMethodAdapter<List<SummaryView
     }
 
     @Override
-    public void updateData(final int currentIndex, final int payerCostSelected) {
-        this.currentIndex = currentIndex;
-        //TODO Only update if showing a new discount model
-        summaryView.update(models.get(currentIndex));
+    public void updateData(final int index, final int payerCostSelected) {
+        final SummaryView.Model nextModel = models.get(index);
+        if (!nextModel.equals(currentModel)) {
+            summaryView.update(nextModel);
+        }
+        currentIndex = index;
+        currentModel = nextModel;
     }
 
     @Override
@@ -41,7 +45,7 @@ public class SummaryViewAdapter implements PaymentMethodAdapter<List<SummaryView
         }
         final GoingToModel goingTo = position < currentIndex ? GoingToModel.BACKWARDS : GoingToModel.FORWARD;
         final int nextIndex = goingTo == GoingToModel.BACKWARDS ? currentIndex - 1 : currentIndex + 1;
-        if (nextIndex >= 0 && nextIndex < models.size()) {
+        if (!currentModel.equals(models.get(nextIndex))) {
             if (goingTo == GoingToModel.BACKWARDS) {
                 positionOffset = 1.0f - positionOffset;
             }

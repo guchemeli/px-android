@@ -117,7 +117,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     }
 
     public interface CallBack {
-
         void onOneTapCanceled();
     }
 
