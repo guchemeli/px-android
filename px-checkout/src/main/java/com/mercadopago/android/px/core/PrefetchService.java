@@ -5,6 +5,7 @@ import android.os.Looper;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.services.CheckoutService;
+import com.mercadopago.android.px.internal.services.PreferenceService;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.exceptions.ApiException;
@@ -57,7 +58,7 @@ import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
         final PaymentSettingRepository paymentSettings =
             session.getConfigurationModule().getPaymentSettings();
 
-        session.getRetrofitClient().create(CheckoutService.class)
+        session.getRetrofitClient().create(PreferenceService.class)
             .getPreference(API_ENVIRONMENT, paymentSettings.getCheckoutPreferenceId(),
                 paymentSettings.getPublicKey())
             .execute(

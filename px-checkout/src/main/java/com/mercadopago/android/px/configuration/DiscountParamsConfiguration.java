@@ -43,7 +43,7 @@ public class DiscountParamsConfiguration {
 
         public Builder() {
             labels = new HashSet<>();
-            productId = "";
+            productId = null;
         }
 
         /**

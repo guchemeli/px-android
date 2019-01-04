@@ -6,10 +6,10 @@ import android.support.annotation.Size;
 import com.google.gson.annotations.SerializedName;
 import com.mercadopago.android.px.model.DifferentialPricing;
 import com.mercadopago.android.px.model.Item;
+import com.mercadopago.android.px.model.OpenPayer;
 import com.mercadopago.android.px.model.Payer;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
-import com.mercadopago.android.px.model.OpenPayer;
 import com.mercadopago.android.px.model.exceptions.CheckoutPreferenceException;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,17 +21,16 @@ import java.util.List;
 import static com.mercadopago.android.px.internal.util.TextUtil.isEmpty;
 
 /**
- * Model that represents curl -X OPTIONS "https://api.mercadopago.com/checkout/preferences" | json_pp
- * It can be not exactly the same because exists custom configurations for open Preference.
- * Some values like: binary mode are not present on API call.
+ * Model that represents curl -X OPTIONS "https://api.mercadopago.com/checkout/preferences" | json_pp It can be not
+ * exactly the same because exists custom configurations for open Preference. Some values like: binary mode are not
+ * present on API call.
  */
 @SuppressWarnings("unused")
 public class CheckoutPreference implements Serializable {
 
     /**
-     * When the preference comes from backend then
-     * id is received - Custom created CheckoutPreferences have null id.
-     * it is nullable but it shouldn't
+     * When the preference comes from backend then id is received - Custom created CheckoutPreferences have null id. it
+     * is nullable but it shouldn't
      */
     @SuppressWarnings("UnusedDeclaration")
     @Nullable private String id;
@@ -241,6 +240,27 @@ public class CheckoutPreference implements Serializable {
         return isBinaryMode;
     }
 
+    @Override
+    public String toString() {
+        return "CheckoutPreference{" +
+            "id='" + id + '\'' +
+            ", siteId='" + siteId + '\'' +
+            ", items=" + items +
+            ", payer=" + payer +
+            ", differentialPricing=" + differentialPricing +
+            ", paymentPreference=" + paymentPreference +
+            ", expirationDateTo=" + expirationDateTo +
+            ", expirationDateFrom=" + expirationDateFrom +
+            ", marketplace='" + marketplace + '\'' +
+            ", marketplaceFee=" + marketplaceFee +
+            ", shippingCost=" + shippingCost +
+            ", operationType='" + operationType + '\'' +
+            ", conceptAmount=" + conceptAmount +
+            ", conceptId='" + conceptId + '\'' +
+            ", isBinaryMode=" + isBinaryMode +
+            '}';
+    }
+
     public static class Builder {
 
         private static final String DEFAULT_MARKETPLACE = "none";
@@ -267,10 +287,8 @@ public class CheckoutPreference implements Serializable {
         /* default */ final Payer payer;
 
         /**
-         * Builder for custom CheckoutPreference construction.
-         * It should be only used if you are processing the payment
-         * with a Payment processor.
-         * Otherwise you should use the ID constructor.
+         * Builder for custom CheckoutPreference construction. It should be only used if you are processing the payment
+         * with a Payment processor. Otherwise you should use the ID constructor.
          *
          * @param site preference site {@link Sites#getById(String)}
          * @param payerEmail payer email
@@ -288,10 +306,8 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * Builder for custom CheckoutPreference construction.
-         * It should be only used if you are processing the payment
-         * with a Payment processor.
-         * Otherwise you should use the ID constructor.
+         * Builder for custom CheckoutPreference construction. It should be only used if you are processing the payment
+         * with a Payment processor. Otherwise you should use the ID constructor.
          *
          * @param site preference site {@link Sites#getById(String)}
          * @param payer payer
@@ -309,8 +325,8 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * Add exclusion payment method id
-         * If you exclude it, it's not going appear as a payment method available on checkout
+         * Add exclusion payment method id If you exclude it, it's not going appear as a payment method available on
+         * checkout
          *
          * @param paymentMethodId exclusion id
          * @return builder
@@ -322,8 +338,8 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * Add exclusion list by payment method id
-         * If you exclude it, it's not going appear as a payment method available on checkout
+         * Add exclusion list by payment method id If you exclude it, it's not going appear as a payment method
+         * available on checkout
          *
          * @param paymentMethodIds exclusion list
          * @return builder
@@ -335,8 +351,8 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * Add exclusion by payment type
-         * If you exclude it, it's not going appear as a payment method available on checkout
+         * Add exclusion by payment type If you exclude it, it's not going appear as a payment method available on
+         * checkout
          *
          * @param paymentTypeId exclusion type
          * @return builder
@@ -348,8 +364,8 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * Add exclusion list by payment type
-         * If you exclude it, it's not going appear as a payment method available on checkout
+         * Add exclusion list by payment type If you exclude it, it's not going appear as a payment method available on
+         * checkout
          *
          * @param paymentTypeIds exclusion list
          * @return builder
@@ -361,8 +377,7 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * If enableBinaryMode is called, processed payment can only be APPROVED or REJECTED.
-         * Default value is false.
+         * If enableBinaryMode is called, processed payment can only be APPROVED or REJECTED. Default value is false.
          * <p>
          * Non compatible with PaymentProcessor.
          * <p>
@@ -387,8 +402,7 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * When default installments is not null
-         * then this value will be forced as installment selected if it matches
+         * When default installments is not null then this value will be forced as installment selected if it matches
          * with one provided by the Installments service.
          *
          * @param defaultInstallments number of the value to be forced
@@ -400,8 +414,8 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * Date that indicates when this preference expires.
-         * If the preference is expired, then the checkout will show an error.
+         * Date that indicates when this preference expires. If the preference is expired, then the checkout will show
+         * an error.
          *
          * @param date creation date.
          * @return builder
@@ -412,8 +426,8 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * Date that indicates from when the preference is active.
-         * If the preference is related with a date in the future then an error screen will be shown.
+         * Date that indicates from when the preference is active. If the preference is related with a date in the
+         * future then an error screen will be shown.
          *
          * @param date creation date.
          * @return builder
@@ -424,8 +438,8 @@ public class CheckoutPreference implements Serializable {
         }
 
         /**
-         * Differential pricing configuration for this preference.
-         * This object is related with the way the installments are asked.
+         * Differential pricing configuration for this preference. This object is related with the way the installments
+         * are asked.
          *
          * @param differentialPricing differential pricing object
          * @return builder

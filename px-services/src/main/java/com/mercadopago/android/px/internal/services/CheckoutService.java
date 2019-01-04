@@ -69,11 +69,6 @@ public interface CheckoutService {
         @Query("express_enabled") final boolean expressEnabled,
         @Nullable @Query("access_token") String accessToken);
 
-    @GET("/{version}/checkout/preferences/{preference_id}")
-    MPCall<CheckoutPreference> getPreference(@Path(value = "version", encoded = true) String version,
-        @Path(value = "preference_id", encoded = true) String checkoutPreferenceId,
-        @Query("public_key") String publicKey);
-
     @GET("/v1/payment_methods")
     MPCall<List<PaymentMethod>> getPaymentMethods(@Query("public_key") String publicKey,
         @Query("access_token") String privateKey);

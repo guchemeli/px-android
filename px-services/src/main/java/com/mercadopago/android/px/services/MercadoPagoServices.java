@@ -12,6 +12,7 @@ import com.mercadopago.android.px.internal.services.IdentificationService;
 import com.mercadopago.android.px.internal.services.InstallmentService;
 import com.mercadopago.android.px.internal.services.InstructionsClient;
 import com.mercadopago.android.px.internal.services.PaymentService;
+import com.mercadopago.android.px.internal.services.PreferenceService;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
 import com.mercadopago.android.px.internal.util.RetrofitUtil;
 import com.mercadopago.android.px.model.BankDeal;
@@ -61,7 +62,7 @@ public class MercadoPagoServices {
     }
 
     public void getCheckoutPreference(final String checkoutPreferenceId, final Callback<CheckoutPreference> callback) {
-        final CheckoutService service = RetrofitUtil.getRetrofitClient(context).create(CheckoutService.class);
+        final PreferenceService service = RetrofitUtil.getRetrofitClient(context).create(PreferenceService.class);
         service.getPreference(API_ENVIRONMENT, checkoutPreferenceId, publicKey).enqueue(callback);
     }
 
@@ -221,5 +222,17 @@ public class MercadoPagoServices {
             }
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     *
+     * @param preferenceBuilder
+     * @param callback
+     */
+    public void createPreference(@NonNull final CheckoutPreference.Builder preferenceBuilder,
+        @NonNull final Callback<CheckoutPreference> callback) {
+        final PreferenceService preferenceService =
+            RetrofitUtil.getRetrofitClient(context).create(PreferenceService.class);
+        preferenceService.createPreference(preferenceBuilder.build(), privateKey).enqueue(callback);
     }
 }
