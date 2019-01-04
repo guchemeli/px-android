@@ -1,3 +1,9 @@
+## VERSION 4.5.0
+_02_01_2019_
+* FEATURE - Account money as a first class member.
+* FEATURE - Added event and view data for PXTrackingListener class.
+* FIX - Crash on back on Sec code saved card.
+
 ## VERSION 4.4.1
 _18_12_2018_
 
