@@ -13,13 +13,11 @@ public class InterestFormatter {
     private int textColor;
     private final Context context;
     private final SpannableStringBuilder spannableStringBuilder;
-    private final String fontStylePath;
 
     public InterestFormatter(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context) {
         this.spannableStringBuilder = spannableStringBuilder;
         this.context = context;
-        fontStylePath = Font.REGULAR.getFontPath();
     }
 
     public InterestFormatter withTextColor(final int color) {
@@ -47,9 +45,6 @@ public class InterestFormatter {
     }
 
     private void updateTextFont(final int indexStart, final int indexEnd) {
-        if (fontStylePath != null) {
-            ViewUtils
-                .setFontInSpannable(indexStart, indexEnd, spannableStringBuilder, fontStylePath, context);
-        }
+        ViewUtils.setFontInSpannable(indexStart, indexEnd, spannableStringBuilder, Font.REGULAR.getFontPath(), context);
     }
 }

@@ -38,12 +38,8 @@ public class InstallmentFormatter extends ChainFormatter {
         return this;
     }
 
-    public Spannable build(@NonNull final CharSequence amount) {
-        return apply(amount);
-    }
-
     @Override
-    protected Spannable apply(@NonNull final CharSequence amount) {
+    public Spannable apply(@NonNull final CharSequence amount) {
         final int indexStart = spannableStringBuilder.length();
         if (installment != 0) {
 
@@ -83,10 +79,7 @@ public class InstallmentFormatter extends ChainFormatter {
         if (semiBoldStyle) {
             ViewUtils.setSemiBoldFontInSpannable(indexStart, indexEnd, spannableStringBuilder, context);
         } else {
-            final String fontStylePath = Font.REGULAR.getFontPath();
-            if (fontStylePath != null) {
-                ViewUtils.setFontInSpannable(indexStart, indexEnd, spannableStringBuilder, fontStylePath, context);
-            }
+            ViewUtils.setFontInSpannable(indexStart, indexEnd, spannableStringBuilder, Font.REGULAR.getFontPath(), context);
         }
     }
 }

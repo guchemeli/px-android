@@ -16,15 +16,16 @@ public class PayerCostFormatter {
     private int textColor;
     private final Context context;
     private final SpannableStringBuilder spannableStringBuilder;
-    private String fontStylePath;
 
     public PayerCostFormatter(@NonNull final SpannableStringBuilder spannableStringBuilder,
-        @NonNull final Context context, @NonNull final PayerCost payerCost, @NonNull final String currencyId) {
+        @NonNull final Context context,
+        @NonNull final PayerCost payerCost,
+        @NonNull final String currencyId) {
+
         this.spannableStringBuilder = spannableStringBuilder;
         this.context = context;
         this.payerCost = payerCost;
         this.currencyId = currencyId;
-        fontStylePath = Font.REGULAR.getFontPath();
     }
 
     public PayerCostFormatter withTextColor(final int color) {
@@ -43,22 +44,12 @@ public class PayerCostFormatter {
         final String separator = " ";
         spannableStringBuilder.append(separator).append(totalAmount);
         final int textLength = separator.length() + totalAmount.length();
+        final int endIndex = initialIndex + textLength;
 
-        updateTextColor(initialIndex, initialIndex + textLength);
-        updateTextFont(initialIndex, initialIndex + textLength);
+        ViewUtils.setColorInSpannable(textColor, initialIndex, endIndex, spannableStringBuilder);
+        ViewUtils.setFontInSpannable(initialIndex, endIndex, spannableStringBuilder,
+            Font.REGULAR.getFontPath(), context);
+
         return spannableStringBuilder;
-    }
-
-    private void updateTextColor(final int indexStart, final int indexEnd) {
-        if (textColor != 0) {
-            ViewUtils.setColorInSpannable(textColor, indexStart, indexEnd, spannableStringBuilder);
-        }
-    }
-
-    private void updateTextFont(final int indexStart, final int indexEnd) {
-        if (fontStylePath != null) {
-            ViewUtils
-                .setFontInSpannable(indexStart, indexEnd, spannableStringBuilder, fontStylePath, context);
-        }
     }
 }

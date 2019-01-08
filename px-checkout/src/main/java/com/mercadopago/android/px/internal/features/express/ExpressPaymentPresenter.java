@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecoratorMapper;
-import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodAdapter;
+import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -236,7 +236,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
 
         getView().configureAdapters(paymentMethodDrawableItemMapper.map(expressMetadataList),
             paymentConfiguration.getCheckoutPreference().getSite(), SELECTED_PAYER_COST_NONE,
-            new PaymentMethodAdapter.Model(paymentModels, summaryModels));
+            new HubAdapter.Model(paymentModels, summaryModels));
     }
 
     @Override

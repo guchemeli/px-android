@@ -66,6 +66,6 @@ public final class InstallmentsDescriptorNoPayerCost extends PaymentMethodDescri
         final InstallmentFormatter installmentFormatter = new InstallmentFormatter(spannableStringBuilder, context)
             .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_black))
             .withSemiBoldStyle();
-        installmentFormatter.build(amount);
+        installmentFormatter.apply(amount);
     }
 }

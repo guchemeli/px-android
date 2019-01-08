@@ -7,8 +7,8 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.style.RelativeSizeSpan;
-import com.mercadopago.android.px.model.Currency;
 import com.mercadopago.android.px.internal.util.SuperscriptSpanAdjuster;
+import com.mercadopago.android.px.model.Currency;
 
 class StyleSmallDecimal extends Style {
 
@@ -52,7 +52,7 @@ class StyleSmallDecimal extends Style {
     }
 
     @Override
-    protected Spannable apply(@Nullable final CharSequence charSequence) {
+    public Spannable apply(@Nullable final CharSequence charSequence) {
         final Currency currency = amountFormatter.currencyFormatter.currency;
         final Character decimalSeparator = currency.getDecimalSeparator();
         final Spannable localizedAmount = amountFormatter.apply(charSequence);

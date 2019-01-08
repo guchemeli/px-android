@@ -1,33 +1,32 @@
 package com.mercadopago.android.px.internal.features.express.slider;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
-import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
-import com.mercadopago.android.px.internal.view.SummaryView;
-import java.util.List;
 
-public interface PaymentMethodAdapter<T> {
-    void setModels(T models);
-    void showInstallmentsList();
-    void updateData(int currentIndex, int payerCostSelected);
-    void updatePosition(float positionOffset, int position);
-    void updateViewsOrder(View previousView, View currentView, View nextView);
+public abstract class PaymentMethodAdapter<T, V extends View> {
 
-    class Model {
-        private final List<PaymentMethodDescriptorView.Model> paymentMethodDescriptorModels;
-        private final List<SummaryView.Model> summaryViewModels;
+    @NonNull protected T data;
+    @Nullable protected final V view;
 
-        public Model(final List<PaymentMethodDescriptorView.Model> paymentMethodDescriptorModels,
-            final List<SummaryView.Model> summaryViewModels) {
-            this.paymentMethodDescriptorModels = paymentMethodDescriptorModels;
-            this.summaryViewModels = summaryViewModels;
-        }
-
-        public List<PaymentMethodDescriptorView.Model> getPaymentMethodDescriptorModels() {
-            return paymentMethodDescriptorModels;
-        }
-
-        public List<SummaryView.Model> getSummaryViewModels() {
-            return summaryViewModels;
-        }
+    public PaymentMethodAdapter(@NonNull final T data) {
+        this(data, null);
     }
+
+    public PaymentMethodAdapter(@NonNull final T data, @Nullable final V view) {
+        this.data = data;
+        this.view = view;
+    }
+
+    public void update(@NonNull final T newData) {
+        data = newData;
+    }
+
+    public abstract void showInstallmentsList();
+
+    public abstract void updateData(int currentIndex, int payerCostSelected);
+
+    public abstract void updatePosition(float positionOffset, int position);
+
+    public abstract void updateViewsOrder(View previousView, View currentView, View nextView);
 }

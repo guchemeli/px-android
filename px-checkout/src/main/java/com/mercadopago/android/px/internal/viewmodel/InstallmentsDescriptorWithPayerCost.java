@@ -56,7 +56,7 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
             .withInstallment(getCurrentPayerCost().getInstallments())
             .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_black))
             .withSemiBoldStyle();
-        installmentFormatter.build(amount);
+        installmentFormatter.apply(amount);
     }
 
     /**
@@ -66,7 +66,6 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
     public void updateTotalAmountDescriptionSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context) {
         if (BigDecimal.ZERO.compareTo(getCurrentPayerCost().getInstallmentRate()) < 0) {
-
             final PayerCostFormatter payerCostFormatter =
                 new PayerCostFormatter(spannableStringBuilder, context, getCurrentPayerCost(), getCurrencyId())
                     .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));

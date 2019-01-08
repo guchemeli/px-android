@@ -145,8 +145,18 @@ public final class ViewUtils {
 
     //TODO refactor
     public static void setFontInSpannable(final int indexStart, final int indexEnd,
-        @NonNull final Spannable spannable, @NonNull final String fontStylePath, @NonNull final Context context) {
+        @NonNull final Spannable spannable, @Nullable final String fontStylePath, @NonNull final Context context) {
+
+        if (TextUtil.isEmpty(fontStylePath)) {
+            return;
+        }
+
         final Typeface typeface = TypefaceUtils.load(context.getAssets(), fontStylePath);
+
+        if (typeface == null) {
+            return;
+        }
+
         final StyleSpan styleSpan = new StyleSpan(typeface.getStyle());
         setFontInSpannable(indexStart, indexEnd, spannable, styleSpan);
     }
@@ -160,15 +170,17 @@ public final class ViewUtils {
     //TODO refactor
     public static void setSemiBoldFontInSpannable(final int indexStart, final int indexEnd,
         @NonNull final Spannable spannable, @NonNull final Context context) {
-        final String fontStylePath = Font.SEMI_BOLD.getFontPath();
-        final StyleSpan styleSpan;
-        if (fontStylePath == null) {
-            styleSpan = new StyleSpan(Typeface.BOLD);
+
+        if (TextUtil.isEmpty(Font.SEMI_BOLD.getFontPath())) {
+            setFontInSpannable(indexStart, indexEnd, spannable, new StyleSpan(Typeface.BOLD));
         } else {
-            final Typeface typeface = TypefaceUtils.load(context.getAssets(), fontStylePath);
-            styleSpan = new StyleSpan(typeface.getStyle());
+            final Typeface semiBold = TypefaceUtils.load(context.getAssets(), Font.SEMI_BOLD.getFontPath());
+            if (semiBold == null) {
+                setFontInSpannable(indexStart, indexEnd, spannable, new StyleSpan(Typeface.BOLD));
+                return;
+            }
+            setFontInSpannable(indexStart, indexEnd, spannable, new StyleSpan(semiBold.getStyle()));
         }
-        setFontInSpannable(indexStart, indexEnd, spannable, styleSpan);
     }
 
     public static void stretchHeight(@NonNull final View view) {

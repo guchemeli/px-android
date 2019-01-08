@@ -35,6 +35,6 @@ public class AccountMoneyDescriptor extends PaymentMethodDescriptorView.Model {
         @NonNull final Context context, @NonNull final TextView textView) {
         final InstallmentFormatter installmentFormatter = new InstallmentFormatter(spannableStringBuilder, context)
             .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
-        installmentFormatter.build(accountMoneyMetadata.displayInfo.sliderTitle);
+        installmentFormatter.apply(accountMoneyMetadata.displayInfo.sliderTitle);
     }
 }

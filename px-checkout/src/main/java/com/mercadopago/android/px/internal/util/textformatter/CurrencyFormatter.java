@@ -25,7 +25,7 @@ public class CurrencyFormatter extends ChainFormatter {
     }
 
     @Override
-    protected Spannable apply(final CharSequence charSequence) {
+    public Spannable apply(final CharSequence charSequence) {
         final String space = hasSpace ? " " : "";
         final String symbol = hasSymbol ? currency.getSymbol() : "";
         return new SpannableString(String.format(Locale.getDefault(), "%s%s%s", symbol, space, charSequence));

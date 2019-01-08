@@ -1,23 +1,17 @@
 package com.mercadopago.android.px.internal.features.express.slider;
 
+import android.support.annotation.NonNull;
 import android.view.View;
-
 import com.mercadolibre.android.ui.widgets.MeliButton;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import java.util.List;
 
-public class ConfirmButtonAdapter implements PaymentMethodAdapter<List<PaymentMethodDescriptorView.Model>> {
+public class ConfirmButtonAdapter extends PaymentMethodAdapter<Integer, MeliButton> {
 
-    private List<PaymentMethodDescriptorView.Model> models;
-    private final MeliButton confirmButton;
 
-    public ConfirmButtonAdapter(final MeliButton confirmButton) {
-        this.confirmButton = confirmButton;
-    }
-
-    @Override
-    public void setModels(final List<PaymentMethodDescriptorView.Model> models) {
-        this.models = models;
+    public ConfirmButtonAdapter(final Integer size,
+        @NonNull final MeliButton view) {
+        super(size, view);
     }
 
     @Override
@@ -28,9 +22,9 @@ public class ConfirmButtonAdapter implements PaymentMethodAdapter<List<PaymentMe
     @Override
     public void updateData(final int currentIndex, final int payerCostSelected) {
         if (isLastElement(currentIndex)) {
-            confirmButton.setState(MeliButton.State.DISABLED);
+            view.setState(MeliButton.State.DISABLED);
         } else {
-            confirmButton.setState(MeliButton.State.NORMAL);
+            view.setState(MeliButton.State.NORMAL);
         }
     }
 
@@ -45,6 +39,6 @@ public class ConfirmButtonAdapter implements PaymentMethodAdapter<List<PaymentMe
     }
 
     private boolean isLastElement(final int position) {
-        return position >= models.size() - 1;
+        return position >= data - 1;
     }
 }

@@ -72,7 +72,7 @@ public class AmountFormatter extends ChainFormatter {
     }
 
     @Override
-    protected Spannable apply(final CharSequence charSequence) {
+    public Spannable apply(final CharSequence charSequence) {
         final BigDecimal remainder = total.remainder(BigDecimal.ONE);
         final String localized;
         if (remainder.compareTo(BigDecimal.ZERO) == 0) {

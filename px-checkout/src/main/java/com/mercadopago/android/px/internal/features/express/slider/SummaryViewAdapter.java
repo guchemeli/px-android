@@ -1,26 +1,20 @@
 package com.mercadopago.android.px.internal.features.express.slider;
 
+import android.support.annotation.NonNull;
 import android.view.View;
 import com.mercadopago.android.px.internal.view.SummaryView;
 import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
 import java.util.List;
 
-public class SummaryViewAdapter implements PaymentMethodAdapter<List<SummaryView.Model>> {
+public class SummaryViewAdapter extends PaymentMethodAdapter<List<SummaryView.Model>, SummaryView> {
 
     private static final int NO_SELECTED = -1;
 
-    private List<SummaryView.Model> models;
-    private final SummaryView summaryView;
     private int currentIndex = NO_SELECTED;
     private SummaryView.Model currentModel;
 
-    public SummaryViewAdapter(final SummaryView summaryView) {
-        this.summaryView = summaryView;
-    }
-
-    @Override
-    public void setModels(final List<SummaryView.Model> models) {
-        this.models = models;
+    public SummaryViewAdapter(@NonNull final List<SummaryView.Model> data, @NonNull final SummaryView view) {
+        super(data, view);
     }
 
     @Override
@@ -30,9 +24,9 @@ public class SummaryViewAdapter implements PaymentMethodAdapter<List<SummaryView
 
     @Override
     public void updateData(final int index, final int payerCostSelected) {
-        final SummaryView.Model nextModel = models.get(index);
+        final SummaryView.Model nextModel = data.get(index);
         if (!nextModel.equals(currentModel)) {
-            summaryView.update(nextModel);
+            view.update(nextModel);
         }
         currentIndex = index;
         currentModel = nextModel;
@@ -45,11 +39,11 @@ public class SummaryViewAdapter implements PaymentMethodAdapter<List<SummaryView
         }
         final GoingToModel goingTo = position < currentIndex ? GoingToModel.BACKWARDS : GoingToModel.FORWARD;
         final int nextIndex = goingTo == GoingToModel.BACKWARDS ? currentIndex - 1 : currentIndex + 1;
-        if (!currentModel.equals(models.get(nextIndex))) {
+        if (!currentModel.equals(data.get(nextIndex))) {
             if (goingTo == GoingToModel.BACKWARDS) {
                 positionOffset = 1.0f - positionOffset;
             }
-            summaryView.animateElementList(positionOffset);
+            view.animateElementList(positionOffset);
         }
     }
 

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecorator;
-import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodAdapter;
+import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.model.Card;
@@ -21,7 +21,8 @@ public interface ExpressPayment {
     interface View extends MvpView {
 
         void configureAdapters(@NonNull List<DrawableFragmentItem> items, @NonNull final Site site,
-            final int selectedPayerCost, @NonNull PaymentMethodAdapter.Model paymentMethodViewModel);
+            final int selectedPayerCost, @NonNull HubAdapter
+            .Model paymentMethodViewModel);
 
         void cancel();
 
