@@ -17,10 +17,10 @@ import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.CountyInstallmentsUtils;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.AmountView;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.PayerCostConfigurationModel;
 import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.SummaryAmount;
 import com.mercadopago.android.px.model.exceptions.ApiException;
@@ -94,10 +94,10 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
         summaryAmountRepository.getSummaryAmount(bin).enqueue(new Callback<SummaryAmount>() {
             @Override
             public void success(final SummaryAmount summaryAmount) {
-                final PayerCostConfigurationModel payerCostConfiguration =
-                    summaryAmount.getPayerCostConfiguration(summaryAmount.getSelectedAmountConfiguration());
+                final AmountConfiguration amountConfiguration =
+                    summaryAmount.getAmountConfiguration(summaryAmount.getDefaultAmountConfiguration());
                 discountRepository.addConfigurations(summaryAmount);
-                payerCostSolver.solve(InstallmentsPresenter.this, payerCostConfiguration.getPayerCosts());
+                payerCostSolver.solve(InstallmentsPresenter.this, amountConfiguration.getPayerCosts());
 
                 if (isViewAttached()) {
                     getView().showAmount(discountRepository.getCurrentConfiguration(),

@@ -8,17 +8,17 @@ import java.util.Map;
 
 public class SummaryAmount implements Parcelable {
 
-    private final String selectedAmountConfiguration;
+    private final String defaultAmountConfiguration;
     private Map<String, DiscountConfigurationModel> discountConfigurations;
-    private Map<String, PayerCostConfigurationModel> payerCostConfigurations;
+    private Map<String, AmountConfiguration> amountConfigurations;
 
     /* default */ SummaryAmount(final Parcel in) {
-        selectedAmountConfiguration = in.readString();
+        defaultAmountConfiguration = in.readString();
     }
 
     @Override
     public void writeToParcel(final Parcel dest, final int flags) {
-        dest.writeString(selectedAmountConfiguration);
+        dest.writeString(defaultAmountConfiguration);
     }
 
     @Override
@@ -38,12 +38,12 @@ public class SummaryAmount implements Parcelable {
         }
     };
 
-    public String getSelectedAmountConfiguration() {
-        return selectedAmountConfiguration;
+    public String getDefaultAmountConfiguration() {
+        return defaultAmountConfiguration;
     }
 
-    public PayerCostConfigurationModel getPayerCostConfiguration(final String key) {
-        return payerCostConfigurations.get(key);
+    public AmountConfiguration getAmountConfiguration(final String key) {
+        return amountConfigurations.get(key);
     }
 
     @NonNull

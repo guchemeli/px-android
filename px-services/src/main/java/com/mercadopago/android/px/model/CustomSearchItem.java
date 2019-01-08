@@ -23,12 +23,12 @@ public class CustomSearchItem implements Serializable, Parcelable {
 
     @Nullable private String discountInfo;
 
-    private String selectedAmountConfiguration;
-    private Map<String, PayerCostModel> payerCostConfigurations;
+    private String defaultAmountConfiguration;
+    private Map<String, AmountConfiguration> amountConfigurations;
 
     @Deprecated
     public CustomSearchItem() {
-        payerCostConfigurations = new HashMap<>();
+        amountConfigurations = new HashMap<>();
     }
 
     protected CustomSearchItem(final Parcel in) {
@@ -38,9 +38,9 @@ public class CustomSearchItem implements Serializable, Parcelable {
         comment = in.readString();
         paymentMethodId = in.readString();
         discountInfo = in.readString();
-        selectedAmountConfiguration = in.readString();
-        payerCostConfigurations = new HashMap<>();
-        in.readMap(payerCostConfigurations, CustomSearchItem.class.getClassLoader());
+        defaultAmountConfiguration = in.readString();
+        amountConfigurations = new HashMap<>();
+        in.readMap(amountConfigurations, CustomSearchItem.class.getClassLoader());
     }
 
     public static final Creator<CustomSearchItem> CREATOR = new Creator<CustomSearchItem>() {
@@ -80,12 +80,12 @@ public class CustomSearchItem implements Serializable, Parcelable {
         return comment;
     }
 
-    public String getSelectedAmountConfiguration() {
-        return selectedAmountConfiguration;
+    public String getDefaultAmountConfiguration() {
+        return defaultAmountConfiguration;
     }
 
-    public PayerCostModel getPayerCostConfiguration(final String key) {
-        return payerCostConfigurations.get(key);
+    public AmountConfiguration getPayerCostConfiguration(final String key) {
+        return amountConfigurations.get(key);
     }
 
     @Override
@@ -101,8 +101,8 @@ public class CustomSearchItem implements Serializable, Parcelable {
         dest.writeString(paymentMethodId);
         dest.writeString(comment);
         dest.writeString(discountInfo);
-        dest.writeString(selectedAmountConfiguration);
-        dest.writeMap(payerCostConfigurations);
+        dest.writeString(defaultAmountConfiguration);
+        dest.writeMap(amountConfigurations);
     }
 
     @Deprecated
