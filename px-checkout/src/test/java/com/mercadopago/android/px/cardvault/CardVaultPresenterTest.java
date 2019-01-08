@@ -13,7 +13,7 @@ import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.preferences.PaymentPreference;
@@ -197,7 +197,7 @@ public class CardVaultPresenterTest {
     @Test
     public void verifyIsSavedCardAndSolverIsCalled() {
         configureMockedCardWith();
-        when(payerCostRepository.getCurrentConfiguration()).thenReturn(mock(PayerCostModel.class));
+        when(payerCostRepository.getCurrentConfiguration()).thenReturn(mock(AmountConfiguration.class));
 
         presenter.initialize();
 

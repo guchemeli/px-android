@@ -30,7 +30,7 @@ import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
@@ -115,9 +115,9 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         final ExpressMetadata expressMetadata = expressMetadataList.get(paymentMethodSelectedIndex);
         PayerCost payerCost = null;
         if (expressMetadata.isCard()) {
-            final PayerCostModel payerCostModel =
+            final AmountConfiguration amountConfiguration =
                 payerCostRepository.getConfigurationFor(expressMetadata.getCard().getId());
-            payerCost = payerCostModel.getPayerCost(payerCostSelection.get(paymentMethodSelectedIndex));
+            payerCost = amountConfiguration.getPayerCost(payerCostSelection.get(paymentMethodSelectedIndex));
         }
 
         //TODO fill cards with esc
@@ -249,15 +249,15 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         final ExpressMetadata expressMetadata = expressMetadataList.get(currentItem);
         final CardMetadata cardMetadata = expressMetadata.getCard();
         if (currentItem <= expressMetadataList.size() && cardMetadata != null) {
-            final PayerCostModel payerCostModel = payerCostRepository.getConfigurationFor(cardMetadata.getId());
-            final List<PayerCost> payerCostList = payerCostModel.getPayerCosts();
+            final AmountConfiguration amountConfiguration = payerCostRepository.getConfigurationFor(cardMetadata.getId());
+            final List<PayerCost> payerCostList = amountConfiguration.getPayerCosts();
             if (payerCostList != null && payerCostList.size() > 1) {
                 int selectedPayerCostIndex = payerCostSelection.get(currentItem);
                 if (selectedPayerCostIndex == SELECTED_PAYER_COST_NONE) {
-                    selectedPayerCostIndex = payerCostModel.getDefaultPayerCostIndex();
+                    selectedPayerCostIndex = amountConfiguration.getDefaultPayerCostIndex();
                 }
                 getView().showInstallmentsList(payerCostList, selectedPayerCostIndex);
-                new InstallmentsEventTrack(expressMetadata, payerCostModel).track();
+                new InstallmentsEventTrack(expressMetadata, amountConfiguration).track();
             }
         }
     }

@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.repository;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import javax.annotation.Nonnull;
 
 public interface PayerCostRepository extends ResourcesProvider {
@@ -15,7 +15,7 @@ public interface PayerCostRepository extends ResourcesProvider {
      * @return The current dominant configuration.
      */
     @NonNull
-    PayerCostModel getCurrentConfiguration();
+    AmountConfiguration getCurrentConfiguration();
 
     /**
      * Obtains the complete payer cost configuration for a specif custom option.
@@ -24,5 +24,5 @@ public interface PayerCostRepository extends ResourcesProvider {
      * @return The payer cost configuration, returns null if don't have a configuration or ID is invalid.
      */
     @NonNull
-    PayerCostModel getConfigurationFor(@Nonnull final String cardId);
+    AmountConfiguration getConfigurationFor(@Nonnull final String cardId);
 }

@@ -16,7 +16,7 @@ import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.model.CardMetadata;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.List;
 
@@ -37,9 +37,9 @@ public final class InstallmentsDescriptorNoPayerCost extends PaymentMethodDescri
         if (card == null) {
             return new InstallmentsDescriptorNoPayerCost(currencyId, null);
         } else {
-            final PayerCostModel payerCostModel = payerCostConfiguration.getConfigurationFor(card.getId());
-            return new InstallmentsDescriptorNoPayerCost(currencyId, payerCostModel.getPayerCosts(),
-                payerCostModel.getDefaultPayerCostIndex());
+            final AmountConfiguration amountConfiguration = payerCostConfiguration.getConfigurationFor(card.getId());
+            return new InstallmentsDescriptorNoPayerCost(currencyId, amountConfiguration.getPayerCosts(),
+                amountConfiguration.getDefaultPayerCostIndex());
         }
     }
 

@@ -10,7 +10,7 @@ import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.mocks.StubSummaryAmount;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.SummaryAmount;
 import com.mercadopago.android.px.model.exceptions.ApiException;
@@ -82,13 +82,12 @@ public class InstallmentsPresenterTest {
     public void whenIsGuessingAndPayerCostIsSelectedFinishWithResult() {
         when(userSelectionRepository.hasCardSelected()).thenReturn(false);
         final SummaryAmount response = StubSummaryAmount.getSummaryAmountTwoPayerCosts();
-        when(summaryAmountRepository.getSummaryAmount(anyString()))
-            .thenReturn(new StubSuccessMpCall<>(response));
+        when(summaryAmountRepository.getSummaryAmount(anyString())).thenReturn(new StubSuccessMpCall<>(response));
 
-        final String selectedAmountConfiguration = response.getSelectedAmountConfiguration();
+        final String selectedAmountConfiguration = response.getDefaultAmountConfiguration();
 
         presenter.initialize();
-        presenter.onClick(response.getPayerCostConfiguration(selectedAmountConfiguration).getPayerCosts().get(0));
+        presenter.onClick(response.getAmountConfiguration(selectedAmountConfiguration).getPayerCosts().get(0));
 
         verify(view).hideLoadingView();
         verify(view).finishWithResult();
@@ -99,8 +98,7 @@ public class InstallmentsPresenterTest {
         when(checkoutPreference.getSite()).thenReturn(Sites.COLOMBIA);
         when(userSelectionRepository.hasCardSelected()).thenReturn(false);
         final SummaryAmount response = StubSummaryAmount.getSummaryAmountTwoPayerCosts();
-        when(summaryAmountRepository.getSummaryAmount(anyString()))
-            .thenReturn(new StubSuccessMpCall<>(response));
+        when(summaryAmountRepository.getSummaryAmount(anyString())).thenReturn(new StubSuccessMpCall<>(response));
 
         presenter.initialize();
         verify(view).warnAboutBankInterests();
@@ -108,11 +106,11 @@ public class InstallmentsPresenterTest {
 
     @Test
     public void whenCardSelectedThenResolvePayerCosts() {
-        final PayerCostModel payerCostModel = mock(PayerCostModel.class);
+        final AmountConfiguration amountConfiguration = mock(AmountConfiguration.class);
         final List<PayerCost> payerCosts = mock(List.class);
         when(userSelectionRepository.hasCardSelected()).thenReturn(true);
-        when(payerCostRepository.getCurrentConfiguration()).thenReturn(payerCostModel);
-        when(payerCostModel.getPayerCosts()).thenReturn(payerCosts);
+        when(payerCostRepository.getCurrentConfiguration()).thenReturn(amountConfiguration);
+        when(amountConfiguration.getPayerCosts()).thenReturn(payerCosts);
         when(payerCostRepository.getCurrentConfiguration().getPayerCosts()).thenReturn(payerCosts);
 
         presenter.initialize();
@@ -124,20 +122,18 @@ public class InstallmentsPresenterTest {
     public void verifyIsGuessingAndSolverIsCalled() {
         when(userSelectionRepository.hasCardSelected()).thenReturn(false);
         final SummaryAmount response = StubSummaryAmount.getSummaryAmountEmptyPayerCosts();
-        when(summaryAmountRepository.getSummaryAmount(anyString()))
-            .thenReturn(new StubSuccessMpCall<>(response));
+        when(summaryAmountRepository.getSummaryAmount(anyString())).thenReturn(new StubSuccessMpCall<>(response));
 
         presenter.initialize();
 
         verify(view).hideLoadingView();
-        verify(payerCostSolver).solve(presenter,
-            response.getPayerCostConfiguration(response.getSelectedAmountConfiguration()).getPayerCosts());
+        verify(payerCostSolver).solve(presenter, response.getAmountConfiguration(response.getDefaultAmountConfiguration()).getPayerCosts());
     }
 
     @Test
     public void verifyIsSavedCardAndSolverIsCalled() {
         when(userSelectionRepository.hasCardSelected()).thenReturn(true);
-        when(payerCostRepository.getCurrentConfiguration()).thenReturn(mock(PayerCostModel.class));
+        when(payerCostRepository.getCurrentConfiguration()).thenReturn(mock(AmountConfiguration.class));
 
         presenter.initialize();
 

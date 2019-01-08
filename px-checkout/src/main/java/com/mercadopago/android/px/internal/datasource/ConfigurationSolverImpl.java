@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.CustomSearchItem;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import java.util.List;
 import javax.annotation.Nonnull;
 
@@ -31,7 +31,7 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
     public String getConfigurationHashFor(@Nonnull final String customOptionId) {
         for (final CustomSearchItem customSearchItem : customSearchItems) {
             if (customSearchItem.getId() != null && customSearchItem.getId().equals(customOptionId)) {
-                return customSearchItem.getSelectedAmountConfiguration();
+                return customSearchItem.getDefaultAmountConfiguration();
             }
         }
         return TextUtil.EMPTY;
@@ -39,10 +39,10 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
 
     @Override
     @Nullable
-    public PayerCostModel getPayerCostConfigurationFor(@NonNull final String customOptionId) {
+    public AmountConfiguration getPayerCostConfigurationFor(@NonNull final String customOptionId) {
         for (final CustomSearchItem customSearchItem : customSearchItems) {
             if (customSearchItem.getId() != null && customSearchItem.getId().equals(customOptionId)) {
-                return customSearchItem.getPayerCostConfiguration(customSearchItem.getSelectedAmountConfiguration());
+                return customSearchItem.getPayerCostConfiguration(customSearchItem.getDefaultAmountConfiguration());
             }
         }
         return null;
@@ -50,7 +50,7 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
 
     @Override
     @Nullable
-    public PayerCostModel getPayerCostConfigurationFor(@NonNull final String customOptionId,
+    public AmountConfiguration getPayerCostConfigurationFor(@NonNull final String customOptionId,
         @NonNull final String configurationHash) {
         for (final CustomSearchItem customSearchItem : customSearchItems) {
             if (customSearchItem.getId() != null && customSearchItem.getId().equals(customOptionId)) {

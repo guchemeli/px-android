@@ -16,7 +16,7 @@ import com.mercadopago.android.px.internal.util.textformatter.PayerCostFormatter
 import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,13 +29,13 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
 
     @NonNull
     public static PaymentMethodDescriptorView.Model createFrom(
-        @NonNull final PaymentSettingRepository paymentConfiguration, @NonNull final PayerCostModel payerCostModel) {
+        @NonNull final PaymentSettingRepository paymentConfiguration, @NonNull final AmountConfiguration amountConfiguration) {
 
         final CheckoutPreference checkoutPreference = paymentConfiguration.getCheckoutPreference();
         final String currencyId = checkoutPreference.getSite().getCurrencyId();
 
         return new InstallmentsDescriptorWithPayerCost(currencyId,
-            payerCostModel.getPayerCosts(), payerCostModel.getDefaultPayerCostIndex());
+            amountConfiguration.getPayerCosts(), amountConfiguration.getDefaultPayerCostIndex());
     }
 
     private InstallmentsDescriptorWithPayerCost(@NonNull final String currencyId,

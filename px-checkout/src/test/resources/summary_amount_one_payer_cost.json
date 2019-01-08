@@ -1,7 +1,7 @@
 {
-  "selected_amount_configuration": "fake_selected_hash",
+  "default_amount_configuration": "fake_selected_hash",
   "discount_configurations": null,
-  "payer_cost_configurations": {
+  "amount_configurations": {
     "fake_selected_hash": {
       "payer_costs": [
         {

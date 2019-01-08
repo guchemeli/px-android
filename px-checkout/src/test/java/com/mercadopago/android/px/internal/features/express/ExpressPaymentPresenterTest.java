@@ -16,7 +16,7 @@ import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
@@ -73,7 +73,7 @@ public class ExpressPaymentPresenterTest {
     private CardMetadata cardMetadata;
 
     @Mock
-    private PayerCostModel payerCostModel;
+    private AmountConfiguration amountConfiguration;
 
     @Mock
     private DiscountConfigurationModel discountConfigurationModel;
@@ -95,7 +95,7 @@ public class ExpressPaymentPresenterTest {
         when(cardMetadata.getId()).thenReturn("123");
         when(discountRepository.getConfigurationFor("123")).thenReturn(discountConfigurationModel);
         when(discountRepository.getConfigurationFor(TextUtil.EMPTY)).thenReturn(discountConfigurationModel);
-        when(payerCostRepository.getConfigurationFor("123")).thenReturn(payerCostModel);
+        when(payerCostRepository.getConfigurationFor("123")).thenReturn(amountConfiguration);
 
         expressPaymentPresenter = new ExpressPaymentPresenter(paymentRepository, configuration, discountRepository,
             amountRepository, groupsRepository, payerCostRepository);
@@ -157,7 +157,7 @@ public class ExpressPaymentPresenterTest {
         final PayerCost firstPayerCost = mock(PayerCost.class);
         final List<PayerCost> payerCostList =
             Arrays.asList(mock(PayerCost.class), firstPayerCost, mock(PayerCost.class));
-        when(payerCostModel.getPayerCosts()).thenReturn(payerCostList);
+        when(amountConfiguration.getPayerCosts()).thenReturn(payerCostList);
 
         expressPaymentPresenter.onPayerCostSelected(paymentMethodIndex, payerCostList.get(selectedPayerCostIndex));
 

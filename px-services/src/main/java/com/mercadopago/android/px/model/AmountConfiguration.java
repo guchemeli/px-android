@@ -8,19 +8,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PayerCostModel implements Serializable, Parcelable {
+public class AmountConfiguration implements Serializable, Parcelable {
 
     public static final int NO_SELECTED = -1;
 
     public final int selectedPayerCostIndex;
     public final List<PayerCost> payerCosts;
 
-    public PayerCostModel(final int selectedPayerCostIndex, @Nullable final List<PayerCost> payerCosts) {
+    public AmountConfiguration(final int selectedPayerCostIndex, @Nullable final List<PayerCost> payerCosts) {
         this.selectedPayerCostIndex = selectedPayerCostIndex;
         this.payerCosts = payerCosts;
     }
 
-    protected PayerCostModel(final Parcel in) {
+    protected AmountConfiguration(final Parcel in) {
         selectedPayerCostIndex = in.readInt();
         payerCosts = in.createTypedArrayList(PayerCost.CREATOR);
     }
@@ -42,15 +42,15 @@ public class PayerCostModel implements Serializable, Parcelable {
         }
     }
 
-    public static final Creator<PayerCostModel> CREATOR = new Creator<PayerCostModel>() {
+    public static final Creator<AmountConfiguration> CREATOR = new Creator<AmountConfiguration>() {
         @Override
-        public PayerCostModel createFromParcel(final Parcel in) {
-            return new PayerCostModel(in);
+        public AmountConfiguration createFromParcel(final Parcel in) {
+            return new AmountConfiguration(in);
         }
 
         @Override
-        public PayerCostModel[] newArray(final int size) {
-            return new PayerCostModel[size];
+        public AmountConfiguration[] newArray(final int size) {
+            return new AmountConfiguration[size];
         }
     };
 
