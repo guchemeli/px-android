@@ -322,9 +322,12 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         // indicator must be after paymentMethodPager adapter is set.
 
         final List<PaymentMethodAdapter> adapters = new ArrayList<>();
+        final TitlePagerAdapter titlePagerAdapter =
+            new TitlePagerAdapter(model.getPaymentMethodDescriptorModels(), titlePager);
+        titlePager.setAdapter(titlePagerAdapter);
         adapters.add(new SummaryViewAdapter(model.getSummaryViewModels(), summaryView));
         adapters.add(new PaymentMethodHeaderAdapter(model.getPaymentMethodDescriptorModels(), paymentMethodHeaderView));
-        adapters.add(new TitlePagerAdapter(model.getPaymentMethodDescriptorModels(), titlePager));
+        adapters.add(titlePagerAdapter);
         adapters.add(new ConfirmButtonAdapter(model.getPaymentMethodDescriptorModels().size(), confirmButton));
         hubAdapter.update(adapters);
     }
