@@ -3,10 +3,11 @@ package com.mercadopago.android.px.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SummaryAmount implements Parcelable {
+public class SummaryAmount implements Parcelable, Serializable {
 
     private final String defaultAmountConfiguration;
     private Map<String, DiscountConfigurationModel> discountConfigurations;

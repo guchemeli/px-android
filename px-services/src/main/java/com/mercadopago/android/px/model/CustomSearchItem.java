@@ -84,7 +84,7 @@ public class CustomSearchItem implements Serializable, Parcelable {
         return defaultAmountConfiguration;
     }
 
-    public AmountConfiguration getPayerCostConfiguration(final String key) {
+    public AmountConfiguration getAmountConfiguration(final String key) {
         return amountConfigurations.get(key);
     }
 
