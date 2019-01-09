@@ -1,6 +1,6 @@
 package com.mercadopago.android.px.internal.features.express;
 
-import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodAdapter;
+import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -11,12 +11,12 @@ import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.CardMetadata;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.model.Item;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.Sites;
@@ -172,7 +172,7 @@ public class ExpressPaymentPresenterTest {
 
         verify(view).showToolbarElementDescriptor(any(ElementDescriptorView.Model.class));
         verify(view).configureAdapters(anyListOf(DrawableFragmentItem.class), any(Site.class), anyInt(),
-            any(PaymentMethodAdapter.Model.class));
+            any(HubAdapter.Model.class));
     }
 
     private void verifyOnViewResumed() {

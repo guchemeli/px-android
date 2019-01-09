@@ -7,7 +7,7 @@ import com.mercadopago.android.px.internal.view.TitlePager;
 import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
 import java.util.List;
 
-public class TitlePagerAdapter extends PaymentMethodAdapter<List<PaymentMethodDescriptorView.Model>, TitlePager> {
+public class TitlePagerAdapter extends ViewAdapter<List<PaymentMethodDescriptorView.Model>, TitlePager> {
 
     private static final int NO_SELECTED = -1;
 
@@ -19,11 +19,6 @@ public class TitlePagerAdapter extends PaymentMethodAdapter<List<PaymentMethodDe
     public TitlePagerAdapter(@NonNull final List<PaymentMethodDescriptorView.Model> models,
         @NonNull final TitlePager titlePager) {
         super(models, titlePager);
-    }
-
-    @Override
-    public void showInstallmentsList() {
-        //Nothing to do here
     }
 
     @Override
@@ -44,7 +39,9 @@ public class TitlePagerAdapter extends PaymentMethodAdapter<List<PaymentMethodDe
     }
 
     @Override
-    public void updateViewsOrder(final View previousView, final View currentView, final View nextView) {
+    public void updateViewsOrder(@NonNull final View previousView,
+        @NonNull final View currentView,
+        @NonNull final View nextView) {
         this.previousView = (PaymentMethodDescriptorView) previousView;
         this.currentView = (PaymentMethodDescriptorView) currentView;
         this.nextView = (PaymentMethodDescriptorView) nextView;

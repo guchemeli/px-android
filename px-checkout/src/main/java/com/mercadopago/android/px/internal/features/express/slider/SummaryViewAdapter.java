@@ -6,7 +6,7 @@ import com.mercadopago.android.px.internal.view.SummaryView;
 import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
 import java.util.List;
 
-public class SummaryViewAdapter extends PaymentMethodAdapter<List<SummaryView.Model>, SummaryView> {
+public class SummaryViewAdapter extends ViewAdapter<List<SummaryView.Model>, SummaryView> {
 
     private static final int NO_SELECTED = -1;
 
@@ -15,11 +15,6 @@ public class SummaryViewAdapter extends PaymentMethodAdapter<List<SummaryView.Mo
 
     public SummaryViewAdapter(@NonNull final List<SummaryView.Model> data, @NonNull final SummaryView view) {
         super(data, view);
-    }
-
-    @Override
-    public void showInstallmentsList() {
-        //Nothing to do here
     }
 
     @Override
@@ -45,10 +40,5 @@ public class SummaryViewAdapter extends PaymentMethodAdapter<List<SummaryView.Mo
             }
             view.animateElementList(positionOffset);
         }
-    }
-
-    @Override
-    public void updateViewsOrder(final View previousView, final View currentView, final View nextView) {
-        //Nothing to do here
     }
 }

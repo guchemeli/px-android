@@ -39,10 +39,10 @@ import com.mercadopago.android.px.internal.features.express.animations.SlideAnim
 import com.mercadopago.android.px.internal.features.express.installments.InstallmentsAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.ConfirmButtonAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
-import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodFragmentAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodFragmentAdapterLowRes;
 import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodHeaderAdapter;
+import com.mercadopago.android.px.internal.features.express.slider.SplitPaymentHeaderAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.SummaryViewAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.TitlePagerAdapter;
 import com.mercadopago.android.px.internal.features.plugins.PaymentProcessorActivity;
@@ -71,6 +71,7 @@ import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.app.Activity.RESULT_CANCELED;
@@ -118,7 +119,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     private PaymentMethodHeaderView paymentMethodHeaderView;
     private LabeledSwitch splitPaymentView;
 
-    private final PaymentMethodAdapter hubAdapter = new HubAdapter();
+    private final HubAdapter hubAdapter = new HubAdapter();
 
     public static Fragment getInstance() {
         return new ExpressPaymentFragment();
@@ -321,15 +322,16 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
         // indicator must be after paymentMethodPager adapter is set.
 
-        final List<PaymentMethodAdapter> adapters = new ArrayList<>();
         final TitlePagerAdapter titlePagerAdapter =
             new TitlePagerAdapter(model.getPaymentMethodDescriptorModels(), titlePager);
         titlePager.setAdapter(titlePagerAdapter);
-        adapters.add(new SummaryViewAdapter(model.getSummaryViewModels(), summaryView));
-        adapters.add(new PaymentMethodHeaderAdapter(model.getPaymentMethodDescriptorModels(), paymentMethodHeaderView));
-        adapters.add(titlePagerAdapter);
-        adapters.add(new ConfirmButtonAdapter(model.getPaymentMethodDescriptorModels().size(), confirmButton));
-        hubAdapter.update(adapters);
+
+        hubAdapter.update(Arrays.asList(titlePagerAdapter,
+            new SummaryViewAdapter(model.getSummaryViewModels(), summaryView),
+            new SplitPaymentHeaderAdapter(new ArrayList<SplitPaymentHeaderAdapter.Model>(), splitPaymentView),
+            new PaymentMethodHeaderAdapter(model.getPaymentMethodDescriptorModels(), paymentMethodHeaderView),
+            new ConfirmButtonAdapter(model.getPaymentMethodDescriptorModels().size(), confirmButton)
+        ));
     }
 
     private void animateViewPagerDown() {

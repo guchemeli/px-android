@@ -8,7 +8,7 @@ import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
 import java.util.List;
 
 public class PaymentMethodHeaderAdapter
-    extends PaymentMethodAdapter<List<PaymentMethodDescriptorView.Model>, PaymentMethodHeaderView> {
+    extends ViewAdapter<List<PaymentMethodDescriptorView.Model>, PaymentMethodHeaderView> {
 
     private static final int NO_SELECTED = -1;
 
@@ -41,10 +41,5 @@ public class PaymentMethodHeaderAdapter
                 currentModel.hasPayerCostList(), nextModel.hasPayerCostList());
             view.updateArrowVisibility(positionOffset, viewModel);
         }
-    }
-
-    @Override
-    public void updateViewsOrder(final View previousView, final View currentView, final View nextView) {
-        //Nothing to do here
     }
 }
