@@ -88,7 +88,7 @@ public class DiscountServiceImp implements DiscountRepository {
             @Override
             public void success(final PaymentMethodSearch paymentMethodSearch) {
                 configurationSolver =
-                    new ConfigurationSolverImpl(paymentMethodSearch.getSelectedAmountConfiguration(),
+                    new ConfigurationSolverImpl(paymentMethodSearch.getDefaultAmountConfiguration(),
                         paymentMethodSearch.getCustomSearchItems());
                 discountConfigurations = paymentMethodSearch.getDiscountConfigurations();
             }
@@ -105,6 +105,6 @@ public class DiscountServiceImp implements DiscountRepository {
         // TODO: remove
         init();
         discountConfigurations.putAll(summaryAmount.getDiscountConfigurations());
-        defaultSelectedGuessingConfiguration = summaryAmount.getSelectedAmountConfiguration();
+        defaultSelectedGuessingConfiguration = summaryAmount.getDefaultAmountConfiguration();
     }
 }

@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.model.PayerCostModel;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import javax.annotation.Nonnull;
 
 public interface ConfigurationSolver {
@@ -31,7 +31,7 @@ public interface ConfigurationSolver {
      * @return The payer cost model associated to the custom option ID.
      */
     @Nullable
-    PayerCostModel getPayerCostConfigurationFor(@NonNull final String customOptionId);
+    AmountConfiguration getPayerCostConfigurationFor(@NonNull final String customOptionId);
 
     /**
      * Retrieves the dominant payer cost model for a custom option and a particular configuration hash.
@@ -41,6 +41,6 @@ public interface ConfigurationSolver {
      * @return The payer cost model associated to the custom option ID and configuration hash.
      */
     @Nullable
-    PayerCostModel getPayerCostConfigurationFor(@NonNull final String customOptionId,
+    AmountConfiguration getPayerCostConfigurationFor(@NonNull final String customOptionId,
         @NonNull final String configurationHash);
 }

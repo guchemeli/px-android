@@ -4,6 +4,5 @@ import android.text.Spannable;
 
 abstract class ChainFormatter {
 
-    protected abstract Spannable apply(CharSequence charSequence);
-
+    public abstract Spannable apply(CharSequence charSequence);
 }

@@ -7,8 +7,9 @@ import android.text.SpannableStringBuilder;
 import com.mercadolibre.android.ui.font.Font;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.ViewUtils;
+import java.util.Locale;
 
-public class InstallmentFormatter extends ChainFormatter {
+public class AmountLabeledFormatter extends ChainFormatter {
 
     private int installment;
     private int textColor;
@@ -16,77 +17,61 @@ public class InstallmentFormatter extends ChainFormatter {
     private final SpannableStringBuilder spannableStringBuilder;
     private boolean semiBoldStyle;
 
-    public InstallmentFormatter(@NonNull final SpannableStringBuilder spannableStringBuilder,
+    public AmountLabeledFormatter(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context) {
         this.spannableStringBuilder = spannableStringBuilder;
         this.context = context;
         semiBoldStyle = false;
     }
 
-    public InstallmentFormatter withInstallment(final int installment) {
+    public AmountLabeledFormatter withInstallment(final int installment) {
         this.installment = installment;
         return this;
     }
 
-    public InstallmentFormatter withTextColor(final int color) {
+    public AmountLabeledFormatter withTextColor(final int color) {
         textColor = color;
         return this;
     }
 
-    public InstallmentFormatter withSemiBoldStyle() {
+    public AmountLabeledFormatter withSemiBoldStyle() {
         semiBoldStyle = true;
         return this;
     }
 
-    public Spannable build(@NonNull final CharSequence amount) {
-        return apply(amount);
-    }
-
     @Override
-    protected Spannable apply(@NonNull final CharSequence amount) {
+    public Spannable apply(@NonNull final CharSequence amount) {
         final int indexStart = spannableStringBuilder.length();
+        final int length;
         if (installment != 0) {
 
             final int holder = R.string.px_amount_with_installments_holder;
-            final String installmentAmount = String.valueOf(installment);
+            final String installmentAmount = String.format(Locale.getDefault(), "%d", installment);
             final int holderFixedCharactersLength = 2;
-
-            final int length = installmentAmount.length() + holderFixedCharactersLength + amount.length();
+            length = installmentAmount.length() + holderFixedCharactersLength + amount.length();
 
             final CharSequence charSequence = context.getResources().getString(holder, installmentAmount, amount);
-
             spannableStringBuilder.append(charSequence);
-
-            updateTextColor(indexStart, indexStart + length);
-            updateTextStyle(indexStart, indexStart + length);
         } else {
+
             final int holder = R.string.px_string_holder;
             final CharSequence charSequence = context.getResources().getString(holder, amount);
             spannableStringBuilder.append(charSequence);
-
-            final int length = charSequence.length();
-
-            updateTextColor(indexStart, indexStart + length);
-            updateTextStyle(indexStart, indexStart + length);
+            length = charSequence.length();
         }
+
+        ViewUtils.setColorInSpannable(textColor, indexStart, indexStart + length, spannableStringBuilder);
+        updateTextStyle(indexStart, indexStart + length);
 
         return spannableStringBuilder;
-    }
-
-    private void updateTextColor(final int indexStart, final int indexEnd) {
-        if (textColor != 0) {
-            ViewUtils.setColorInSpannable(textColor, indexStart, indexEnd, spannableStringBuilder);
-        }
     }
 
     private void updateTextStyle(final int indexStart, final int indexEnd) {
         if (semiBoldStyle) {
             ViewUtils.setSemiBoldFontInSpannable(indexStart, indexEnd, spannableStringBuilder, context);
         } else {
-            final String fontStylePath = Font.REGULAR.getFontPath();
-            if (fontStylePath != null) {
-                ViewUtils.setFontInSpannable(indexStart, indexEnd, spannableStringBuilder, fontStylePath, context);
-            }
+            ViewUtils
+                .setFontInSpannable(indexStart, indexEnd, spannableStringBuilder, Font.REGULAR.getFontPath(), context);
         }
     }
 }

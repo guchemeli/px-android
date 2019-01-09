@@ -38,11 +38,11 @@ public class ConfigurationSolverTest {
             new ConfigurationSolverImpl(HASH_SAMPLE_GENERAL_CONFIGURATION, customSearchItems);
 
         when(accountMoneyCustomSearchItem.getId()).thenReturn(ACCOUNT_MONEY_SAMPLE_ID);
-        when(accountMoneyCustomSearchItem.getSelectedAmountConfiguration())
+        when(accountMoneyCustomSearchItem.getDefaultAmountConfiguration())
             .thenReturn(HASH_SAMPLE_ACCOUNT_MONEY_CONFIGURATION);
 
         when(cardCustomSearchItem.getId()).thenReturn(CARD_SAMPLE_ID);
-        when(cardCustomSearchItem.getSelectedAmountConfiguration()).thenReturn(HASH_SAMPLE_SAVED_CARD_CONFIGURATION);
+        when(cardCustomSearchItem.getDefaultAmountConfiguration()).thenReturn(HASH_SAMPLE_SAVED_CARD_CONFIGURATION);
     }
 
     @Test

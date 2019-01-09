@@ -24,7 +24,7 @@ public class PaymentMethodSearch implements Serializable {
     /**
      * amount management
      **/
-    private String selectedAmountConfiguration;
+    private String defaultAmountConfiguration;
     private Map<String, DiscountConfigurationModel> discountConfigurations;
 
     //region deprecated
@@ -293,8 +293,8 @@ public class PaymentMethodSearch implements Serializable {
     }
 
     @NonNull
-    public String getSelectedAmountConfiguration() {
-        return selectedAmountConfiguration;
+    public String getDefaultAmountConfiguration() {
+        return defaultAmountConfiguration;
     }
 
     @NonNull
