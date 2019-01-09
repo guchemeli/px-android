@@ -7,7 +7,7 @@ import android.text.SpannableStringBuilder;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.TextUtil;
-import com.mercadopago.android.px.internal.util.textformatter.InstallmentFormatter;
+import com.mercadopago.android.px.internal.util.textformatter.AmountLabeledFormatter;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.model.AccountMoneyMetadata;
 
@@ -31,10 +31,11 @@ public class AccountMoneyDescriptor extends PaymentMethodDescriptorView.Model {
     }
 
     @Override
-    public void updateInstallmentsDescriptionSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
+    public void updateSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context, @NonNull final TextView textView) {
-        final InstallmentFormatter installmentFormatter = new InstallmentFormatter(spannableStringBuilder, context)
-            .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
-        installmentFormatter.apply(accountMoneyMetadata.displayInfo.sliderTitle);
+        final AmountLabeledFormatter amountLabeledFormatter =
+            new AmountLabeledFormatter(spannableStringBuilder, context)
+                .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
+        amountLabeledFormatter.apply(accountMoneyMetadata.displayInfo.sliderTitle);
     }
 }
