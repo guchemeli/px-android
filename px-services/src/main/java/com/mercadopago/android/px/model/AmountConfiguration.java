@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Amount configuration represents one hash_amount representation. this DTO is strongly linked with a {@link
+ * Amount configuration represents one hash_amount representation for cards. this DTO is strongly linked with a {@link
  * DiscountConfigurationModel}.
  */
 @Keep
@@ -24,12 +24,12 @@ public class AmountConfiguration implements Serializable {
     /**
      * Payer cost configuration for single payment method selection
      */
-    public List<PayerCost> payerCosts;
+    @NonNull public List<PayerCost> payerCosts;
 
     /**
      * Split payment node it it applies.
      */
-    public Split split;
+    @Nullable public Split split;
 
     /**
      * null if there is no discount configuration associated.
