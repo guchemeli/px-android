@@ -42,7 +42,7 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
     public AmountConfiguration getPayerCostConfigurationFor(@NonNull final String customOptionId) {
         for (final CustomSearchItem customSearchItem : customSearchItems) {
             if (customSearchItem.getId() != null && customSearchItem.getId().equals(customOptionId)) {
-                return customSearchItem.getPayerCostConfiguration(customSearchItem.getDefaultAmountConfiguration());
+                return customSearchItem.getAmountConfiguration(customSearchItem.getDefaultAmountConfiguration());
             }
         }
         return null;
@@ -54,7 +54,7 @@ public class ConfigurationSolverImpl implements ConfigurationSolver {
         @NonNull final String configurationHash) {
         for (final CustomSearchItem customSearchItem : customSearchItems) {
             if (customSearchItem.getId() != null && customSearchItem.getId().equals(customOptionId)) {
-                return customSearchItem.getPayerCostConfiguration(configurationHash);
+                return customSearchItem.getAmountConfiguration(configurationHash);
             }
         }
         return null;

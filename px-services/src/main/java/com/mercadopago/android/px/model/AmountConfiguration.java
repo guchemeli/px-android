@@ -1,29 +1,40 @@
 package com.mercadopago.android.px.model;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AmountConfiguration implements Serializable, Parcelable {
+/**
+ * Amount configuration represents one hash_amount representation for cards. this DTO is strongly linked with a {@link
+ * DiscountConfigurationModel}.
+ */
+@Keep
+public class AmountConfiguration implements Serializable {
 
     public static final int NO_SELECTED = -1;
 
-    public final int selectedPayerCostIndex;
-    public final List<PayerCost> payerCosts;
+    /**
+     * default selected payer cost configuration for single payment method selection
+     */
+    public int selectedPayerCostIndex;
 
-    public AmountConfiguration(final int selectedPayerCostIndex, @Nullable final List<PayerCost> payerCosts) {
-        this.selectedPayerCostIndex = selectedPayerCostIndex;
-        this.payerCosts = payerCosts;
-    }
+    /**
+     * Payer cost configuration for single payment method selection
+     */
+    @NonNull public List<PayerCost> payerCosts;
 
-    protected AmountConfiguration(final Parcel in) {
-        selectedPayerCostIndex = in.readInt();
-        payerCosts = in.createTypedArrayList(PayerCost.CREATOR);
-    }
+    /**
+     * Split payment node it it applies.
+     */
+    @Nullable public Split split;
+
+    /**
+     * null if there is no discount configuration associated.
+     */
+    @Nullable public String discountToken;
 
     @NonNull
     public List<PayerCost> getPayerCosts() {
@@ -40,28 +51,5 @@ public class AmountConfiguration implements Serializable, Parcelable {
         } else {
             return payerCosts.get(userSelectedPayerCost);
         }
-    }
-
-    public static final Creator<AmountConfiguration> CREATOR = new Creator<AmountConfiguration>() {
-        @Override
-        public AmountConfiguration createFromParcel(final Parcel in) {
-            return new AmountConfiguration(in);
-        }
-
-        @Override
-        public AmountConfiguration[] newArray(final int size) {
-            return new AmountConfiguration[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(final Parcel dest, final int flags) {
-        dest.writeInt(selectedPayerCostIndex);
-        dest.writeTypedList(payerCosts);
     }
 }
