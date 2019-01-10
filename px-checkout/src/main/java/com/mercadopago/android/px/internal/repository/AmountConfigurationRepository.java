@@ -1,11 +1,10 @@
 package com.mercadopago.android.px.internal.repository;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.internal.base.ResourcesProvider;
 import com.mercadopago.android.px.model.AmountConfiguration;
 import javax.annotation.Nonnull;
 
-public interface PayerCostRepository extends ResourcesProvider {
+public interface AmountConfigurationRepository {
 
     /**
      * Obtains the payer costs configuration that applies in a particular moment of the flow

@@ -86,7 +86,6 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
     private void updateInterestDescriptionSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context) {
         if (hasMultipleInstallments() && BigDecimal.ZERO.compareTo(getCurrentPayerCost().getInstallmentRate()) == 0) {
-
             final InterestFormatter interestFormatter = new InterestFormatter(spannableStringBuilder, context)
                 .withTextColor(ContextCompat.getColor(context, R.color.px_discount_description));
             interestFormatter.apply();

@@ -43,7 +43,7 @@ public class CardVaultActivity extends AppCompatActivity implements CardVaultVie
         paymentSettingRepository = session.getConfigurationModule().getPaymentSettings();
         presenter = new CardVaultPresenter(session.getConfigurationModule().getUserSelectionRepository(),
             paymentSettingRepository,
-            session.getMercadoPagoESC(), session.getPayerCostRepository(), session.providePayerCostSolver());
+            session.getMercadoPagoESC(), session.getAmountConfigurationRepository(), session.providePayerCostSolver());
         presenter.attachResourcesProvider(new CardVaultProviderImpl(getApplicationContext()));
         presenter.attachView(this);
         final Card card = session.getConfigurationModule().getUserSelectionRepository().getCard();

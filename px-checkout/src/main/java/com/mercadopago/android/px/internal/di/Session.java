@@ -17,7 +17,7 @@ import com.mercadopago.android.px.internal.datasource.InstructionsService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
-import com.mercadopago.android.px.internal.datasource.PayerCostRepositoryImpl;
+import com.mercadopago.android.px.internal.datasource.AmountConfigurationRepositoryImpl;
 import com.mercadopago.android.px.internal.datasource.PaymentService;
 import com.mercadopago.android.px.internal.datasource.PluginService;
 import com.mercadopago.android.px.internal.datasource.SummaryAmountService;
@@ -31,7 +31,7 @@ import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.InstructionsRepository;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
@@ -63,7 +63,7 @@ public final class Session extends ApplicationModule
     private AmountRepository amountRepository;
     private GroupsRepository groupsRepository;
     private PaymentRepository paymentRepository;
-    private PayerCostRepository payerCostRepository;
+    private AmountConfigurationRepository amountConfigurationRepository;
     private GroupsCache groupsCache;
     private PluginService pluginRepository;
     private InternalConfiguration internalConfiguration;
@@ -128,7 +128,7 @@ public final class Session extends ApplicationModule
         internalConfiguration = null;
         instructionsRepository = null;
         summaryAmountRepository = null;
-        payerCostRepository = null;
+        amountConfigurationRepository = null;
     }
 
     public GroupsRepository getGroupsRepository() {
@@ -200,13 +200,13 @@ public final class Session extends ApplicationModule
     }
 
     @NonNull
-    public PayerCostRepository getPayerCostRepository() {
-        if (payerCostRepository == null) {
-            payerCostRepository =
-                new PayerCostRepositoryImpl(getGroupsRepository(),
+    public AmountConfigurationRepository getAmountConfigurationRepository() {
+        if (amountConfigurationRepository == null) {
+            amountConfigurationRepository =
+                new AmountConfigurationRepositoryImpl(getGroupsRepository(),
                     getConfigurationModule().getUserSelectionRepository());
         }
-        return payerCostRepository;
+        return amountConfigurationRepository;
     }
 
     @StringRes

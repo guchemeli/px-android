@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.Card;
@@ -13,12 +13,12 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.services.Callback;
 import java.util.ArrayList;
 
-public class PayerCostRepositoryImpl implements PayerCostRepository {
+public class AmountConfigurationRepositoryImpl implements AmountConfigurationRepository {
 
     /* default */ ConfigurationSolver configurationSolver;
     private final UserSelectionRepository userSelectionRepository;
 
-    public PayerCostRepositoryImpl(@NonNull final GroupsRepository groupsRepository,
+    public AmountConfigurationRepositoryImpl(@NonNull final GroupsRepository groupsRepository,
         @NonNull final UserSelectionRepository userSelectionRepository) {
 
         this.userSelectionRepository = userSelectionRepository;

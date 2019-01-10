@@ -77,7 +77,7 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity implements Ins
         configuration = configurationModule.getPaymentSettings();
         presenter = new InstallmentsPresenter(session.getAmountRepository(), configuration,
             configurationModule.getUserSelectionRepository(), session.getDiscountRepository(),
-            session.getSummaryAmountRepository(), session.getPayerCostRepository(), session.providePayerCostSolver());
+            session.getSummaryAmountRepository(), session.getAmountConfigurationRepository(), session.providePayerCostSolver());
 
         getActivityParameters();
         presenter.attachView(this);

@@ -9,7 +9,7 @@ import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingCont
 import com.mercadopago.android.px.internal.features.express.installments.InstallmentsAdapter;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.SummaryAmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
@@ -32,7 +32,7 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
     AmountView.OnClick, InstallmentsAdapter.ItemListener, PayerCostListener {
 
     @NonNull private final SummaryAmountRepository summaryAmountRepository;
-    @NonNull private final PayerCostRepository payerCostRepository;
+    @NonNull private final AmountConfigurationRepository amountConfigurationRepository;
     @NonNull /* default */ final AmountRepository amountRepository;
     @NonNull /* default */ final PaymentSettingRepository configuration;
     @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
@@ -51,14 +51,14 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
         @NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final DiscountRepository discountRepository,
         @NonNull final SummaryAmountRepository summaryAmountRepository,
-        @NonNull final PayerCostRepository payerCostRepository,
+        @NonNull final AmountConfigurationRepository amountConfigurationRepository,
         @NonNull final PayerCostSolver payerCostSolver) {
         this.amountRepository = amountRepository;
         this.configuration = configuration;
         this.userSelectionRepository = userSelectionRepository;
         this.discountRepository = discountRepository;
         this.summaryAmountRepository = summaryAmountRepository;
-        this.payerCostRepository = payerCostRepository;
+        this.amountConfigurationRepository = amountConfigurationRepository;
         this.payerCostSolver = payerCostSolver;
     }
 
@@ -86,7 +86,7 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
 
     /* default */ void resolvePayerCostsForSavedCard() {
         getView().hideLoadingView();
-        payerCostSolver.solve(this, payerCostRepository.getCurrentConfiguration().getPayerCosts());
+        payerCostSolver.solve(this, amountConfigurationRepository.getCurrentConfiguration().getPayerCosts());
     }
 
     /* default */ void resolvePayerCostsForGuessedCard() {

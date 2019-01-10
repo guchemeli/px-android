@@ -8,7 +8,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.textformatter.AmountLabeledFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.CurrencyFormatter;
@@ -29,7 +29,7 @@ public final class InstallmentsDescriptorNoPayerCost extends PaymentMethodDescri
     @NonNull
     public static PaymentMethodDescriptorView.Model createFrom(
         @NonNull final PaymentSettingRepository paymentConfiguration,
-        @NonNull final PayerCostRepository payerCostConfiguration,
+        @NonNull final AmountConfigurationRepository amRepository,
         @Nullable final CardMetadata card) {
 
         final CheckoutPreference checkoutPreference = paymentConfiguration.getCheckoutPreference();
@@ -38,7 +38,7 @@ public final class InstallmentsDescriptorNoPayerCost extends PaymentMethodDescri
         if (card == null) {
             return new InstallmentsDescriptorNoPayerCost(currencyId, null);
         } else {
-            final AmountConfiguration amountConfiguration = payerCostConfiguration.getConfigurationFor(card.getId());
+            final AmountConfiguration amountConfiguration = amRepository.getConfigurationFor(card.getId());
             return new InstallmentsDescriptorNoPayerCost(currencyId, amountConfiguration.getPayerCosts(),
                 amountConfiguration.getDefaultPayerCostIndex());
         }

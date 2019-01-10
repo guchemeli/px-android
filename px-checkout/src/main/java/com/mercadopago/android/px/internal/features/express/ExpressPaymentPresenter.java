@@ -10,7 +10,7 @@ import com.mercadopago.android.px.internal.features.express.slider.SplitPaymentH
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
@@ -68,7 +68,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     @NonNull private final AmountRepository amountRepository;
     @NonNull private final DiscountRepository discountRepository;
     @NonNull private final PaymentSettingRepository paymentConfiguration;
-    @NonNull private final PayerCostRepository payerCostRepository;
+    @NonNull private final AmountConfigurationRepository amountConfigurationRepository;
     @NonNull private final ExplodeDecoratorMapper explodeDecoratorMapper;
 
     //TODO remove.
@@ -80,13 +80,13 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         @NonNull final DiscountRepository discountRepository,
         @NonNull final AmountRepository amountRepository,
         @NonNull final GroupsRepository groupsRepository,
-        @NonNull final PayerCostRepository payerCostRepository) {
+        @NonNull final AmountConfigurationRepository amountConfigurationRepository) {
 
         this.paymentRepository = paymentRepository;
         this.paymentConfiguration = paymentConfiguration;
         this.amountRepository = amountRepository;
         this.discountRepository = discountRepository;
-        this.payerCostRepository = payerCostRepository;
+        this.amountConfigurationRepository = amountConfigurationRepository;
         explodeDecoratorMapper = new ExplodeDecoratorMapper();
         paymentMethodDrawableItemMapper = new PaymentMethodDrawableItemMapper();
 
@@ -106,6 +106,47 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     }
 
     @Override
+    public void attachView(final ExpressPayment.View view) {
+        super.attachView(view);
+
+        final ElementDescriptorView.Model elementDescriptorModel =
+            new ElementDescriptorMapper().map(paymentConfiguration.getCheckoutPreference());
+
+        final List<SummaryView.Model> summaryModels =
+            new SummaryViewModelMapper(paymentConfiguration.getCheckoutPreference(), discountRepository,
+                amountRepository, elementDescriptorModel, this).map(expressMetadataList);
+
+        final List<PaymentMethodDescriptorView.Model> paymentModels =
+            new PaymentMethodDescriptorMapper(paymentConfiguration, amountConfigurationRepository)
+                .map(expressMetadataList);
+
+        final List<SplitPaymentHeaderAdapter.Model> splitHeaderModels =
+            new SplitHeaderMapper(paymentConfiguration.getCheckoutPreference()
+                .getSite()
+                .getCurrencyId())
+                .map(expressMetadataList);
+
+        final HubAdapter.Model model = new HubAdapter.Model(paymentModels, summaryModels, splitHeaderModels);
+
+        getView().showToolbarElementDescriptor(elementDescriptorModel);
+
+        getView().configureAdapters(paymentMethodDrawableItemMapper.map(expressMetadataList),
+            paymentConfiguration.getCheckoutPreference().getSite(), SELECTED_PAYER_COST_NONE,
+            model);
+    }
+
+    @Override
+    public void onViewResumed() {
+        // If a payment was attempted, the exploding fragment is still visible when we go back to one tap fragment.
+        // Example: call for authorize, after asking for cvv and pressing back, we go back to one tap and need to
+        // remove the exploding fragment we had before.
+        if (paymentRepository.hasPayment()) {
+            cancelLoading();
+        }
+        paymentRepository.attach(this);
+    }
+
+    @Override
     public void trackExpressView() {
         new OneTapViewTracker(expressMetadataList,
             paymentConfiguration.getCheckoutPreference(),
@@ -115,10 +156,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
 
     @Override
     public void confirmPayment(final int paymentMethodSelectedIndex) {
-        if (paymentRepository.isExplodingAnimationCompatible()) {
-            getView().startLoadingButton(paymentRepository.getPaymentTimeout());
-            getView().disableToolbarBack();
-        }
+        refreshExplodingState();
 
         // TODO improve: This was added because onetap can detach this listener on its onDestroy
         paymentRepository.attach(this);
@@ -127,7 +165,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         PayerCost payerCost = null;
         if (expressMetadata.isCard()) {
             final AmountConfiguration amountConfiguration =
-                payerCostRepository.getConfigurationFor(expressMetadata.getCard().getId());
+                amountConfigurationRepository.getConfigurationFor(expressMetadata.getCard().getId());
             payerCost = amountConfiguration.getPayerCost(payerCostSelection.get(paymentMethodSelectedIndex));
         }
 
@@ -135,6 +173,13 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         ConfirmEvent.from(Collections.<String>emptySet(), expressMetadata, payerCost).track();
 
         paymentRepository.startExpressPayment(expressMetadata, payerCost);
+    }
+
+    private void refreshExplodingState() {
+        if (paymentRepository.isExplodingAnimationCompatible()) {
+            getView().startLoadingButton(paymentRepository.getPaymentTimeout());
+            getView().disableToolbarBack();
+        }
     }
 
     @Override
@@ -178,7 +223,6 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     @Override
     public void onPaymentError(@NonNull final MercadoPagoError error) {
         cancelLoading();
-
         if (error.isInternalServerError() || error.isNoConnectivityError()) {
             FrictionEventTracker.with(OneTapViewTracker.PATH_REVIEW_ONE_TAP_VIEW,
                 FrictionEventTracker.Id.GENERIC, FrictionEventTracker.Style.CUSTOM_COMPONENT,
@@ -207,18 +251,6 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     }
 
     @Override
-    public void onViewResumed() {
-        // If a payment was attempted, the exploding fragment is still visible when we go back to one tap fragment.
-        // Example: call for authorize, after asking for cvv and pressing back, we go back to one tap and need to
-        // remove the exploding fragment we had before.
-
-        if (paymentRepository.hasPayment()) {
-            cancelLoading();
-        }
-        paymentRepository.attach(this);
-    }
-
-    @Override
     public void updateElementPosition(final int paymentMethodIndex) {
         getView().hideInstallmentsSelection();
         getView().showInstallmentsDescriptionRow(paymentMethodIndex, payerCostSelection.get(paymentMethodIndex));
@@ -230,45 +262,19 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     }
 
     @Override
-    public void attachView(final ExpressPayment.View view) {
-        super.attachView(view);
-
-        final ElementDescriptorView.Model elementDescriptorModel =
-            new ElementDescriptorMapper().map(paymentConfiguration.getCheckoutPreference());
-
-        final List<SummaryView.Model> summaryModels =
-            new SummaryViewModelMapper(paymentConfiguration.getCheckoutPreference(), discountRepository,
-                amountRepository, elementDescriptorModel, this).map(expressMetadataList);
-
-        final List<PaymentMethodDescriptorView.Model> paymentModels =
-            new PaymentMethodDescriptorMapper(paymentConfiguration, payerCostRepository)
-                .map(expressMetadataList);
-
-        final List<SplitPaymentHeaderAdapter.Model> models =
-            new SplitHeaderMapper(paymentConfiguration.getCheckoutPreference()
-                .getSite()
-                .getCurrencyId())
-                .map(expressMetadataList);
-
-        getView().showToolbarElementDescriptor(elementDescriptorModel);
-
-        getView().configureAdapters(paymentMethodDrawableItemMapper.map(expressMetadataList),
-            paymentConfiguration.getCheckoutPreference().getSite(), SELECTED_PAYER_COST_NONE,
-            new HubAdapter.Model(paymentModels, summaryModels, models));
-    }
-
-    @Override
     public void onViewPaused() {
         paymentRepository.detach(this);
     }
 
     @Override
     public void onInstallmentsRowPressed(final int currentItem) {
+        // TODO add split payment modificiations ;;;
+
         final ExpressMetadata expressMetadata = expressMetadataList.get(currentItem);
         final CardMetadata cardMetadata = expressMetadata.getCard();
         if (currentItem <= expressMetadataList.size() && cardMetadata != null) {
             final AmountConfiguration amountConfiguration =
-                payerCostRepository.getConfigurationFor(cardMetadata.getId());
+                amountConfigurationRepository.getConfigurationFor(cardMetadata.getId());
             final List<PayerCost> payerCostList = amountConfiguration.getPayerCosts();
             if (payerCostList.size() > 1) {
                 int selectedPayerCostIndex = payerCostSelection.get(currentItem);
@@ -313,7 +319,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     public void onPayerCostSelected(final int paymentMethodIndex, final PayerCost payerCostSelected) {
         final CardMetadata cardMetadata = expressMetadataList.get(paymentMethodIndex).getCard();
         final int selected =
-            payerCostRepository.getConfigurationFor(cardMetadata.getId()).getPayerCosts().indexOf(payerCostSelected);
+            amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()).getPayerCosts().indexOf(payerCostSelected);
         updateElementPosition(paymentMethodIndex, selected);
         getView().collapseInstallmentsSelection();
     }

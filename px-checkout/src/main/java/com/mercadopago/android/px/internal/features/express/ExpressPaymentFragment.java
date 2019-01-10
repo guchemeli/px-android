@@ -40,7 +40,6 @@ import com.mercadopago.android.px.internal.features.express.installments.Install
 import com.mercadopago.android.px.internal.features.express.slider.ConfirmButtonAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodFragmentAdapter;
-import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodFragmentAdapterLowRes;
 import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodHeaderAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.SplitPaymentHeaderAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.SummaryViewAdapter;
@@ -134,14 +133,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         @Nullable final Bundle savedInstanceState) {
         return inflater.inflate(R.layout.px_fragment_express_payment, container, false);
     }
-
-    //region Low res config
-    @NonNull
-    private PaymentMethodFragmentAdapter getAdapter(@NonNull final List<DrawableFragmentItem> items) {
-        return ScaleUtil.isLowRes(getContext()) ? new PaymentMethodFragmentAdapterLowRes(getChildFragmentManager(),
-            items) : new PaymentMethodFragmentAdapter(getChildFragmentManager(), items);
-    }
-    // endregion Low res config
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
@@ -251,7 +242,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
             session.getDiscountRepository(),
             session.getAmountRepository(),
             session.getGroupsRepository(),
-            session.getPayerCostRepository());
+            session.getAmountConfigurationRepository());
     }
 
     @Override
@@ -313,10 +304,11 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         final int selectedPayerCost,
         @NonNull final HubAdapter.Model model) {
 
-        paymentMethodPager.setAdapter(getAdapter(items));
+        paymentMethodPager.setAdapter(PaymentMethodFragmentAdapter.with(getContext(), getChildFragmentManager(), items));
 
         installmentsAdapter = new InstallmentsAdapter(site, new ArrayList<PayerCost>(), selectedPayerCost, this);
         installmentsRecyclerView.setAdapter(installmentsAdapter);
+
         indicator.attachToPager(paymentMethodPager);
 
         // indicator must be after paymentMethodPager adapter is set.
@@ -348,8 +340,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     }
 
     @Override
-    public void showInstallmentsList(final List<PayerCost> payerCostList,
-        final int payerCostSelected) {
+    public void showInstallmentsList(final List<PayerCost> payerCostList, final int payerCostSelected) {
         animateViewPagerDown();
         installmentsSelectorSeparator.setVisibility(VISIBLE);
         installmentsRecyclerView.setVisibility(VISIBLE);
