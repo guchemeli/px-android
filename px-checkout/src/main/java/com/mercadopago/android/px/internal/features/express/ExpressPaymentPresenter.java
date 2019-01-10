@@ -5,6 +5,7 @@ import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecoratorMapper;
 import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
+import com.mercadopago.android.px.internal.features.express.slider.SplitPaymentHeaderAdapter;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -49,7 +50,8 @@ import java.util.List;
 import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView.Model.SELECTED_PAYER_COST_NONE;
 
 /* default */ class ExpressPaymentPresenter extends MvpPresenter<ExpressPayment.View, ResourcesProvider>
-    implements ExpressPayment.Actions, AmountDescriptorView.OnClickListenerWithDiscount {
+    implements ExpressPayment.Actions, AmountDescriptorView.OnClickListenerWithDiscount,
+    SplitPaymentHeaderAdapter.SplitListener {
 
     @NonNull private final PaymentRepository paymentRepository;
     @NonNull private final AmountRepository amountRepository;
@@ -343,5 +345,10 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     @Override
     public void onAmountDescriptorClicked(@NonNull final DiscountConfigurationModel discountModel) {
         getView().showDiscountDetailDialog(discountModel);
+    }
+
+    @Override
+    public void onSplitChanged(final boolean isChecked, final int index) {
+
     }
 }

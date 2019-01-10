@@ -80,7 +80,8 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 public class ExpressPaymentFragment extends Fragment implements ExpressPayment.View, ViewPager.OnPageChangeListener,
-    InstallmentsAdapter.ItemListener, SummaryView.OnFitListener, ExplodingFragment.ExplodingAnimationListener {
+    InstallmentsAdapter.ItemListener, SummaryView.OnFitListener,
+    ExplodingFragment.ExplodingAnimationListener {
 
     private static final String TAG_EXPLODING_FRAGMENT = "TAG_EXPLODING_FRAGMENT";
     private static final int REQ_CODE_CARD_VAULT = 0x999;
@@ -328,7 +329,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
         hubAdapter.update(Arrays.asList(titlePagerAdapter,
             new SummaryViewAdapter(model.getSummaryViewModels(), summaryView),
-            new SplitPaymentHeaderAdapter(new ArrayList<SplitPaymentHeaderAdapter.Model>(), splitPaymentView),
+            new SplitPaymentHeaderAdapter(new ArrayList<SplitPaymentHeaderAdapter.Model>(), splitPaymentView, presenter),
             new PaymentMethodHeaderAdapter(model.getPaymentMethodDescriptorModels(), paymentMethodHeaderView),
             new ConfirmButtonAdapter(model.getPaymentMethodDescriptorModels().size(), confirmButton)
         ));
