@@ -118,7 +118,7 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
     public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
         for (final Model model : data) {
             model.visit(isChecked);
-            splitListener.onSplitChanged(isChecked, current);
         }
+        splitListener.onSplitChanged(isChecked, current);
     }
 }
