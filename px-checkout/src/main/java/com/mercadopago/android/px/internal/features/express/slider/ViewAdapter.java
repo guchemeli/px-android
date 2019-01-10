@@ -22,7 +22,7 @@ public abstract class ViewAdapter<T, V extends View> {
         data = newData;
     }
 
-    public abstract void updateData(int currentIndex, int payerCostSelected);
+    public abstract void updateData(final int currentIndex, final int payerCostSelected);
 
     public void updateViewsOrder(@NonNull final View previousView,
         @NonNull final View currentView,

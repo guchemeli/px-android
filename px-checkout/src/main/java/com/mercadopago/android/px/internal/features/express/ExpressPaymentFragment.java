@@ -58,7 +58,6 @@ import com.mercadopago.android.px.internal.view.PaymentMethodHeaderView;
 import com.mercadopago.android.px.internal.view.ScrollingPagerIndicator;
 import com.mercadopago.android.px.internal.view.SummaryView;
 import com.mercadopago.android.px.internal.view.TitlePager;
-import com.mercadopago.android.px.internal.viewmodel.PayerCostSelection;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
@@ -87,8 +86,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     private static final int REQ_CODE_CARD_VAULT = 0x999;
     private static final int REQ_CODE_PAYMENT_PROCESSOR = 0x123;
     private static final float PAGER_NEGATIVE_MARGIN_MULTIPLIER = -1.5f;
-    private static final String BUNDLE_STATE_PAYER_COST =
-        "com.mercadopago.android.px.internal.features.express.PAYER_COST";
 
     // Width / Height
     @NonNull private static final Pair<Integer, Integer> ASPECT_RATIO_HIGH_RES = new Pair<>(850, 460);
@@ -259,18 +256,19 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
     @Override
     public void onViewStateRestored(@Nullable final Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        //TODO remove presenter null check after session is persisted
         if (savedInstanceState != null && presenter != null) {
-            final PayerCostSelection payerCostSelection = savedInstanceState.getParcelable(BUNDLE_STATE_PAYER_COST);
-            presenter.setPayerCostSelection(payerCostSelection);
+            presenter.fromBundle(savedInstanceState);
         }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
-        outState.putParcelable(BUNDLE_STATE_PAYER_COST, presenter.getPayerCostSelection());
-        super.onSaveInstanceState(outState);
+        if (presenter != null) {
+            super.onSaveInstanceState(presenter.toBundle(outState));
+        } else {
+            super.onSaveInstanceState(outState);
+        }
     }
 
     @Override

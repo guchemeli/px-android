@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.internal.features.express;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.base.ResourcesProvider;
@@ -55,14 +56,20 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     AmountDescriptorView.OnClickListenerWithDiscount,
     SplitPaymentHeaderAdapter.SplitListener {
 
+    private static final String BUNDLE_STATE_PAYER_COST =
+        "com.mercadopago.android.px.internal.features.express.PAYER_COST";
+    /* default */ PayerCostSelection payerCostSelection;
+
+    private static final String BUNDLE_STATE_SPLIT_PREF =
+        "com.mercadopago.android.px.internal.features.express.SPLIT_PREF";
+    /* default */ boolean isSplitUserPreference = false;
+
     @NonNull private final PaymentRepository paymentRepository;
     @NonNull private final AmountRepository amountRepository;
     @NonNull private final DiscountRepository discountRepository;
     @NonNull private final PaymentSettingRepository paymentConfiguration;
     @NonNull private final PayerCostRepository payerCostRepository;
     @NonNull private final ExplodeDecoratorMapper explodeDecoratorMapper;
-
-    /* default */ PayerCostSelection payerCostSelection;
 
     //TODO remove.
     /* default */ List<ExpressMetadata> expressMetadataList;
@@ -263,7 +270,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
             final AmountConfiguration amountConfiguration =
                 payerCostRepository.getConfigurationFor(cardMetadata.getId());
             final List<PayerCost> payerCostList = amountConfiguration.getPayerCosts();
-            if (payerCostList != null && payerCostList.size() > 1) {
+            if (payerCostList.size() > 1) {
                 int selectedPayerCostIndex = payerCostSelection.get(currentItem);
                 if (selectedPayerCostIndex == SELECTED_PAYER_COST_NONE) {
                     selectedPayerCostIndex = amountConfiguration.getDefaultPayerCostIndex();
@@ -317,14 +324,18 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         super.detachView();
     }
 
-    // Keep - Save state
-    public PayerCostSelection getPayerCostSelection() {
-        return payerCostSelection;
+    @Override
+    public void fromBundle(@NonNull final Bundle bundle) {
+        payerCostSelection = bundle.getParcelable(BUNDLE_STATE_SPLIT_PREF);
+        isSplitUserPreference = bundle.getBoolean(BUNDLE_STATE_SPLIT_PREF, false);
     }
 
-    // Keep - Restored state
-    public void setPayerCostSelection(final PayerCostSelection payerCostSelection) {
-        this.payerCostSelection = payerCostSelection;
+    @NonNull
+    @Override
+    public Bundle toBundle(@NonNull final Bundle bundle) {
+        bundle.putParcelable(BUNDLE_STATE_PAYER_COST, payerCostSelection);
+        bundle.putBoolean(BUNDLE_STATE_SPLIT_PREF, isSplitUserPreference);
+        return bundle;
     }
 
     @Override
@@ -358,7 +369,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     }
 
     @Override
-    public void onSplitChanged(final boolean isChecked, final int index) {
-
+    public void onSplitChanged(final boolean isChecked) {
+        isSplitUserPreference = isChecked;
     }
 }

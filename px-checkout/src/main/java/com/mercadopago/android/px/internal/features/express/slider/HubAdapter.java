@@ -10,6 +10,7 @@ import java.util.List;
 public class HubAdapter extends ViewAdapter<List<ViewAdapter<?, ? extends View>>, View> {
 
     public static class Model {
+
         @NonNull public final List<PaymentMethodDescriptorView.Model> paymentMethodDescriptorModels;
         @NonNull public final List<SummaryView.Model> summaryViewModels;
         @NonNull public final List<SplitPaymentHeaderAdapter.Model> splitModels;

@@ -20,10 +20,9 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
     implements CompoundButton.OnCheckedChangeListener {
 
     @NonNull private final SplitListener splitListener;
-    private int current = 0;
 
     public interface SplitListener {
-        void onSplitChanged(final boolean isChecked, final int index);
+        void onSplitChanged(final boolean isChecked);
     }
 
     public abstract static class Model {
@@ -109,7 +108,6 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
             return;
         }
 
-        current = currentIndex;
         final Model model = data.get(currentIndex);
         model.visit(view);
     }
@@ -119,6 +117,6 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
         for (final Model model : data) {
             model.visit(isChecked);
         }
-        splitListener.onSplitChanged(isChecked, current);
+        splitListener.onSplitChanged(isChecked);
     }
 }
