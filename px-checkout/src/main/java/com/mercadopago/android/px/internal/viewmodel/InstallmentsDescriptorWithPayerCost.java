@@ -8,9 +8,8 @@ import android.text.SpannableStringBuilder;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
-import com.mercadopago.android.px.internal.util.textformatter.CFTFormatter;
-import com.mercadopago.android.px.internal.util.textformatter.CurrencyFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.AmountLabeledFormatter;
+import com.mercadopago.android.px.internal.util.textformatter.CFTFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.InterestFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.PayerCostFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
@@ -56,8 +55,9 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
         @NonNull final Context context,
         @NonNull final TextView textView) {
 
-        final CurrencyFormatter currencyFormatter = TextFormatter.withCurrencyId(getCurrencyId());
-        final Spannable amount = currencyFormatter.amount(getCurrentPayerCost().getInstallmentAmount())
+
+        final Spannable amount = TextFormatter.withCurrencyId(getCurrencyId())
+            .amount(getCurrentPayerCost().getInstallmentAmount())
             .normalDecimals()
             .into(textView)
             .toSpannable();

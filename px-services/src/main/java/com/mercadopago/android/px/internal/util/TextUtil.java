@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 public final class TextUtil {
 
     public static final String EMPTY = "";
+    public static final CharSequence SPACE = " ";
 
     private TextUtil() {
         throw new AssertionError("Util classes shouldn't be instantiated.");

@@ -10,21 +10,16 @@ import java.util.List;
 public class HubAdapter extends ViewAdapter<List<ViewAdapter<?, ? extends View>>, View> {
 
     public static class Model {
-        private final List<PaymentMethodDescriptorView.Model> paymentMethodDescriptorModels;
-        private final List<SummaryView.Model> summaryViewModels;
+        @NonNull public final List<PaymentMethodDescriptorView.Model> paymentMethodDescriptorModels;
+        @NonNull public final List<SummaryView.Model> summaryViewModels;
+        @NonNull public final List<SplitPaymentHeaderAdapter.Model> splitModels;
 
-        public Model(final List<PaymentMethodDescriptorView.Model> paymentMethodDescriptorModels,
-            final List<SummaryView.Model> summaryViewModels) {
+        public Model(@NonNull final List<PaymentMethodDescriptorView.Model> paymentMethodDescriptorModels,
+            @NonNull final List<SummaryView.Model> summaryViewModels,
+            @NonNull final List<SplitPaymentHeaderAdapter.Model> splitModels) {
             this.paymentMethodDescriptorModels = paymentMethodDescriptorModels;
             this.summaryViewModels = summaryViewModels;
-        }
-
-        public List<PaymentMethodDescriptorView.Model> getPaymentMethodDescriptorModels() {
-            return paymentMethodDescriptorModels;
-        }
-
-        public List<SummaryView.Model> getSummaryViewModels() {
-            return summaryViewModels;
+            this.splitModels = splitModels;
         }
     }
 
@@ -54,7 +49,8 @@ public class HubAdapter extends ViewAdapter<List<ViewAdapter<?, ? extends View>>
     }
 
     @Override
-    public void updateViewsOrder(@NonNull final View previousView, @NonNull final View currentView, @NonNull final View nextView) {
+    public void updateViewsOrder(@NonNull final View previousView, @NonNull final View currentView,
+        @NonNull final View nextView) {
         for (final ViewAdapter adapter : data) {
             adapter.updateViewsOrder(previousView, currentView, nextView);
         }

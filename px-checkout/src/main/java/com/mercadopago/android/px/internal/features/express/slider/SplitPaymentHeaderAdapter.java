@@ -2,8 +2,16 @@ package com.mercadopago.android.px.internal.features.express.slider;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.CompoundButton;
+import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.util.TextUtil;
+import com.mercadopago.android.px.internal.util.ViewUtils;
+import com.mercadopago.android.px.internal.util.textformatter.AmountLabeledFormatter;
+import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import com.mercadopago.android.px.internal.view.LabeledSwitch;
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +28,8 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
 
     public abstract static class Model {
         public abstract void visit(final LabeledSwitch labeledSwitch);
+
+        public abstract void visit(final boolean isChecked);
     }
 
     public static final class Empty extends Model {
@@ -27,25 +37,60 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
         public void visit(final LabeledSwitch labeledSwitch) {
             labeledSwitch.setVisibility(View.GONE);
         }
+
+        @Override
+        public void visit(final boolean isChecked) {
+            // do nothing
+        }
     }
 
     public static final class Split extends Model {
 
         private final String message;
         private final BigDecimal balance;
+        private final String currencyId;
         private boolean isChecked;
 
-        public Split(final String message, final BigDecimal balance, final boolean isChecked) {
+        public Split(final String message, final BigDecimal balance,
+            final String currencyId,
+            final boolean isChecked) {
             this.message = message;
             this.balance = balance;
+            this.currencyId = currencyId;
             this.isChecked = isChecked;
         }
 
         @Override
         public void visit(final LabeledSwitch labeledSwitch) {
+
+            // ${amount} semibold, color black
+            final Spannable amount =
+                new AmountLabeledFormatter(new SpannableStringBuilder(), labeledSwitch.getContext())
+                    .withSemiBoldStyle()
+                    .withTextColor(ContextCompat.getColor(labeledSwitch.getContext(), R.color.ui_meli_black))
+                    .apply(TextFormatter
+                        .withCurrencyId(currencyId)
+                        .amount(balance)
+                        .normalDecimals()
+                        .toSpannable());
+
+            // create text message
+            final SpannableStringBuilder message = new SpannableStringBuilder(TextUtil.SPACE)
+                .append(this.message);
+
+            // added color
+            ViewUtils.setColorInSpannable(ContextCompat.getColor(labeledSwitch.getContext(),
+                R.color.ui_meli_grey), 0, message.length(),
+                message);
+            // build definitive message
+            labeledSwitch.setText(new SpannableStringBuilder(amount).append(message));
+            labeledSwitch.setChecked(isChecked);
             labeledSwitch.setVisibility(View.VISIBLE);
-            labeledSwitch.setText("Some label");
-            labeledSwitch.setChecked(true);
+        }
+
+        @Override
+        public void visit(final boolean isChecked) {
+            this.isChecked = isChecked;
         }
     }
 
@@ -60,7 +105,7 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
     public void updateData(final int currentIndex, final int payerCostSelected) {
         // Empty data case
         if (currentIndex >= data.size()) {
-            view.setVisibility(View.GONE);
+            new Empty().visit(view);
             return;
         }
 
@@ -71,6 +116,9 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
 
     @Override
     public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
-        splitListener.onSplitChanged(isChecked, current);
+        for (final Model model : data) {
+            model.visit(isChecked);
+            splitListener.onSplitChanged(isChecked, current);
+        }
     }
 }
