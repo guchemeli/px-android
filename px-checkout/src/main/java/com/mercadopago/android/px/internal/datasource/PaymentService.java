@@ -36,6 +36,7 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,9 @@ public class PaymentService implements PaymentRepository {
     @NonNull /* default */ final PaymentServiceHandlerWrapper handlerWrapper;
 
     @Nullable private IPayment payment;
+
+    //TODO remove.
+    private boolean splitPayment;
 
     public PaymentService(@NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
@@ -125,10 +129,13 @@ public class PaymentService implements PaymentRepository {
      * This method presets all user information ahead before the payment is processed.
      *
      * @param expressMetadata model
+     * @param splitPayment
      */
     @Override
     public void startExpressPayment(@NonNull final ExpressMetadata expressMetadata,
-        @Nullable final PayerCost payerCost) {
+        @Nullable final PayerCost payerCost, final boolean splitPayment) {
+
+        this.splitPayment = splitPayment;
 
         groupsRepository.getGroups().enqueue(new Callback<PaymentMethodSearch>() {
             @Override
@@ -268,10 +275,21 @@ public class PaymentService implements PaymentRepository {
         final DiscountConfigurationModel discountModel = discountRepository.getCurrentConfiguration();
         paymentData.setCampaign(discountModel.getCampaign());
         paymentData.setDiscount(discountModel.getDiscount());
+
+        // TODO refactor
         paymentData.setTransactionAmount(amountRepository.getAmountToPay());
+
         //se agrego payer info a la pref - BOLBRADESCO
         paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
         paymentDataList.add(paymentData);
+
+        //TODO refactor
+        if(splitPayment) {
+            final PaymentData splittedPM = new PaymentData();
+            splittedPM.setPaymentMethod(new PaymentMethod("account_money", "Account money","account_money"));
+            splittedPM.setTransactionAmount(BigDecimal.TEN);
+            paymentDataList.add(splittedPM);
+        }
 
         return paymentDataList;
     }

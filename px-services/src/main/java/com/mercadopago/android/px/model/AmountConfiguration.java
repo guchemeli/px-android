@@ -14,8 +14,6 @@ import java.util.List;
 @Keep
 public class AmountConfiguration implements Serializable {
 
-    public static final int NO_SELECTED = -1;
-
     /**
      * default selected payer cost configuration for single payment method selection
      */
@@ -43,14 +41,6 @@ public class AmountConfiguration implements Serializable {
 
     public int getDefaultPayerCostIndex() {
         return selectedPayerCostIndex;
-    }
-
-    public PayerCost getPayerCost(final int userSelectedPayerCost) {
-        if (userSelectedPayerCost == NO_SELECTED) {
-            return payerCosts.get(selectedPayerCostIndex);
-        } else {
-            return payerCosts.get(userSelectedPayerCost);
-        }
     }
 
     public boolean allowSplit() {

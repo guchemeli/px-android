@@ -7,10 +7,10 @@ import com.mercadopago.android.px.internal.base.ResourcesProvider;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecoratorMapper;
 import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.SplitPaymentHeaderAdapter;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
-import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
@@ -121,9 +121,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
                 .map(expressMetadataList);
 
         final List<SplitPaymentHeaderAdapter.Model> splitHeaderModels =
-            new SplitHeaderMapper(paymentConfiguration.getCheckoutPreference()
-                .getSite()
-                .getCurrencyId(),
+            new SplitHeaderMapper(paymentConfiguration.getCheckoutPreference().getSite().getCurrencyId(),
                 amountConfigurationRepository)
                 .map(expressMetadataList);
 
@@ -163,17 +161,30 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         paymentRepository.attach(this);
 
         final ExpressMetadata expressMetadata = expressMetadataList.get(paymentMethodSelectedIndex);
+
         PayerCost payerCost = null;
+        boolean splitPayment = false;
+
         if (expressMetadata.isCard()) {
             final AmountConfiguration amountConfiguration =
                 amountConfigurationRepository.getConfigurationFor(expressMetadata.getCard().getId());
-            payerCost = amountConfiguration.getPayerCost(payerCostSelection.get(paymentMethodSelectedIndex));
+            splitPayment = isSplitUserPreference && amountConfiguration.allowSplit();
+            if (splitPayment) {
+                payerCost = PayerCost
+                    .getPayerCost(amountConfiguration.split.payerCosts,
+                        payerCostSelection.get(paymentMethodSelectedIndex),
+                        amountConfiguration.split.selectedPayerCostIndex);
+            } else {
+                payerCost = PayerCost
+                    .getPayerCost(amountConfiguration.payerCosts, payerCostSelection.get(paymentMethodSelectedIndex),
+                        amountConfiguration.selectedPayerCostIndex);
+            }
         }
 
         //TODO fill cards with esc
         ConfirmEvent.from(Collections.<String>emptySet(), expressMetadata, payerCost).track();
 
-        paymentRepository.startExpressPayment(expressMetadata, payerCost);
+        paymentRepository.startExpressPayment(expressMetadata, payerCost, splitPayment);
     }
 
     private void refreshExplodingState() {
@@ -320,7 +331,8 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
     public void onPayerCostSelected(final int paymentMethodIndex, final PayerCost payerCostSelected) {
         final CardMetadata cardMetadata = expressMetadataList.get(paymentMethodIndex).getCard();
         final int selected =
-            amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()).getPayerCosts().indexOf(payerCostSelected);
+            amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()).getPayerCosts()
+                .indexOf(payerCostSelected);
         updateElementPosition(paymentMethodIndex, selected);
         getView().collapseInstallmentsSelection();
     }
@@ -377,6 +389,9 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
 
     @Override
     public void onSplitChanged(final boolean isChecked) {
+        // Reset payer cost selection.
+        payerCostSelection = new PayerCostSelection(expressMetadataList.size() + 1);
+        // ver si agregamos 2 tipos de selecciones.
         isSplitUserPreference = isChecked;
     }
 }

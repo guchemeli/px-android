@@ -74,7 +74,7 @@ public final class CurrenciesUtil {
         return df.format(truncated);
     }
 
-    public static String getLocalizedAmount(final @NonNull BigDecimal amount, final Currency currency) {
+    public static String getLocalizedAmount(@NonNull final BigDecimal amount, final Currency currency) {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
         dfs.setDecimalSeparator(currency.getDecimalSeparator());
         dfs.setGroupingSeparator(currency.getThousandsSeparator());

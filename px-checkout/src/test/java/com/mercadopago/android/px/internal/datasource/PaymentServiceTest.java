@@ -89,7 +89,7 @@ public class PaymentServiceTest {
         final Card card = creditCardPresetMock();
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, splitPayment);
 
         verify(userSelectionRepository).select(card);
     }
@@ -99,7 +99,7 @@ public class PaymentServiceTest {
         creditCardPresetMock();
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, splitPayment);
 
         verify(userSelectionRepository).select(payerCost);
     }
@@ -109,7 +109,7 @@ public class PaymentServiceTest {
         final Card card = creditCardPresetMock();
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, splitPayment);
 
         verify(userSelectionRepository).select(card);
         verify(userSelectionRepository).select(payerCost);
@@ -122,7 +122,7 @@ public class PaymentServiceTest {
         when(tokenRepository.createToken(card)).thenReturn(new StubFailMpCall(mock(ApiException.class)));
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, splitPayment);
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);
@@ -143,7 +143,7 @@ public class PaymentServiceTest {
         when(tokenRepository.createToken(card)).thenReturn(tokenMPCall);
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, splitPayment);
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);
@@ -158,7 +158,7 @@ public class PaymentServiceTest {
         when(escManager.hasEsc(card)).thenReturn(false);
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, splitPayment);
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);
