@@ -1,58 +1,38 @@
 language: android
 jdk: oraclejdk8
-# Use the Travis Container-Based Infrastructure
 sudo: false
-
 before_install:
 - yes | sdkmanager "platforms;android-27"
-
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.gradle/daemon
-    - $HOME/.gradle/native
-    - $HOME/.android/build-cache
-
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+  - "$HOME/.gradle/daemon"
+  - "$HOME/.gradle/native"
+  - "$HOME/.android/build-cache"
 env:
   global:
-    - GRADLE_OPTS="-Xmx512m"
-    - ADB_INSTALL_TIMEOUT=8
-
+  - GRADLE_OPTS="-Xmx512m"
+  - ADB_INSTALL_TIMEOUT=8
+  - secure: Qk6F7w936HkeLGtmT3+yoMrwrfNsHal6PX+Ae3nxyshoVXtR+NyFj1Ww8knWCDiry+QPYHNDyJ3Q+ONNqBKHbBFPm+5vYJ1MTMWH4kueuibChuFvjymmp0Gx/pIgiFChJhgXBHg3dJv3Bh9wEdlMCsmCjQ0v0XKw/FnfsqeWrDAYMC7LPw4d/mYeJ1H0MkKMUtUfsAU0qIOIxwXvUMJcc+GDNaat05XtvgGHF9r3oHQOZ9LQuhe7qItRFF7PaJvFBIb6/YFrg4eMyiLw2BaMqAdFZ+cGOqapUfEZDq6iMjJH6OE65EG52M9/ZnZjlf5CqP73o83ht5XwyH63/01cVTZcaEMdsE90Mr15d0PkYy5hseXRiokcL9tmf1xjPZVKsca3+JZxxTQ77m996L08dj/UuQSMy+kPwh+ePWajnRv7ejq6eDNWBPRuCNiCiUMtr6Q5jN7aK/568EWwjcIBHs1tm4trsDbw5Qsw9j/sK6slFNuW0W/FBJH+ELU2Qw/gQZJ1XnZl6Ximkl3/MTTg8h+eoKtlqHooyxG0AphL2ahzkOgLuzZgNYAg8NV1AipBv0Wf5ykVngelCcwXSx4QlKec8oWE2lBuuujk8KHECjJNvGePRCO2OYKpHjEafSej/3d7mtSmnLjx3PuzIwc/b7C9SeFDH8Wp22iqT8J0RaI=
 android:
   components:
-    # Latest revision of Android SDK Tools
-    - tools
-    - platform-tools
-    - tools # intentional, see travis-ci/docs-travis-ci-com#779
-    - build-tools-27.0.2
-    # For androidTests avd creation fails without this
-    - android-22
-    # emulator image
-    - sys-img-armeabi-v7a-android-22
-    - android-27 # compile sdk
-    - extra-android-m2repository
-
-    # Additional components
-    - extra-android-m2repository
-    - extra-google-m2repository
-    - extra-android-support
-#    - extra-google-google_play_services
-
-before_script:
-  # Config for instrumentation and unit tests
-  - echo no | android create avd --force -n test -t android-22 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
-  - adb shell setprop dalvik.vm.dexopt-flags v=n,o=v
-
+  - tools
+  - platform-tools
+  - tools
+  - build-tools-27.0.2
+  - android-22
+  - sys-img-armeabi-v7a-android-22
+  - android-27
+  - extra-android-m2repository
+  - extra-android-m2repository
+  - extra-google-m2repository
+  - extra-android-support
 script:
-  - ./gradlew :px-checkout:lint && ./gradlew :px-checkout:jacocoTestReport && ./scripts/cd_script.sh
-
+- "./gradlew :px-checkout:lint && ./scripts/cd_script.sh"
 after_success:
 - pip install --user codecov
 - codecov

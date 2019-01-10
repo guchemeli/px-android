@@ -3,8 +3,8 @@ package com.mercadopago.android.px.internal.datasource.cache;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
-import com.mercadopago.android.px.services.Callback;
 import com.mercadopago.android.px.model.exceptions.ApiException;
+import com.mercadopago.android.px.services.Callback;
 
 public class GroupsCacheCoordinator implements GroupsCache {
 
@@ -26,19 +26,19 @@ public class GroupsCacheCoordinator implements GroupsCache {
             return new MPCall<PaymentMethodSearch>() {
                 @Override
                 public void enqueue(final Callback<PaymentMethodSearch> callback) {
-                    diskCache(callback);
+                    groupsDiskCache.get().enqueue(getCallbackDisk(callback));
                 }
 
                 @Override
                 public void execute(final Callback<PaymentMethodSearch> callback) {
-                    diskCache(callback);
+                    groupsDiskCache.get().execute(getCallbackDisk(callback));
                 }
             };
         }
     }
 
-    /* default */ void diskCache(final Callback<PaymentMethodSearch> callback) {
-        groupsDiskCache.get().enqueue(new Callback<PaymentMethodSearch>() {
+    /* default */ Callback<PaymentMethodSearch> getCallbackDisk(final Callback<PaymentMethodSearch> callback) {
+        return new Callback<PaymentMethodSearch>() {
             @Override
             public void success(final PaymentMethodSearch paymentMethodSearch) {
                 groupsMemCache.put(paymentMethodSearch);
@@ -49,7 +49,7 @@ public class GroupsCacheCoordinator implements GroupsCache {
             public void failure(final ApiException apiException) {
                 callback.failure(apiException);
             }
-        });
+        };
     }
 
     @Override
