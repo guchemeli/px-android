@@ -52,4 +52,8 @@ public class AmountConfiguration implements Serializable {
             return payerCosts.get(userSelectedPayerCost);
         }
     }
+
+    public boolean allowSplit() {
+        return split != null;
+    }
 }

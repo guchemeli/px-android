@@ -33,8 +33,8 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
         final CheckoutPreference checkoutPreference = paymentConfiguration.getCheckoutPreference();
         final String currencyId = checkoutPreference.getSite().getCurrencyId();
 
-        return new InstallmentsDescriptorWithPayerCost(currencyId,
-            amountConfiguration.getPayerCosts(), amountConfiguration.getDefaultPayerCostIndex());
+        return new InstallmentsDescriptorWithPayerCost(currencyId, amountConfiguration.getPayerCosts(),
+            amountConfiguration.getDefaultPayerCostIndex());
     }
 
     private InstallmentsDescriptorWithPayerCost(@NonNull final String currencyId,

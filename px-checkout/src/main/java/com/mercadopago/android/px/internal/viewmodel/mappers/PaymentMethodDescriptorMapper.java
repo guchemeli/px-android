@@ -47,8 +47,7 @@ public class PaymentMethodDescriptorMapper
         if (PaymentTypes.isCreditCardPaymentType(paymentTypeId)) {
             //This model is useful for Credit Card only
             return InstallmentsDescriptorWithPayerCost
-                .createFrom(paymentConfiguration,
-                    amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()));
+                .createFrom(paymentConfiguration, amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()));
         } else if (PaymentTypes.isAccountMoney(expressMetadata.getPaymentMethodId())) {
             return AccountMoneyDescriptor.createFrom(expressMetadata.getAccountMoney());
         } else if (!expressMetadata.isCard()

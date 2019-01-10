@@ -13,7 +13,7 @@ import com.mercadopago.android.px.internal.util.ViewUtils;
 import com.mercadopago.android.px.internal.util.textformatter.AmountLabeledFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import com.mercadopago.android.px.internal.view.LabeledSwitch;
-import java.math.BigDecimal;
+import com.mercadopago.android.px.model.Split;
 import java.util.List;
 
 public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHeaderAdapter.Model>, LabeledSwitch>
@@ -43,20 +43,16 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
         }
     }
 
-    public static final class Split extends Model {
+    public static final class SplitModel extends Model {
 
-        private final String message;
-        private final BigDecimal balance;
         private final String currencyId;
+        @NonNull private final Split split;
         private boolean isChecked;
 
-        public Split(final String message, final BigDecimal balance,
-            final String currencyId,
-            final boolean isChecked) {
-            this.message = message;
-            this.balance = balance;
+        public SplitModel(@NonNull final String currencyId, @NonNull final Split split) {
             this.currencyId = currencyId;
-            this.isChecked = isChecked;
+            this.split = split;
+            isChecked = split.defaultEnabled;
         }
 
         @Override
@@ -69,13 +65,13 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
                     .withTextColor(ContextCompat.getColor(labeledSwitch.getContext(), R.color.ui_meli_black))
                     .apply(TextFormatter
                         .withCurrencyId(currencyId)
-                        .amount(balance)
+                        .amount(split.amount)
                         .normalDecimals()
                         .toSpannable());
 
             // create text message
             final SpannableStringBuilder message = new SpannableStringBuilder(TextUtil.SPACE)
-                .append(this.message);
+                .append(split.message);
 
             // added color
             ViewUtils.setColorInSpannable(ContextCompat.getColor(labeledSwitch.getContext(),

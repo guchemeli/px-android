@@ -123,7 +123,8 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         final List<SplitPaymentHeaderAdapter.Model> splitHeaderModels =
             new SplitHeaderMapper(paymentConfiguration.getCheckoutPreference()
                 .getSite()
-                .getCurrencyId())
+                .getCurrencyId(),
+                amountConfigurationRepository)
                 .map(expressMetadataList);
 
         final HubAdapter.Model model = new HubAdapter.Model(paymentModels, summaryModels, splitHeaderModels);
