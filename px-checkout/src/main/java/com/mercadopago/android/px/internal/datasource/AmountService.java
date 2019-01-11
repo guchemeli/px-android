@@ -65,8 +65,9 @@ public class AmountService implements AmountRepository {
         final BigDecimal installmentTotalAmount = getInstallmentTotalAmount();
         final int compare = amountWithoutPayerCosts.compareTo(installmentTotalAmount);
         // if amount  > installment amount ; return only charges else charges plus diff
-        return compare == 0 ? installmentTotalAmount.subtract(amountWithoutPayerCosts)
-            .add(chargeRepository.getChargeAmount()) : chargeRepository.getChargeAmount();
+        return compare == 0 ? chargeRepository.getChargeAmount() :
+            installmentTotalAmount.subtract(amountWithoutPayerCosts)
+                .add(chargeRepository.getChargeAmount());
     }
 
     private BigDecimal getDiscountAmount() {

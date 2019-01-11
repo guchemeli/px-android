@@ -57,6 +57,7 @@ public class PaymentServiceTest {
     @Mock private GroupsRepository groupsRepository;
     @Mock private PaymentMethodSearch paymentMethodSearch;
     @Mock private List<ExpressMetadata> expressMetadata;
+    @Mock private AmountConfigurationRepository amountConfigurationRepository;
 
     @Mock private ExpressMetadata node;
     @Mock private CardMetadata cardMetadata;
@@ -79,7 +80,8 @@ public class PaymentServiceTest {
             escManager,
             tokenRepository,
             instructionsRepository,
-            groupsRepository);
+            groupsRepository,
+            amountConfigurationRepository);
 
         when(paymentSettingRepository.getCheckoutPreference()).thenReturn(mock(CheckoutPreference.class));
         when(discountRepository.getCurrentConfiguration()).thenReturn(WITHOUT_DISCOUNT);
