@@ -1,15 +1,14 @@
 package com.mercadopago.android.px.internal.features.express;
 
 import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
-import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
-import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.CardMetadata;
@@ -145,8 +144,7 @@ public class ExpressPaymentPresenterTest {
         expressPaymentPresenter.onSliderOptionSelected(currentElementPosition);
 
         verify(view).hideInstallmentsSelection();
-        verify(view).showInstallmentsDescriptionRow(currentElementPosition,
-            PaymentMethodDescriptorView.Model.SELECTED_PAYER_COST_NONE);
+        verify(view).showInstallmentsDescriptionRow(currentElementPosition, PayerCost.NO_SELECTED);
         verifyNoMoreInteractions(view);
     }
 
@@ -171,13 +169,12 @@ public class ExpressPaymentPresenterTest {
         expressPaymentPresenter.attachView(view);
 
         verify(view).showToolbarElementDescriptor(any(ElementDescriptorView.Model.class));
-        verify(view).configureAdapters(anyListOf(DrawableFragmentItem.class), any(Site.class), anyInt(),
+        verify(view).configureAdapters(anyListOf(DrawableFragmentItem.class), any(Site.class),
             any(HubAdapter.Model.class));
     }
 
     private void verifyOnViewResumed() {
         expressPaymentPresenter.onViewResumed();
-
         verify(paymentRepository).hasPayment();
         verify(paymentRepository).attach(expressPaymentPresenter);
     }

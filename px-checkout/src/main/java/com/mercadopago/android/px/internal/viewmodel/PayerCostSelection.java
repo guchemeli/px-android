@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.viewmodel;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
+import com.mercadopago.android.px.model.PayerCost;
 
 public class PayerCostSelection implements Parcelable {
 
@@ -11,7 +11,7 @@ public class PayerCostSelection implements Parcelable {
     public PayerCostSelection(final int paymentMethodsSize) {
         payerCostSelected = new int[paymentMethodsSize];
         for (int i = 0; i < payerCostSelected.length; i++) {
-            payerCostSelected[i] = PaymentMethodDescriptorView.Model.SELECTED_PAYER_COST_NONE;
+            payerCostSelected[i] = PayerCost.NO_SELECTED;
         }
     }
 

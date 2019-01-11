@@ -49,8 +49,6 @@ import com.mercadopago.android.px.tracking.internal.views.OneTapViewTracker;
 import java.util.Collections;
 import java.util.List;
 
-import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView.Model.SELECTED_PAYER_COST_NONE;
-
 /* default */ class ExpressPaymentPresenter extends MvpPresenter<ExpressPayment.View, ResourcesProvider>
     implements ExpressPayment.Actions,
     AmountDescriptorView.OnClickListenerWithDiscount,
@@ -130,8 +128,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         getView().showToolbarElementDescriptor(elementDescriptorModel);
 
         getView().configureAdapters(paymentMethodDrawableItemMapper.map(expressMetadataList),
-            paymentConfiguration.getCheckoutPreference().getSite(), SELECTED_PAYER_COST_NONE,
-            model);
+            paymentConfiguration.getCheckoutPreference().getSite(), model);
     }
 
     @Override
@@ -183,7 +180,6 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
 
         //TODO fill cards with esc
         ConfirmEvent.from(Collections.<String>emptySet(), expressMetadata, payerCost).track();
-
 
         paymentRepository.startExpressPayment(expressMetadata, payerCost, splitPayment);
     }
@@ -291,7 +287,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
             final List<PayerCost> payerCostList = amountConfiguration.getPayerCosts();
             if (payerCostList.size() > 1) {
                 int selectedPayerCostIndex = payerCostSelection.get(currentItem);
-                if (selectedPayerCostIndex == SELECTED_PAYER_COST_NONE) {
+                if (selectedPayerCostIndex == PayerCost.NO_SELECTED) {
                     selectedPayerCostIndex = amountConfiguration.getDefaultPayerCostIndex();
                 }
                 getView().showInstallmentsList(payerCostList, selectedPayerCostIndex);

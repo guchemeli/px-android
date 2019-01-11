@@ -21,8 +21,7 @@ public interface ExpressPayment {
 
     interface View extends MvpView {
 
-        void configureAdapters(@NonNull List<DrawableFragmentItem> items, @NonNull final Site site,
-            final int selectedPayerCost, @NonNull HubAdapter
+        void configureAdapters(@NonNull List<DrawableFragmentItem> items, @NonNull final Site site, @NonNull HubAdapter
             .Model paymentMethodViewModel);
 
         void cancel();

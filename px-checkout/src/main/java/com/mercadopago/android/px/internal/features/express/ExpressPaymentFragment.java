@@ -301,12 +301,12 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     @Override
     public void configureAdapters(@NonNull final List<DrawableFragmentItem> items,
         @NonNull final Site site,
-        final int selectedPayerCost,
         @NonNull final HubAdapter.Model model) {
 
-        paymentMethodPager.setAdapter(PaymentMethodFragmentAdapter.with(getContext(), getChildFragmentManager(), items));
+        paymentMethodPager
+            .setAdapter(PaymentMethodFragmentAdapter.with(getContext(), getChildFragmentManager(), items));
 
-        installmentsAdapter = new InstallmentsAdapter(site, new ArrayList<PayerCost>(), selectedPayerCost, this);
+        installmentsAdapter = new InstallmentsAdapter(site, new ArrayList<PayerCost>(), PayerCost.NO_SELECTED, this);
         installmentsRecyclerView.setAdapter(installmentsAdapter);
 
         indicator.attachToPager(paymentMethodPager);

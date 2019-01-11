@@ -7,7 +7,6 @@ import android.text.SpannableStringBuilder;
 import android.util.AttributeSet;
 import android.widget.TextView;
 import com.mercadopago.android.px.model.PayerCost;
-import java.util.List;
 
 public class PaymentMethodDescriptorView extends MPTextView {
 
@@ -27,71 +26,28 @@ public class PaymentMethodDescriptorView extends MPTextView {
 
     public void update(@NonNull final Model model) {
         final SpannableStringBuilder spannableStringBuilder = new SpannableStringBuilder();
-
-        if (model.isEmpty()) {
-            spannableStringBuilder.append(" ");
-        } else {
-            model.updateSpannable(spannableStringBuilder, getContext(), this);
-        }
-
+        model.updateSpannable(spannableStringBuilder, getContext(), this);
         setText(spannableStringBuilder);
     }
 
-    public static class Model {
-        public static final int SELECTED_PAYER_COST_NONE = -1;
-        private int defaultPayerCost = SELECTED_PAYER_COST_NONE;
-        private int currentPayerCost = SELECTED_PAYER_COST_NONE;
-        @Nullable private String currencyId;
-        @Nullable private List<PayerCost> payerCostList;
+    public abstract static class Model {
 
-        public Model(@Nullable final String currencyId, @Nullable final List<PayerCost> payerCostList) {
-            this(currencyId, payerCostList, SELECTED_PAYER_COST_NONE);
+        protected int payerCostSelected = PayerCost.NO_SELECTED;
+        protected boolean userWantToSplit = true;
+
+        public abstract void updateSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
+            @NonNull final Context context, @NonNull final TextView textView);
+
+        public final void setCurrentPayerCost(final int payerCostSelected) {
+            this.payerCostSelected = payerCostSelected;
         }
 
-        public Model() {
-            this(null, null);
-        }
-
-        public Model(@NonNull final String currencyId,
-            @Nullable final List<PayerCost> payerCostList,
-            final int defaultPayerCost) {
-            this.currencyId = currencyId;
-            this.payerCostList = payerCostList;
-            this.defaultPayerCost = defaultPayerCost;
-            currentPayerCost = defaultPayerCost;
-        }
-
-        public boolean isEmpty() {
-            return currencyId == null || payerCostList == null;
-        }
-
-        @Nullable
-        public String getCurrencyId() {
-            return currencyId;
-        }
-
-        @Nullable
-        public PayerCost getCurrentPayerCost() {
-            return payerCostList == null ? null : payerCostList.get(currentPayerCost);
-        }
-
-        public void setCurrentPayerCost(final int currentPayerCost) {
-            this.currentPayerCost = currentPayerCost == SELECTED_PAYER_COST_NONE ?
-                defaultPayerCost : currentPayerCost;
-        }
-
-        protected boolean hasMultipleInstallments() {
-            final PayerCost payerCost = getCurrentPayerCost();
-            return payerCost != null && payerCost.getInstallments() > 1;
+        public final void setSplit(final boolean split) {
+            userWantToSplit = split;
         }
 
         public boolean hasPayerCostList() {
-            return payerCostList != null && payerCostList.size() > 1;
-        }
-
-        public void updateSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
-            @NonNull final Context context, @NonNull final TextView textView) {
-            //Do nothing
+            return false;
         }
     }
 }
