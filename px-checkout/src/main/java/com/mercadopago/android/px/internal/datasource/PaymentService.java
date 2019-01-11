@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import com.mercadopago.android.px.core.PaymentProcessor;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandlerWrapper;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.EscManager;
@@ -36,15 +37,12 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PaymentService implements PaymentRepository {
 
-    @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
     @NonNull private final PaymentSettingRepository paymentSettingRepository;
-    @NonNull /* default */ final PluginRepository pluginRepository;
     @NonNull private final DiscountRepository discountRepository;
     @NonNull private final AmountRepository amountRepository;
     @NonNull private final PaymentProcessor paymentProcessor;
@@ -54,11 +52,11 @@ public class PaymentService implements PaymentRepository {
     @NonNull private final EscManager escManager;
 
     @NonNull /* default */ final PaymentServiceHandlerWrapper handlerWrapper;
+    @NonNull /* default */ final AmountConfigurationRepository amountConfigurationRepository;
+    @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
+    @NonNull /* default */ final PluginRepository pluginRepository;
 
     @Nullable private IPayment payment;
-
-    //TODO remove.
-    private boolean splitPayment;
 
     public PaymentService(@NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
@@ -70,8 +68,9 @@ public class PaymentService implements PaymentRepository {
         @NonNull final EscManager escManager,
         @NonNull final TokenRepository tokenRepository,
         @NonNull final InstructionsRepository instructionsRepository,
-        @NonNull final GroupsRepository groupsRepository) {
-
+        @NonNull final GroupsRepository groupsRepository,
+        @NonNull final AmountConfigurationRepository amountConfigurationRepository) {
+        this.amountConfigurationRepository = amountConfigurationRepository;
         this.escManager = escManager;
         this.userSelectionRepository = userSelectionRepository;
         this.pluginRepository = pluginRepository;
@@ -133,9 +132,8 @@ public class PaymentService implements PaymentRepository {
      */
     @Override
     public void startExpressPayment(@NonNull final ExpressMetadata expressMetadata,
-        @Nullable final PayerCost payerCost, final boolean splitPayment) {
-
-        this.splitPayment = splitPayment;
+        @Nullable final PayerCost payerCost,
+        final boolean splitPayment) {
 
         groupsRepository.getGroups().enqueue(new Callback<PaymentMethodSearch>() {
             @Override
@@ -145,16 +143,27 @@ public class PaymentService implements PaymentRepository {
                 if (PaymentTypes.isCardPaymentType(paymentTypeId)) {
                     // Saved card.
                     final Card card = new CardMapper(paymentMethodSearch).map(expressMetadata);
-                    userSelectionRepository.select(card);
+                    if (splitPayment) {
+                        //TODO refactor
+                        final String secondaryPaymentMethodId =
+                            amountConfigurationRepository
+                                .getConfigurationFor(card.getId()).split.secondaryPaymentMethodId;
+                        userSelectionRepository
+                            .select(card, paymentMethodSearch.getPaymentMethodById(secondaryPaymentMethodId));
+                    } else {
+                        userSelectionRepository.select(card, null);
+                    }
+
                     userSelectionRepository.select(payerCost);
                 } else if (PaymentTypes.isPlugin(paymentTypeId)) {
-                    userSelectionRepository
-                        .select(pluginRepository
-                            .getPluginAsPaymentMethod(expressMetadata.getPaymentMethodId(), paymentTypeId));
+                    userSelectionRepository.select(pluginRepository
+                            .getPluginAsPaymentMethod(expressMetadata.getPaymentMethodId(), paymentTypeId),
+                        null);
                 } else if (PaymentTypes.isAccountMoney(paymentTypeId)) {
                     final PaymentMethod paymentMethod =
                         new AccountMoneyMapper(paymentMethodSearch).map(expressMetadata);
-                    userSelectionRepository.select(paymentMethod);
+
+                    userSelectionRepository.select(paymentMethod, null);
                 } else {
                     throw new IllegalStateException("payment method selected can not be used for express payment");
                 }
@@ -267,28 +276,32 @@ public class PaymentService implements PaymentRepository {
     @Override
     public List<PaymentData> getPaymentDataList() {
         final List<PaymentData> paymentDataList = new ArrayList<>();
+
+        //TODO tokens
+        final DiscountConfigurationModel discountModel = discountRepository.getCurrentConfiguration();
+        final PaymentMethod secondaryPaymentMethod = userSelectionRepository.getSecondaryPaymentMethod();
+
         final PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(userSelectionRepository.getPaymentMethod());
         paymentData.setPayerCost(userSelectionRepository.getPayerCost());
-        paymentData.setIssuer(userSelectionRepository.getIssuer());
         paymentData.setToken(paymentSettingRepository.getToken());
-        final DiscountConfigurationModel discountModel = discountRepository.getCurrentConfiguration();
+        paymentData.setIssuer(userSelectionRepository.getIssuer());
         paymentData.setCampaign(discountModel.getCampaign());
         paymentData.setDiscount(discountModel.getDiscount());
-
-        // TODO refactor
+        paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
         paymentData.setTransactionAmount(amountRepository.getAmountToPay());
 
-        //se agrego payer info a la pref - BOLBRADESCO
-        paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
         paymentDataList.add(paymentData);
 
-        //TODO refactor
-        if(splitPayment) {
-            final PaymentData splittedPM = new PaymentData();
-            splittedPM.setPaymentMethod(new PaymentMethod("account_money", "Account money","account_money"));
-            splittedPM.setTransactionAmount(BigDecimal.TEN);
-            paymentDataList.add(splittedPM);
+        if (secondaryPaymentMethod != null) {
+            final PaymentData secondaryPaymentData = new PaymentData();
+            secondaryPaymentData.setPaymentMethod(secondaryPaymentMethod);
+            secondaryPaymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
+            secondaryPaymentData.setCampaign(discountModel.getCampaign());
+            secondaryPaymentData.setDiscount(discountModel.getDiscount());
+            secondaryPaymentData
+                .setTransactionAmount(amountConfigurationRepository.getCurrentConfiguration().split.amount);
+            paymentDataList.add(secondaryPaymentData);
         }
 
         return paymentDataList;

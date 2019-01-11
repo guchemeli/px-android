@@ -6,11 +6,7 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by vaserber on 10/20/17.
- */
-
-public class RendererFactory {
+public final class RendererFactory {
 
     private static final Map<Class, Class> rendererRegistry = new HashMap<>();
 

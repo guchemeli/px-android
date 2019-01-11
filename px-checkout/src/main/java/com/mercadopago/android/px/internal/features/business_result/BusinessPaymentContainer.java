@@ -66,9 +66,12 @@ public class BusinessPaymentContainer
         }
 
         if (props.payment.shouldShowPaymentMethod()) {
+            final LinearLayout pmContainer = ViewUtils.createLinearContainer(context);
             for (final PaymentMethodComponent.PaymentMethodProps prop : props.getPaymentMethodProps()) {
-                renderPaymentMethod(prop, mainContentContainer);
+                renderPaymentMethod(prop, pmContainer);
             }
+            mainContentContainer.addView(pmContainer);
+            ViewUtils.stretchHeight(pmContainer);
         }
 
         if (props.payment.hasBottomFragment()) {
@@ -89,11 +92,11 @@ public class BusinessPaymentContainer
         return scrollView;
     }
 
-    private View renderPaymentMethod(@NonNull final PaymentMethodComponent.PaymentMethodProps props,
+    private void renderPaymentMethod(@NonNull final PaymentMethodComponent.PaymentMethodProps props,
         @NonNull final LinearLayout mainContentContainer) {
         final PaymentMethodComponent paymentMethodComponent = new PaymentMethodComponent(props);
-        RendererFactory.create(mainContentContainer.getContext(), paymentMethodComponent).render(mainContentContainer);
-        return mainContentContainer.findViewById(R.id.mpsdkPaymentMethodContainer);
+        final View pmView = paymentMethodComponent.render(mainContentContainer);
+        mainContentContainer.addView(pmView);
     }
 
     private ViewTreeObserver.OnGlobalLayoutListener bodyCorrection(final LinearLayout mainContentContainer,

@@ -191,6 +191,7 @@ public class PaymentResultActivity extends AppCompatActivity implements PaymentR
         presenter = new PaymentResultPresenter(this,
             session.getConfigurationModule().getPaymentSettings(),
             session.getInstructionsRepository());
+
         presenter.setPaymentResult(paymentResult);
 
         final PaymentResultProvider provider = new PaymentResultProviderImpl(this);

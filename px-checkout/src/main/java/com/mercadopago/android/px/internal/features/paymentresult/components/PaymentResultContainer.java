@@ -81,8 +81,8 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
     public boolean hasBodyComponent() {
         boolean hasBody = true;
         if (props.paymentResult != null) {
-            String status = props.paymentResult.getPaymentStatus();
-            String statusDetail = props.paymentResult.getPaymentStatusDetail();
+            final String status = props.paymentResult.getPaymentStatus();
+            final String statusDetail = props.paymentResult.getPaymentStatusDetail();
 
             if (Payment.StatusCodes.STATUS_REJECTED.equals(status)
                 && Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_PLUGIN_PM.equals(statusDetail)) {

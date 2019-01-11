@@ -61,7 +61,7 @@ public class BusinessPaymentResultActivity extends AppCompatActivity implements 
                 .getPaymentMethod();
         final PaymentData paymentData = new PaymentData();
         paymentData.setPaymentMethod(paymentMethod);
-
+        // TODO refactor --  payment data changes
         new ResultViewTrack(ResultViewTrack.Style.CUSTOM, new PaymentResult.Builder()
             .setPaymentData(paymentData)
             .setPaymentStatus(model.payment.getPaymentStatus())

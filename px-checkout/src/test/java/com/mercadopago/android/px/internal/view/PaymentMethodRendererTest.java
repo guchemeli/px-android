@@ -2,7 +2,6 @@ package com.mercadopago.android.px.internal.view;
 
 import android.content.Context;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.view.PaymentMethodRenderer;
 import com.mercadopago.android.px.model.PaymentTypes;
 import java.util.Locale;
 import org.junit.Before;

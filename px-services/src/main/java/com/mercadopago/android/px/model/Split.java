@@ -33,6 +33,9 @@ public class Split implements Serializable {
      */
     @NonNull public BigDecimal amount;
 
+    @NonNull
+    public String secondaryPaymentMethodId;
+
     /**
      * Default selected payer cost index
      */

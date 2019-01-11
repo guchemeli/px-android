@@ -184,6 +184,7 @@ import static com.mercadopago.android.px.internal.view.PaymentMethodDescriptorVi
         //TODO fill cards with esc
         ConfirmEvent.from(Collections.<String>emptySet(), expressMetadata, payerCost).track();
 
+
         paymentRepository.startExpressPayment(expressMetadata, payerCost, splitPayment);
     }
 
