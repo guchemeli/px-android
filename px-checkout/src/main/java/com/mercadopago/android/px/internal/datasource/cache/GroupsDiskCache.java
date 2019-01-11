@@ -57,7 +57,7 @@ public class GroupsDiskCache implements GroupsCache {
 
             @Override
             public void execute(final Callback<PaymentMethodSearch> callback) {
-                read(callback);
+                readExec(callback);
             }
         };
     }
@@ -88,6 +88,20 @@ public class GroupsDiskCache implements GroupsCache {
                     callback.failure(new ApiException());
                 }
             });
+        }
+    }
+
+    /* default */ void readExec(final Callback<PaymentMethodSearch> callback) {
+        if (isCached()) {
+            final String fileContent = fileManager.readFileContent(groupsFile);
+            final PaymentMethodSearch paymentMethodSearch = jsonUtil.fromJson(fileContent, PaymentMethodSearch.class);
+            if (paymentMethodSearch != null) {
+                callback.success(paymentMethodSearch);
+            } else {
+                callback.failure(new ApiException());
+            }
+        } else {
+            callback.failure(new ApiException());
         }
     }
 
