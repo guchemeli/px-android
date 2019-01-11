@@ -3,7 +3,7 @@ package com.mercadopago.android.px.internal.features.installments;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.SummaryAmountRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
@@ -42,7 +42,7 @@ public class InstallmentsPresenterTest {
     @Mock private UserSelectionRepository userSelectionRepository;
     @Mock private DiscountRepository discountRepository;
     @Mock private SummaryAmountRepository summaryAmountRepository;
-    @Mock private PayerCostRepository payerCostRepository;
+    @Mock private AmountConfigurationRepository amountConfigurationRepository;
     @Mock private PayerCostSolver payerCostSolver;
 
     @Mock private InstallmentsView view;
@@ -52,7 +52,7 @@ public class InstallmentsPresenterTest {
         when(checkoutPreference.getSite()).thenReturn(Sites.ARGENTINA);
         when(configuration.getCheckoutPreference()).thenReturn(checkoutPreference);
         presenter = new InstallmentsPresenter(amountRepository, configuration, userSelectionRepository,
-            discountRepository, summaryAmountRepository, payerCostRepository, payerCostSolver);
+            discountRepository, summaryAmountRepository, amountConfigurationRepository, payerCostSolver);
         presenter.attachView(view);
     }
 
@@ -109,9 +109,9 @@ public class InstallmentsPresenterTest {
         final AmountConfiguration amountConfiguration = mock(AmountConfiguration.class);
         final List<PayerCost> payerCosts = mock(List.class);
         when(userSelectionRepository.hasCardSelected()).thenReturn(true);
-        when(payerCostRepository.getCurrentConfiguration()).thenReturn(amountConfiguration);
+        when(amountConfigurationRepository.getCurrentConfiguration()).thenReturn(amountConfiguration);
         when(amountConfiguration.getPayerCosts()).thenReturn(payerCosts);
-        when(payerCostRepository.getCurrentConfiguration().getPayerCosts()).thenReturn(payerCosts);
+        when(amountConfigurationRepository.getCurrentConfiguration().getPayerCosts()).thenReturn(payerCosts);
 
         presenter.initialize();
 
@@ -133,11 +133,11 @@ public class InstallmentsPresenterTest {
     @Test
     public void verifyIsSavedCardAndSolverIsCalled() {
         when(userSelectionRepository.hasCardSelected()).thenReturn(true);
-        when(payerCostRepository.getCurrentConfiguration()).thenReturn(mock(AmountConfiguration.class));
+        when(amountConfigurationRepository.getCurrentConfiguration()).thenReturn(mock(AmountConfiguration.class));
 
         presenter.initialize();
 
-        verify(payerCostSolver).solve(presenter, payerCostRepository.getCurrentConfiguration().getPayerCosts());
+        verify(payerCostSolver).solve(presenter, amountConfigurationRepository.getCurrentConfiguration().getPayerCosts());
     }
 
     @Test

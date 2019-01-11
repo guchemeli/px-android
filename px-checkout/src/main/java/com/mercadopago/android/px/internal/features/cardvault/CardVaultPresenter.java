@@ -10,7 +10,7 @@ import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.features.installments.PayerCostListener;
 import com.mercadopago.android.px.internal.features.installments.PayerCostSolver;
 import com.mercadopago.android.px.internal.features.providers.CardVaultProvider;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
@@ -30,7 +30,7 @@ import java.util.List;
 public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultProvider> implements PayerCostListener {
 
     @NonNull /* default */ final MercadoPagoESC mercadoPagoESC;
-    @NonNull /* default */ final PayerCostRepository payerCostRepository;
+    @NonNull /* default */ final AmountConfigurationRepository amountConfigurationRepository;
     @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
     @NonNull /* default */ final PaymentSettingRepository paymentSettingRepository;
 
@@ -58,12 +58,12 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
     public CardVaultPresenter(@NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
         @NonNull final MercadoPagoESC mercadoPagoESC,
-        @NonNull final PayerCostRepository payerCostRepository,
+        @NonNull final AmountConfigurationRepository amountConfigurationRepository,
         @NonNull final PayerCostSolver payerCostSolver) {
         this.userSelectionRepository = userSelectionRepository;
         this.paymentSettingRepository = paymentSettingRepository;
         this.mercadoPagoESC = mercadoPagoESC;
-        this.payerCostRepository = payerCostRepository;
+        this.amountConfigurationRepository = amountConfigurationRepository;
         this.payerCostSolver = payerCostSolver;
     }
 
@@ -225,7 +225,7 @@ public class CardVaultPresenter extends MvpPresenter<CardVaultView, CardVaultPro
         setPaymentMethod(card.getPaymentMethod());
 
         if (userSelectionRepository.getPayerCost() == null) {
-            payerCostSolver.solve(this, payerCostRepository.getCurrentConfiguration().getPayerCosts());
+            payerCostSolver.solve(this, amountConfigurationRepository.getCurrentConfiguration().getPayerCosts());
         } else {
             // This could happen on one tap flows
             onSelectedPayerCost();

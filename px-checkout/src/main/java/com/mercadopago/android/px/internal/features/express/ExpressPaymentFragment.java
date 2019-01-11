@@ -40,7 +40,6 @@ import com.mercadopago.android.px.internal.features.express.installments.Install
 import com.mercadopago.android.px.internal.features.express.slider.ConfirmButtonAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodFragmentAdapter;
-import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodFragmentAdapterLowRes;
 import com.mercadopago.android.px.internal.features.express.slider.PaymentMethodHeaderAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.SplitPaymentHeaderAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.SummaryViewAdapter;
@@ -58,7 +57,6 @@ import com.mercadopago.android.px.internal.view.PaymentMethodHeaderView;
 import com.mercadopago.android.px.internal.view.ScrollingPagerIndicator;
 import com.mercadopago.android.px.internal.view.SummaryView;
 import com.mercadopago.android.px.internal.view.TitlePager;
-import com.mercadopago.android.px.internal.viewmodel.PayerCostSelection;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
@@ -80,14 +78,13 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 public class ExpressPaymentFragment extends Fragment implements ExpressPayment.View, ViewPager.OnPageChangeListener,
-    InstallmentsAdapter.ItemListener, SummaryView.OnFitListener, ExplodingFragment.ExplodingAnimationListener {
+    InstallmentsAdapter.ItemListener, SummaryView.OnFitListener,
+    ExplodingFragment.ExplodingAnimationListener {
 
     private static final String TAG_EXPLODING_FRAGMENT = "TAG_EXPLODING_FRAGMENT";
     private static final int REQ_CODE_CARD_VAULT = 0x999;
     private static final int REQ_CODE_PAYMENT_PROCESSOR = 0x123;
     private static final float PAGER_NEGATIVE_MARGIN_MULTIPLIER = -1.5f;
-    private static final String BUNDLE_STATE_PAYER_COST =
-        "com.mercadopago.android.px.internal.features.express.PAYER_COST";
 
     // Width / Height
     @NonNull private static final Pair<Integer, Integer> ASPECT_RATIO_HIGH_RES = new Pair<>(850, 460);
@@ -136,14 +133,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         @Nullable final Bundle savedInstanceState) {
         return inflater.inflate(R.layout.px_fragment_express_payment, container, false);
     }
-
-    //region Low res config
-    @NonNull
-    private PaymentMethodFragmentAdapter getAdapter(@NonNull final List<DrawableFragmentItem> items) {
-        return ScaleUtil.isLowRes(getContext()) ? new PaymentMethodFragmentAdapterLowRes(getChildFragmentManager(),
-            items) : new PaymentMethodFragmentAdapter(getChildFragmentManager(), items);
-    }
-    // endregion Low res config
 
     @Override
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
@@ -253,23 +242,24 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
             session.getDiscountRepository(),
             session.getAmountRepository(),
             session.getGroupsRepository(),
-            session.getPayerCostRepository());
+            session.getAmountConfigurationRepository());
     }
 
     @Override
     public void onViewStateRestored(@Nullable final Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        //TODO remove presenter null check after session is persisted
         if (savedInstanceState != null && presenter != null) {
-            final PayerCostSelection payerCostSelection = savedInstanceState.getParcelable(BUNDLE_STATE_PAYER_COST);
-            presenter.setPayerCostSelection(payerCostSelection);
+            presenter.fromBundle(savedInstanceState);
         }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(@NonNull final Bundle outState) {
-        outState.putParcelable(BUNDLE_STATE_PAYER_COST, presenter.getPayerCostSelection());
-        super.onSaveInstanceState(outState);
+        if (presenter != null) {
+            super.onSaveInstanceState(presenter.toBundle(outState));
+        } else {
+            super.onSaveInstanceState(outState);
+        }
     }
 
     @Override
@@ -314,23 +304,24 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         final int selectedPayerCost,
         @NonNull final HubAdapter.Model model) {
 
-        paymentMethodPager.setAdapter(getAdapter(items));
+        paymentMethodPager.setAdapter(PaymentMethodFragmentAdapter.with(getContext(), getChildFragmentManager(), items));
 
         installmentsAdapter = new InstallmentsAdapter(site, new ArrayList<PayerCost>(), selectedPayerCost, this);
         installmentsRecyclerView.setAdapter(installmentsAdapter);
+
         indicator.attachToPager(paymentMethodPager);
 
         // indicator must be after paymentMethodPager adapter is set.
 
         final TitlePagerAdapter titlePagerAdapter =
-            new TitlePagerAdapter(model.getPaymentMethodDescriptorModels(), titlePager);
+            new TitlePagerAdapter(model.paymentMethodDescriptorModels, titlePager);
         titlePager.setAdapter(titlePagerAdapter);
 
         hubAdapter.update(Arrays.asList(titlePagerAdapter,
-            new SummaryViewAdapter(model.getSummaryViewModels(), summaryView),
-            new SplitPaymentHeaderAdapter(new ArrayList<SplitPaymentHeaderAdapter.Model>(), splitPaymentView),
-            new PaymentMethodHeaderAdapter(model.getPaymentMethodDescriptorModels(), paymentMethodHeaderView),
-            new ConfirmButtonAdapter(model.getPaymentMethodDescriptorModels().size(), confirmButton)
+            new SummaryViewAdapter(model.summaryViewModels, summaryView),
+            new SplitPaymentHeaderAdapter(model.splitModels, splitPaymentView, presenter),
+            new PaymentMethodHeaderAdapter(model.paymentMethodDescriptorModels, paymentMethodHeaderView),
+            new ConfirmButtonAdapter(model.paymentMethodDescriptorModels.size(), confirmButton)
         ));
     }
 
@@ -349,8 +340,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     }
 
     @Override
-    public void showInstallmentsList(final List<PayerCost> payerCostList,
-        final int payerCostSelected) {
+    public void showInstallmentsList(final List<PayerCost> payerCostList, final int payerCostSelected) {
         animateViewPagerDown();
         installmentsSelectorSeparator.setVisibility(VISIBLE);
         installmentsRecyclerView.setVisibility(VISIBLE);

@@ -1,5 +1,6 @@
 package com.mercadopago.android.px.internal.features.express;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
@@ -88,6 +89,10 @@ public interface ExpressPayment {
         void onSliderOptionSelected(final int position);
 
         void onPayerCostSelected(final int paymentMethodIndex, final PayerCost payerCostSelected);
+
+        void fromBundle(@NonNull Bundle bundle);
+
+        Bundle toBundle(@NonNull Bundle bundle);
 
         void hasFinishPaymentAnimation();
 

@@ -4,7 +4,7 @@ import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.TextUtil;
@@ -58,7 +58,7 @@ public class ExpressPaymentPresenterTest {
     private DiscountRepository discountRepository;
 
     @Mock
-    private PayerCostRepository payerCostRepository;
+    private AmountConfigurationRepository amountConfigurationRepository;
 
     @Mock
     private AmountRepository amountRepository;
@@ -95,10 +95,10 @@ public class ExpressPaymentPresenterTest {
         when(cardMetadata.getId()).thenReturn("123");
         when(discountRepository.getConfigurationFor("123")).thenReturn(discountConfigurationModel);
         when(discountRepository.getConfigurationFor(TextUtil.EMPTY)).thenReturn(discountConfigurationModel);
-        when(payerCostRepository.getConfigurationFor("123")).thenReturn(amountConfiguration);
+        when(amountConfigurationRepository.getConfigurationFor("123")).thenReturn(amountConfiguration);
 
         expressPaymentPresenter = new ExpressPaymentPresenter(paymentRepository, configuration, discountRepository,
-            amountRepository, groupsRepository, payerCostRepository);
+            amountRepository, groupsRepository, amountConfigurationRepository);
 
         verifyAttachView();
     }

@@ -6,7 +6,7 @@ import com.mercadopago.android.px.internal.features.cardvault.CardVaultPresenter
 import com.mercadopago.android.px.internal.features.cardvault.CardVaultView;
 import com.mercadopago.android.px.internal.features.installments.PayerCostSolver;
 import com.mercadopago.android.px.internal.features.providers.CardVaultProvider;
-import com.mercadopago.android.px.internal.repository.PayerCostRepository;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.TextUtil;
@@ -38,7 +38,7 @@ public class CardVaultPresenterTest {
     @Mock private CardVaultProvider cardVaultProvider;
     @Mock private PaymentSettingRepository paymentSettingRepository;
     @Mock private UserSelectionRepository userSelectionRepository;
-    @Mock private PayerCostRepository payerCostRepository;
+    @Mock private AmountConfigurationRepository amountConfigurationRepository;
     @Mock private MercadoPagoESC mercadoPagoESC;
     @Mock private PayerCostSolver payerCostSolver;
 
@@ -49,7 +49,7 @@ public class CardVaultPresenterTest {
         configurePaymentPreferenceMock(null);
 
         presenter = new CardVaultPresenter(userSelectionRepository, paymentSettingRepository, mercadoPagoESC,
-            payerCostRepository, payerCostSolver);
+            amountConfigurationRepository, payerCostSolver);
 
         presenter.setPaymentRecovery(null);
         presenter.attachView(view);
@@ -197,11 +197,11 @@ public class CardVaultPresenterTest {
     @Test
     public void verifyIsSavedCardAndSolverIsCalled() {
         configureMockedCardWith();
-        when(payerCostRepository.getCurrentConfiguration()).thenReturn(mock(AmountConfiguration.class));
+        when(amountConfigurationRepository.getCurrentConfiguration()).thenReturn(mock(AmountConfiguration.class));
 
         presenter.initialize();
 
-        verify(payerCostSolver).solve(presenter, payerCostRepository.getCurrentConfiguration().getPayerCosts());
+        verify(payerCostSolver).solve(presenter, amountConfigurationRepository.getCurrentConfiguration().getPayerCosts());
     }
 
     @Test

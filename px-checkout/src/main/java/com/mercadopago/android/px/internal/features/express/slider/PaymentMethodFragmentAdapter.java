@@ -1,9 +1,11 @@
 package com.mercadopago.android.px.internal.features.express.slider;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import com.mercadopago.android.px.internal.util.ScaleUtil;
 import com.mercadopago.android.px.internal.viewmodel.drawables.AccountMoneyDrawableFragmentItem;
 import com.mercadopago.android.px.internal.viewmodel.drawables.AddNewCardFragmentDrawableFragmentItem;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
@@ -15,7 +17,13 @@ public class PaymentMethodFragmentAdapter extends FragmentStatePagerAdapter impl
 
     @NonNull private final List<DrawableFragmentItem> items;
 
-    public PaymentMethodFragmentAdapter(@NonNull final FragmentManager fm,
+    public static PaymentMethodFragmentAdapter with(@NonNull final Context context, @NonNull final FragmentManager fm,
+        @NonNull final List<DrawableFragmentItem> drawableFragmentItems) {
+        return ScaleUtil.isLowRes(context) ? new PaymentMethodFragmentAdapterLowRes(fm,
+            drawableFragmentItems) : new PaymentMethodFragmentAdapter(fm, drawableFragmentItems);
+    }
+
+    protected PaymentMethodFragmentAdapter(@NonNull final FragmentManager fm,
         @NonNull final List<DrawableFragmentItem> drawableFragmentItems) {
         super(fm);
         items = drawableFragmentItems;
