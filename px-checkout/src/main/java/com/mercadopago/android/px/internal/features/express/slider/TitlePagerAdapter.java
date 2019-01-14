@@ -22,14 +22,14 @@ public class TitlePagerAdapter extends ViewAdapter<List<PaymentMethodDescriptorV
     }
 
     @Override
-    public void updateData(final int currentIndex, final int payerCostSelected) {
+    public void updateData(final int currentIndex, final int payerCostSelected, final boolean userWantsToSplit) {
         if (this.currentIndex != currentIndex) {
             final GoingToModel goingTo =
                 this.currentIndex < currentIndex ? GoingToModel.BACKWARDS : GoingToModel.FORWARD;
             view.orderViews(goingTo);
             this.currentIndex = currentIndex;
         }
-        refreshData(currentIndex, payerCostSelected);
+        refreshData(currentIndex, payerCostSelected, userWantsToSplit);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TitlePagerAdapter extends ViewAdapter<List<PaymentMethodDescriptorV
         this.nextView = (PaymentMethodDescriptorView) nextView;
     }
 
-    private void refreshData(final int currentIndex, final int payerCostSelected) {
+    private void refreshData(final int currentIndex, final int payerCostSelected, final boolean userWantsToSplit) {
         if (currentIndex > 0) {
             final PaymentMethodDescriptorView.Model previousModel = data.get(currentIndex - 1);
             previousView.update(previousModel);
@@ -55,6 +55,7 @@ public class TitlePagerAdapter extends ViewAdapter<List<PaymentMethodDescriptorV
 
         final PaymentMethodDescriptorView.Model currentModel = data.get(currentIndex);
         currentModel.setCurrentPayerCost(payerCostSelected);
+        currentModel.setSplit(userWantsToSplit);
         currentView.update(currentModel);
 
         if (currentIndex + 1 < data.size()) {

@@ -7,7 +7,7 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.configuration.PaymentResultScreenConfiguration;
 import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultDecorator;
 import com.mercadopago.android.px.internal.features.paymentresult.PaymentResultProvider;
-import com.mercadopago.android.px.internal.features.paymentresult.formatter.HeaderTitleFormatter;
+import com.mercadopago.android.px.internal.viewmodel.HeaderTitleFormatter;
 import com.mercadopago.android.px.internal.features.paymentresult.model.Badge;
 import com.mercadopago.android.px.internal.features.paymentresult.props.HeaderProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultBodyProps;

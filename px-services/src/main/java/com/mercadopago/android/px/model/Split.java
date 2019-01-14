@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,4 +47,9 @@ public class Split implements Serializable {
 
     @Nullable
     public String secondaryMethodDiscountToken;
+
+    @NonNull
+    public List<PayerCost> getPayerCosts() {
+        return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
+    }
 }

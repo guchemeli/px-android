@@ -7,10 +7,10 @@ import android.widget.TextView;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 
-public class EmptyInstallmentsDescriptor extends PaymentMethodDescriptorView.Model {
+public class EmptyInstallmentsDescriptorModel extends PaymentMethodDescriptorView.Model {
 
     public static PaymentMethodDescriptorView.Model create() {
-        return new EmptyInstallmentsDescriptor();
+        return new EmptyInstallmentsDescriptorModel();
     }
 
     @Override

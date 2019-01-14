@@ -36,9 +36,9 @@ public class HubAdapter extends ViewAdapter<List<ViewAdapter<?, ? extends View>>
     }
 
     @Override
-    public void updateData(final int currentIndex, final int payerCostSelected) {
+    public void updateData(final int currentIndex, final int payerCostSelected, final boolean userWantsToSplit) {
         for (final ViewAdapter adapter : data) {
-            adapter.updateData(currentIndex, payerCostSelected);
+            adapter.updateData(currentIndex, payerCostSelected, userWantsToSplit);
         }
     }
 

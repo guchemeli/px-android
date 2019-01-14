@@ -31,7 +31,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -143,8 +142,8 @@ public class ExpressPaymentPresenterTest {
 
         expressPaymentPresenter.onSliderOptionSelected(currentElementPosition);
 
-        verify(view).hideInstallmentsSelection();
-        verify(view).showInstallmentsDescriptionRow(currentElementPosition, PayerCost.NO_SELECTED);
+        verify(view).updateViewForPosition(currentElementPosition, PayerCost.NO_SELECTED,
+            false);
         verifyNoMoreInteractions(view);
     }
 
@@ -159,8 +158,7 @@ public class ExpressPaymentPresenterTest {
 
         expressPaymentPresenter.onPayerCostSelected(paymentMethodIndex, payerCostList.get(selectedPayerCostIndex));
 
-        verify(view).hideInstallmentsSelection();
-        verify(view).showInstallmentsDescriptionRow(paymentMethodIndex, selectedPayerCostIndex);
+        verify(view).updateViewForPosition(paymentMethodIndex, selectedPayerCostIndex, false);
         verify(view).collapseInstallmentsSelection();
         verifyNoMoreInteractions(view);
     }

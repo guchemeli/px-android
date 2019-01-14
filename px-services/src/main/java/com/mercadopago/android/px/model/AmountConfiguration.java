@@ -46,4 +46,24 @@ public class AmountConfiguration implements Serializable {
     public boolean allowSplit() {
         return split != null;
     }
+
+    @NonNull
+    public List<PayerCost> getAppliedPayerCost(final boolean userWantToSplit) {
+        if (userWantToSplit && allowSplit()) {
+            return split.getPayerCosts();
+        } else {
+            return getPayerCosts();
+        }
+    }
+
+    @NonNull
+    public PayerCost getCurrentPayerCost(final boolean userWantToSplit, final int userSelectedIndex) {
+        if (userWantToSplit && allowSplit()) {
+            return PayerCost.getPayerCost(split.getPayerCosts(), userSelectedIndex,
+                split.selectedPayerCostIndex);
+        } else {
+            return PayerCost.getPayerCost(getPayerCosts(), userSelectedIndex,
+                selectedPayerCostIndex);
+        }
+    }
 }

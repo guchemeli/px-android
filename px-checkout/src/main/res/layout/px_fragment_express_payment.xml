@@ -62,7 +62,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/installments_header"
-            android:layout_marginTop="@dimen/px_s_margin"
             android:paddingLeft="@dimen/px_m_margin"
             android:paddingRight="@dimen/px_m_margin"/>
 
@@ -70,15 +69,19 @@
             android:id="@+id/installments_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/container"
-            android:paddingBottom="@dimen/px_s_margin"
-            android:paddingTop="@dimen/px_s_margin"/>
+            android:layout_above="@id/container"/>
 
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/installments_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:visibility="gone"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -118,27 +121,6 @@
                     android:layout_marginRight="@dimen/px_m_margin"
                     android:layout_marginTop="@dimen/px_s_margin"
                     android:text="@string/px_pay"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/installments_recycler_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <View
-                    android:id="@+id/installments_selector_separator"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/px_xxxs_height"
-                    android:background="@color/px_expressCheckoutSeparatorLine"
-                    android:visibility="invisible"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/installments_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    tools:visibility="invisible"/>
 
             </LinearLayout>
 

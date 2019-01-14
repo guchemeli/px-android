@@ -6,10 +6,10 @@ import android.view.animation.Animation;
 
 public class HideViewOnAnimationListener implements Animation.AnimationListener {
 
-    private final View viewToHide;
+    private final View targetView;
 
-    public HideViewOnAnimationListener(@NonNull final View viewToHide) {
-        this.viewToHide = viewToHide;
+    public HideViewOnAnimationListener(@NonNull final View targetView) {
+        this.targetView = targetView;
     }
 
     @Override
@@ -19,8 +19,8 @@ public class HideViewOnAnimationListener implements Animation.AnimationListener 
 
     @Override
     public void onAnimationEnd(final Animation animation) {
-        viewToHide.setVisibility(View.INVISIBLE);
-        viewToHide.clearAnimation();
+        targetView.setVisibility(View.GONE);
+        targetView.clearAnimation();
     }
 
     @Override

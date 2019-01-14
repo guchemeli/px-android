@@ -1,14 +1,14 @@
 package com.mercadopago.android.px.internal.features.express.slider;
 
 import android.support.annotation.NonNull;
-import android.view.View;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.view.PaymentMethodHeaderView;
 import com.mercadopago.android.px.internal.viewmodel.GoingToModel;
 import java.util.List;
 
 public class PaymentMethodHeaderAdapter
-    extends ViewAdapter<List<PaymentMethodDescriptorView.Model>, PaymentMethodHeaderView> {
+    extends ViewAdapter<List<PaymentMethodDescriptorView.Model>,
+    PaymentMethodHeaderView> {
 
     private static final int NO_SELECTED = -1;
 
@@ -25,9 +25,12 @@ public class PaymentMethodHeaderAdapter
     }
 
     @Override
-    public void updateData(final int currentIndex, final int payerCostSelected) {
+    public void updateData(final int currentIndex, final int payerCostSelected, final boolean userWantsToSplit) {
         this.currentIndex = currentIndex;
         view.showTitlePager(data.get(currentIndex).hasPayerCostList());
+        // Needed to update when no position is changed, but
+        // title content has.
+        updatePosition(0f, currentIndex);
     }
 
     @Override

@@ -11,7 +11,7 @@ public class ConfirmButtonAdapter extends ViewAdapter<Integer, MeliButton> {
     }
 
     @Override
-    public void updateData(final int currentIndex, final int payerCostSelected) {
+    public void updateData(final int currentIndex, final int payerCostSelected, final boolean userWantsToSplit) {
         if (isLastElement(currentIndex)) {
             view.setState(MeliButton.State.DISABLED);
         } else {

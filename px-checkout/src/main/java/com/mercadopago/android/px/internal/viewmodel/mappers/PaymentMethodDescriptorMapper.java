@@ -4,9 +4,9 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
-import com.mercadopago.android.px.internal.viewmodel.AccountMoneyDescriptor;
-import com.mercadopago.android.px.internal.viewmodel.EmptyInstallmentsDescriptor;
-import com.mercadopago.android.px.internal.viewmodel.InstallmentsDescriptorWithPayerCost;
+import com.mercadopago.android.px.internal.viewmodel.AccountMoneyDescriptorModel;
+import com.mercadopago.android.px.internal.viewmodel.EmptyInstallmentsDescriptorModel;
+import com.mercadopago.android.px.internal.viewmodel.CreditCardDescriptorModel;
 import com.mercadopago.android.px.model.CardMetadata;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.model.PaymentTypes;
@@ -45,18 +45,18 @@ public class PaymentMethodDescriptorMapper
 
         if (PaymentTypes.isCreditCardPaymentType(paymentTypeId)) {
             //This model is useful for Credit Card only
-            return InstallmentsDescriptorWithPayerCost
+            return CreditCardDescriptorModel
                 .createFrom(paymentConfiguration.getCheckoutPreference().getSite().getCurrencyId(),
                     amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()));
         } else if (PaymentTypes.isAccountMoney(expressMetadata.getPaymentMethodId())) {
-            return AccountMoneyDescriptor.createFrom(expressMetadata.getAccountMoney());
+            return AccountMoneyDescriptorModel.createFrom(expressMetadata.getAccountMoney());
         } else {
             //This model is useful in case of One payment method (debit) to represent an empty row
-            return EmptyInstallmentsDescriptor.create();
+            return EmptyInstallmentsDescriptorModel.create();
         }
     }
 
     private PaymentMethodDescriptorView.Model createAddNewPaymentModel() {
-        return EmptyInstallmentsDescriptor.create();
+        return EmptyInstallmentsDescriptorModel.create();
     }
 }

@@ -18,9 +18,10 @@ import com.mercadopago.android.px.model.PayerCost;
 import java.math.BigDecimal;
 
 /**
- * Model used to instantiate InstallmentsDescriptorView For payment methods with payer costs: credit_card only
+ * Model used to instantiate PaymentMethodDescriptorView for payment methods with payer costs. This model is used for
+ * credit_card
  */
-public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDescriptorView.Model {
+public final class CreditCardDescriptorModel extends PaymentMethodDescriptorView.Model {
 
     private final String currencyId;
     private final AmountConfiguration amountConfiguration;
@@ -29,29 +30,15 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
     public static PaymentMethodDescriptorView.Model createFrom(
         @NonNull final String currencyId,
         @NonNull final AmountConfiguration amountConfiguration) {
-        return new InstallmentsDescriptorWithPayerCost(currencyId, amountConfiguration);
+        return new CreditCardDescriptorModel(currencyId, amountConfiguration);
     }
 
     @Override
     public boolean hasPayerCostList() {
-        if (userWantToSplit && amountConfiguration.allowSplit()) {
-            return amountConfiguration.split.payerCosts.size() > 1;
-        } else {
-            return amountConfiguration.getPayerCosts().size() > 1;
-        }
+        return amountConfiguration.getAppliedPayerCost(userWantToSplit).size() > 1;
     }
 
-    private PayerCost getCurrent() {
-        if (userWantToSplit && amountConfiguration.allowSplit()) {
-            return PayerCost.getPayerCost(amountConfiguration.split.payerCosts, payerCostSelected,
-                amountConfiguration.split.selectedPayerCostIndex);
-        } else {
-            return PayerCost.getPayerCost(amountConfiguration.getPayerCosts(), payerCostSelected,
-                amountConfiguration.selectedPayerCostIndex);
-        }
-    }
-
-    private InstallmentsDescriptorWithPayerCost(@NonNull final String currencyId,
+    private CreditCardDescriptorModel(@NonNull final String currencyId,
         @NonNull final AmountConfiguration amountConfiguration) {
         this.currencyId = currencyId;
         this.amountConfiguration = amountConfiguration;
@@ -91,7 +78,8 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
         @NonNull final Context context) {
         if (BigDecimal.ZERO.compareTo(getCurrent().getInstallmentRate()) < 0) {
             final PayerCostFormatter payerCostFormatter =
-                new PayerCostFormatter(spannableStringBuilder, context, getCurrent(), currencyId)
+                new PayerCostFormatter(spannableStringBuilder, context,
+                    getCurrent(), currencyId)
                     .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
             payerCostFormatter.apply();
         }
@@ -108,9 +96,13 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
 
     private void updateCFTSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context) {
-
         final CFTFormatter cftFormatter = new CFTFormatter(spannableStringBuilder, context, getCurrent())
             .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
         cftFormatter.build();
+    }
+
+    @NonNull
+    private PayerCost getCurrent() {
+        return amountConfiguration.getCurrentPayerCost(userWantToSplit, payerCostSelected);
     }
 }
