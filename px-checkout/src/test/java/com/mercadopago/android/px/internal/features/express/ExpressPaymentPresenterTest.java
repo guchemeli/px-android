@@ -152,9 +152,8 @@ public class ExpressPaymentPresenterTest {
         final int paymentMethodIndex = 0;
         final int selectedPayerCostIndex = 1;
         final PayerCost firstPayerCost = mock(PayerCost.class);
-        final List<PayerCost> payerCostList =
-            Arrays.asList(mock(PayerCost.class), firstPayerCost, mock(PayerCost.class));
-        when(amountConfiguration.getPayerCosts()).thenReturn(payerCostList);
+        final List<PayerCost> payerCostList = Arrays.asList(mock(PayerCost.class), firstPayerCost, mock(PayerCost.class));
+        when(amountConfiguration.getAppliedPayerCost(false)).thenReturn(payerCostList);
 
         expressPaymentPresenter.onPayerCostSelected(paymentMethodIndex, payerCostList.get(selectedPayerCostIndex));
 
