@@ -32,6 +32,7 @@ public interface CheckoutService {
         @Nullable @Query("differential_pricing_id") Integer differentialPricingId,
         @Nullable @Query("default_installments") final Integer defaultInstallments,
         @Query("express_enabled") final boolean expressEnabled,
+        @Query("split_payment_enabled") final boolean hasSplitPaymentProcessor,
         @Body Map<String, Object> body);
 
     /**

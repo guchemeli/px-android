@@ -7,7 +7,8 @@ import java.util.Collection;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-public class PaymentMethodSearchBody {
+public class
+PaymentMethodSearchBody {
 
     @SerializedName("access_token")
     private final String privateKey;

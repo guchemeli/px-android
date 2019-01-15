@@ -2,6 +2,7 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.DiscountParamsConfiguration;
+import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.constants.ProcessingModes;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
@@ -91,6 +92,9 @@ public class GroupsService implements GroupsRepository {
         //TODO add preference service.
         final boolean expressPaymentEnabled =
             paymentSettingRepository.getAdvancedConfiguration().isExpressPaymentEnabled();
+
+        final boolean hasSplitPaymentProcessor =
+            paymentSettingRepository.getPaymentConfiguration().getPaymentProcessor() instanceof SplitPaymentProcessor;
         final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
         final Integer defaultInstallments = checkoutPreference.getPaymentPreference().getDefaultInstallments();
 
@@ -126,7 +130,7 @@ public class GroupsService implements GroupsRepository {
                 language, paymentSettingRepository.getPublicKey(),
                 checkoutPreference.getTotalAmount(), excludedPaymentTypesAppended, excludedPaymentMethodsAppended,
                 checkoutPreference.getSite().getId(), ProcessingModes.AGGREGATOR, cardsWithEscAppended,
-                differentialPricingId, defaultInstallments, expressPaymentEnabled, body);
+                differentialPricingId, defaultInstallments, expressPaymentEnabled, hasSplitPaymentProcessor, body);
     }
 
     private Collection<String> getUnsupportedPaymentTypes(@NonNull final Site site) {
