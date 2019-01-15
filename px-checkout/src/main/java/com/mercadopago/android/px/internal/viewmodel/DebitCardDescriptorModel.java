@@ -1,0 +1,67 @@
+package com.mercadopago.android.px.internal.viewmodel;
+
+import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.widget.TextView;
+import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.util.textformatter.AmountLabeledFormatter;
+import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
+import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
+import com.mercadopago.android.px.model.AmountConfiguration;
+import com.mercadopago.android.px.model.PayerCost;
+
+/**
+ * Model used to instantiate PaymentMethodDescriptorView for payment methods with payer costs. This model is used for
+ * credit_card
+ */
+public final class DebitCardDescriptorModel extends PaymentMethodDescriptorView.Model {
+
+    private final String currencyId;
+    private final AmountConfiguration amountConfiguration;
+
+    @NonNull
+    public static PaymentMethodDescriptorView.Model createFrom(
+        @NonNull final String currencyId,
+        @NonNull final AmountConfiguration amountConfiguration) {
+        return new DebitCardDescriptorModel(currencyId, amountConfiguration);
+    }
+
+    private DebitCardDescriptorModel(@NonNull final String currencyId,
+        @NonNull final AmountConfiguration amountConfiguration) {
+        this.currencyId = currencyId;
+        this.amountConfiguration = amountConfiguration;
+    }
+
+    @Override
+    public void updateSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
+        @NonNull final Context context, @NonNull final TextView textView) {
+        updateInstallment(spannableStringBuilder, context, textView);
+    }
+
+    private void updateInstallment(@NonNull final SpannableStringBuilder spannableStringBuilder,
+        @NonNull final Context context,
+        @NonNull final TextView textView) {
+
+        if (amountConfiguration.isSplitPossible(userWantToSplit)) {
+            final Spannable amount = TextFormatter.withCurrencyId(currencyId)
+                .amount(getCurrent().getInstallmentAmount())
+                .normalDecimals()
+                .into(textView)
+                .toSpannable();
+
+            final AmountLabeledFormatter amountLabeledFormatter =
+                new AmountLabeledFormatter(spannableStringBuilder, context)
+                    .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_black))
+                    .withSemiBoldStyle();
+            amountLabeledFormatter.apply(amount);
+        }
+    }
+
+    @NonNull
+    private PayerCost getCurrent() {
+        return amountConfiguration.getCurrentPayerCost(userWantToSplit, payerCostSelected);
+    }
+}

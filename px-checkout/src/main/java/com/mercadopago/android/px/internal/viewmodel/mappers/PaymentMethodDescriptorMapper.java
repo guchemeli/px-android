@@ -5,8 +5,9 @@ import com.mercadopago.android.px.internal.repository.AmountConfigurationReposit
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.AccountMoneyDescriptorModel;
-import com.mercadopago.android.px.internal.viewmodel.EmptyInstallmentsDescriptorModel;
 import com.mercadopago.android.px.internal.viewmodel.CreditCardDescriptorModel;
+import com.mercadopago.android.px.internal.viewmodel.DebitCardDescriptorModel;
+import com.mercadopago.android.px.internal.viewmodel.EmptyInstallmentsDescriptorModel;
 import com.mercadopago.android.px.model.CardMetadata;
 import com.mercadopago.android.px.model.ExpressMetadata;
 import com.mercadopago.android.px.model.PaymentTypes;
@@ -50,8 +51,13 @@ public class PaymentMethodDescriptorMapper
                     amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()));
         } else if (PaymentTypes.isAccountMoney(expressMetadata.getPaymentMethodId())) {
             return AccountMoneyDescriptorModel.createFrom(expressMetadata.getAccountMoney());
-        } else {
+        } else if (PaymentTypes.isCardPaymentType(paymentTypeId)) {
+            DebitCardDescriptorModel
+                .createFrom(paymentConfiguration.getCheckoutPreference().getSite().getCurrencyId(),
+                    amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()));
             //This model is useful in case of One payment method (debit) to represent an empty row
+            return EmptyInstallmentsDescriptorModel.create();
+        } else {
             return EmptyInstallmentsDescriptorModel.create();
         }
     }

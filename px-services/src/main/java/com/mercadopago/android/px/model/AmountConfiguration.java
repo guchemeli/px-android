@@ -49,7 +49,7 @@ public class AmountConfiguration implements Serializable {
 
     @NonNull
     public List<PayerCost> getAppliedPayerCost(final boolean userWantToSplit) {
-        if (userWantToSplit && allowSplit()) {
+        if (isSplitPossible(userWantToSplit)) {
             return split.getPayerCosts();
         } else {
             return getPayerCosts();
@@ -58,12 +58,16 @@ public class AmountConfiguration implements Serializable {
 
     @NonNull
     public PayerCost getCurrentPayerCost(final boolean userWantToSplit, final int userSelectedIndex) {
-        if (userWantToSplit && allowSplit()) {
+        if (isSplitPossible(userWantToSplit)) {
             return PayerCost.getPayerCost(split.getPayerCosts(), userSelectedIndex,
                 split.selectedPayerCostIndex);
         } else {
             return PayerCost.getPayerCost(getPayerCosts(), userSelectedIndex,
                 selectedPayerCostIndex);
         }
+    }
+
+    public boolean isSplitPossible(final boolean userWantToSplit) {
+        return userWantToSplit && allowSplit();
     }
 }
