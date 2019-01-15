@@ -52,11 +52,9 @@ public class PaymentMethodDescriptorMapper
         } else if (PaymentTypes.isAccountMoney(expressMetadata.getPaymentMethodId())) {
             return AccountMoneyDescriptorModel.createFrom(expressMetadata.getAccountMoney());
         } else if (PaymentTypes.isCardPaymentType(paymentTypeId)) {
-            DebitCardDescriptorModel
+            return DebitCardDescriptorModel
                 .createFrom(paymentConfiguration.getCheckoutPreference().getSite().getCurrencyId(),
                     amountConfigurationRepository.getConfigurationFor(cardMetadata.getId()));
-            //This model is useful in case of One payment method (debit) to represent an empty row
-            return EmptyInstallmentsDescriptorModel.create();
         } else {
             return EmptyInstallmentsDescriptorModel.create();
         }
