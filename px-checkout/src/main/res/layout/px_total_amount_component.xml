@@ -29,13 +29,5 @@
             android:textColor="@color/ui_meli_dark_grey"
             android:textSize="@dimen/px_xs_text"
             tools:text="($1459,00)"/>
-
-        <com.mercadopago.android.px.internal.view.MPTextView
-            android:id="@+id/mpsdkTotalAmount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/ui_meli_dark_grey"
-            android:textSize="@dimen/px_xs_text"
-            tools:text="$ 2020"/>
     </LinearLayout>
 </LinearLayout>

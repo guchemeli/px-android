@@ -19,23 +19,19 @@ public class TotalAmount extends Component<TotalAmount.Props, Void> {
     public static class Props implements Parcelable {
 
         public final PayerCost payerCost;
-        public final Discount discount;
         public final String currencyId;
         public final BigDecimal amount;
 
         public Props(final String currencyId,
             final BigDecimal amount,
-            final PayerCost payerCost,
-            final Discount discount) {
+            final PayerCost payerCost) {
             this.payerCost = payerCost;
-            this.discount = discount;
             this.currencyId = currencyId;
             this.amount = amount;
         }
 
         protected Props(final Parcel in) {
             payerCost = in.readParcelable(PayerCost.class.getClassLoader());
-            discount = in.readParcelable(Discount.class.getClassLoader());
             currencyId = in.readString();
             amount = ParcelableUtil.getBigDecimal(in);
         }
@@ -60,7 +56,6 @@ public class TotalAmount extends Component<TotalAmount.Props, Void> {
         @Override
         public void writeToParcel(final Parcel dest, final int flags) {
             dest.writeParcelable(payerCost, flags);
-            dest.writeParcelable(discount, flags);
             dest.writeString(currencyId);
             ParcelableUtil.write(dest, amount);
         }
