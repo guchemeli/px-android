@@ -6,6 +6,7 @@ import com.mercadopago.android.px.internal.features.paymentresult.props.BodyErro
 import com.mercadopago.android.px.internal.features.paymentresult.props.InstructionsProps;
 import com.mercadopago.android.px.internal.features.paymentresult.props.PaymentResultBodyProps;
 import com.mercadopago.android.px.internal.view.ActionDispatcher;
+import com.mercadopago.android.px.internal.view.CompactComponent;
 import com.mercadopago.android.px.internal.view.Component;
 import com.mercadopago.android.px.internal.view.PaymentMethodComponent;
 import com.mercadopago.android.px.internal.view.Receipt;
@@ -115,9 +116,8 @@ public class Body extends Component<PaymentResultBodyProps, Void> {
     }
 
     @NonNull
-    public List<Component> getPaymentMethodComponents() {
-        final List<Component> components = new ArrayList<>();
-
+    public List<CompactComponent> getPaymentMethodComponents() {
+        final List<CompactComponent> components = new ArrayList<>();
         for (final PaymentData paymentData : props.paymentResult.getPaymentDataList()) {
             components.add(
                 new PaymentMethodComponent(PaymentMethodComponent.PaymentMethodProps.with(paymentData, props.currencyId,

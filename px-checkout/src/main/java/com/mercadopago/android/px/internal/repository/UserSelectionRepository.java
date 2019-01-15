@@ -9,18 +9,21 @@ import com.mercadopago.android.px.model.PaymentMethod;
 
 public interface UserSelectionRepository {
 
-    void select(@Nullable final PaymentMethod paymentMethod);
+    void select(@Nullable final PaymentMethod primary, @Nullable final PaymentMethod secondary);
+
+    void select(@Nullable final Card card, @Nullable final PaymentMethod secondaryPaymentMethod);
 
     void select(@NonNull final PayerCost payerCost);
 
     void select(@NonNull final Issuer issuer);
 
-    void select(@Nullable final Card card);
-
     void select(String paymentType);
 
     @Nullable
     PaymentMethod getPaymentMethod();
+
+    @Nullable
+    PaymentMethod getSecondaryPaymentMethod();
 
     void removePaymentMethodSelection();
 

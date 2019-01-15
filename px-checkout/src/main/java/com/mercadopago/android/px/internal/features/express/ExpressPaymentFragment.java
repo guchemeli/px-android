@@ -33,8 +33,8 @@ import com.mercadopago.android.px.internal.features.Constants;
 import com.mercadopago.android.px.internal.features.explode.ExplodeDecorator;
 import com.mercadopago.android.px.internal.features.explode.ExplodeParams;
 import com.mercadopago.android.px.internal.features.explode.ExplodingFragment;
-import com.mercadopago.android.px.internal.features.express.animations.FadeAnim;
-import com.mercadopago.android.px.internal.features.express.animations.InstallmentsAnimation;
+import com.mercadopago.android.px.internal.features.express.animations.ExpandAndCollapseAnimation;
+import com.mercadopago.android.px.internal.features.express.animations.FadeAnimator;
 import com.mercadopago.android.px.internal.features.express.animations.SlideAnim;
 import com.mercadopago.android.px.internal.features.express.installments.InstallmentsAdapter;
 import com.mercadopago.android.px.internal.features.express.slider.ConfirmButtonAdapter;
@@ -78,8 +78,10 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
 public class ExpressPaymentFragment extends Fragment implements ExpressPayment.View, ViewPager.OnPageChangeListener,
-    InstallmentsAdapter.ItemListener, SummaryView.OnFitListener,
-    ExplodingFragment.ExplodingAnimationListener {
+    InstallmentsAdapter.ItemListener,
+    SummaryView.OnFitListener,
+    ExplodingFragment.ExplodingAnimationListener,
+    SplitPaymentHeaderAdapter.SplitListener {
 
     private static final String TAG_EXPLODING_FRAGMENT = "TAG_EXPLODING_FRAGMENT";
     private static final int REQ_CODE_CARD_VAULT = 0x999;
@@ -98,18 +100,16 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     private ActionBar actionBar;
     private ElementDescriptorView toolbarElementDescriptor;
     private SummaryView summaryView;
-    private View installmentsSelectorSeparator;
     private MeliButton confirmButton;
     private RecyclerView installmentsRecyclerView;
     /* default */ ViewPager paymentMethodPager;
     /* default */ View pagerAndConfirmButtonContainer;
     private ScrollingPagerIndicator indicator;
-    private InstallmentsAnimation installmentsAnimation;
-    private FadeAnim fadeAnimation;
-    private SlideAnim slideAnim;
+    private ExpandAndCollapseAnimation expandAndCollapseAnimation;
+    private FadeAnimator fadeAnimation;
+    private SlideAnim paymentMethodSlideAnim;
     private InstallmentsAdapter installmentsAdapter;
     private FixedAspectRatioFrameLayout aspectRatioContainer;
-    private View recyclerContainer;
     private Animation toolbarAppearAnimation;
     private Animation toolbarDisappearAnimation;
     private TitlePager titlePager;
@@ -120,6 +120,12 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
     public static Fragment getInstance() {
         return new ExpressPaymentFragment();
+    }
+
+    @Override
+    public void onSplitChanged(final boolean isChecked) {
+        final int currentItem = paymentMethodPager.getCurrentItem();
+        presenter.onSplitChanged(isChecked, currentItem);
     }
 
     public interface CallBack {
@@ -138,8 +144,6 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
 
         configureViews(view);
-
-        //Order is important - On click and events should be wired AFTER view is attached.
         //TODO remove try catch after session is persisted
         try {
             presenter = createPresenter(view.getContext());
@@ -150,7 +154,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         } catch (final Exception e) {
             //Nothing to do here
         }
-        //Add interaction listeners.
+        // Order is important - On click and events should be wired AFTER view is attached.
         summaryView.setOnFitListener(this);
         toolbarAppearAnimation = AnimationUtils.loadAnimation(view.getContext(), R.anim.px_toolbar_appear);
         toolbarDisappearAnimation = AnimationUtils.loadAnimation(view.getContext(), R.anim.px_toolbar_disappear);
@@ -176,17 +180,15 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
         toolbarElementDescriptor = view.findViewById(R.id.element_descriptor_toolbar);
         pagerAndConfirmButtonContainer = view.findViewById(R.id.container);
-        installmentsSelectorSeparator = view.findViewById(R.id.installments_selector_separator);
         aspectRatioContainer = view.findViewById(R.id.aspect_ratio_container);
         paymentMethodPager = view.findViewById(R.id.payment_method_pager);
         indicator = view.findViewById(R.id.indicator);
         installmentsRecyclerView = view.findViewById(R.id.installments_recycler_view);
         confirmButton = view.findViewById(R.id.confirm_button);
-        recyclerContainer = view.findViewById(R.id.installments_recycler_container);
-        installmentsAnimation = new InstallmentsAnimation(installmentsRecyclerView);
-        fadeAnimation = new FadeAnim(view.getContext());
-        slideAnim = new SlideAnim();
+        expandAndCollapseAnimation = new ExpandAndCollapseAnimation(installmentsRecyclerView);
+        fadeAnimation = new FadeAnimator(view.getContext());
 
+        paymentMethodSlideAnim = new SlideAnim(aspectRatioContainer);
         configureCardAspectRatio(aspectRatioContainer);
 
         final LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -203,9 +205,9 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
                 @Override
                 public void onGlobalLayout() {
                     if (pagerAndConfirmButtonContainer.getHeight() > 0) {
-                        ViewGroup.LayoutParams params = recyclerContainer.getLayoutParams();
+                        final ViewGroup.LayoutParams params = installmentsRecyclerView.getLayoutParams();
                         params.height = pagerAndConfirmButtonContainer.getHeight();
-                        recyclerContainer.setLayoutParams(params);
+                        installmentsRecyclerView.setLayoutParams(params);
                         pagerAndConfirmButtonContainer.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                     }
                 }
@@ -301,13 +303,14 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     @Override
     public void configureAdapters(@NonNull final List<DrawableFragmentItem> items,
         @NonNull final Site site,
-        final int selectedPayerCost,
         @NonNull final HubAdapter.Model model) {
 
-        paymentMethodPager.setAdapter(PaymentMethodFragmentAdapter.with(getContext(), getChildFragmentManager(), items));
+        paymentMethodPager
+            .setAdapter(PaymentMethodFragmentAdapter.with(getContext(), getChildFragmentManager(), items));
 
-        installmentsAdapter = new InstallmentsAdapter(site, new ArrayList<PayerCost>(), selectedPayerCost, this);
+        installmentsAdapter = new InstallmentsAdapter(site, new ArrayList<PayerCost>(), PayerCost.NO_SELECTED, this);
         installmentsRecyclerView.setAdapter(installmentsAdapter);
+        installmentsRecyclerView.setVisibility(View.GONE);
 
         indicator.attachToPager(paymentMethodPager);
 
@@ -319,17 +322,10 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
         hubAdapter.update(Arrays.asList(titlePagerAdapter,
             new SummaryViewAdapter(model.summaryViewModels, summaryView),
-            new SplitPaymentHeaderAdapter(model.splitModels, splitPaymentView, presenter),
+            new SplitPaymentHeaderAdapter(model.splitModels, splitPaymentView, this),
             new PaymentMethodHeaderAdapter(model.paymentMethodDescriptorModels, paymentMethodHeaderView),
             new ConfirmButtonAdapter(model.paymentMethodDescriptorModels.size(), confirmButton)
         ));
-    }
-
-    private void animateViewPagerDown() {
-        slideAnim.slideDown(aspectRatioContainer, 0, pagerAndConfirmButtonContainer.getHeight());
-        fadeAnimation.fadeOut(aspectRatioContainer);
-        fadeAnimation.fadeOutFast(confirmButton);
-        fadeAnimation.fadeOutFast(indicator);
     }
 
     @Override
@@ -342,19 +338,20 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     @Override
     public void showInstallmentsList(final List<PayerCost> payerCostList, final int payerCostSelected) {
         animateViewPagerDown();
-        installmentsSelectorSeparator.setVisibility(VISIBLE);
         installmentsRecyclerView.setVisibility(VISIBLE);
         installmentsRecyclerView.scrollToPosition(payerCostSelected);
         installmentsAdapter.setPayerCosts(payerCostList);
         installmentsAdapter.setPayerCostSelected(payerCostSelected);
         installmentsAdapter.notifyDataSetChanged();
-        installmentsAnimation.expand();
+        expandAndCollapseAnimation.expand();
         hubAdapter.showInstallmentsList();
     }
 
-    @Override
-    public void hideInstallmentsSelection() {
-        installmentsSelectorSeparator.setVisibility(INVISIBLE);
+    private void animateViewPagerDown() {
+        paymentMethodSlideAnim.slideDown(0, pagerAndConfirmButtonContainer.getHeight());
+        fadeAnimation.fadeOut(aspectRatioContainer);
+        fadeAnimation.fadeOutFast(confirmButton);
+        fadeAnimation.fadeOutFast(indicator);
     }
 
     @Override
@@ -365,13 +362,11 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
     @Override
     public void collapseInstallmentsSelection() {
-        slideAnim.slideUp(aspectRatioContainer, pagerAndConfirmButtonContainer.getHeight(), 0);
-
+        expandAndCollapseAnimation.collapse();
+        paymentMethodSlideAnim.slideUp(pagerAndConfirmButtonContainer.getHeight(), 0);
         fadeAnimation.fadeInFastest(aspectRatioContainer);
         fadeAnimation.fadeIn(confirmButton);
         fadeAnimation.fadeIn(indicator);
-
-        installmentsAnimation.collapse();
     }
 
     @Override
@@ -412,21 +407,22 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     @Override
     public void showErrorSnackBar(@NonNull final MercadoPagoError error) {
         if (getView() != null && getActivity() != null) {
-            MeliSnackbar.make(getView(), error.getMessage(), Snackbar.LENGTH_LONG,
-                MeliSnackbar.SnackbarType.ERROR).show();
+            MeliSnackbar.make(getView(), error.getMessage(), Snackbar.LENGTH_LONG, MeliSnackbar.SnackbarType.ERROR)
+                .show();
         }
     }
 
     @Override
-    public void showInstallmentsDescriptionRow(final int paymentMethodIndex, final int payerCostSelected) {
-        hubAdapter.updateData(paymentMethodIndex, payerCostSelected);
+    public void updateViewForPosition(final int paymentMethodIndex,
+        final int payerCostSelected,
+        final boolean isSplitUserPreference) {
+        hubAdapter.updateData(paymentMethodIndex, payerCostSelected, isSplitUserPreference);
     }
 
+    //TODO refactor
     @Override
     public void showPaymentResult(@NonNull final IPayment paymentResult) {
-        //TODO refactor
         if (getActivity() != null) {
-            //TODO refactor
             if (paymentResult instanceof GenericPayment) {
                 ((CheckoutActivity) getActivity()).presenter.onPaymentFinished((GenericPayment) paymentResult);
             } else if (paymentResult instanceof Payment) {
@@ -528,10 +524,12 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
     @Override
     public void startLoadingButton(final int paymentTimeout) {
+
         hideConfirmButton();
         final int[] location = new int[2];
         confirmButton.getLocationOnScreen(location);
 
+        // TODO refactor - unify review and confirm.
         final ExplodeParams explodeParams =
             new ExplodeParams(location[1] - confirmButton.getMeasuredHeight() / 2, confirmButton.getMeasuredHeight(),
                 (int) getContext().getResources().getDimension(R.dimen.px_m_margin),

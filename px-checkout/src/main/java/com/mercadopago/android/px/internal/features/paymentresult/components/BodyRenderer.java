@@ -4,16 +4,13 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.util.FragmentUtil;
 import com.mercadopago.android.px.internal.util.ViewUtils;
-import com.mercadopago.android.px.internal.view.Component;
+import com.mercadopago.android.px.internal.view.CompactComponent;
 import com.mercadopago.android.px.internal.view.Renderer;
 import com.mercadopago.android.px.internal.view.RendererFactory;
-
-/**
- * Created by vaserber on 10/23/17.
- */
 
 public class BodyRenderer extends Renderer<Body> {
     @Override
@@ -38,9 +35,12 @@ public class BodyRenderer extends Renderer<Body> {
             }
 
             if (component.isStatusApproved()) {
-                for (final Component pmComponent : component.getPaymentMethodComponents()) {
-                    RendererFactory.create(context, pmComponent).render(bodyViewGroup);
+                final LinearLayout pmContainer = ViewUtils.createLinearContainer(context);
+                for (final CompactComponent pmComponent : component.getPaymentMethodComponents()) {
+                    pmContainer.addView(pmComponent.render(bodyViewGroup));
                 }
+                ViewUtils.stretchHeight(pmContainer);
+                bodyViewGroup.addView(pmContainer);
             }
 
             if (component.hasBottomCustomComponent()) {

@@ -5,9 +5,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
-
-import static com.mercadopago.android.px.model.AmountConfiguration.NO_SELECTED;
 
 /**
  * Split DTO - represents the split payment amount and charges.
@@ -35,6 +34,9 @@ public class Split implements Serializable {
      */
     @NonNull public BigDecimal amount;
 
+    @NonNull
+    public String secondaryPaymentMethodId;
+
     /**
      * Default selected payer cost index
      */
@@ -46,12 +48,8 @@ public class Split implements Serializable {
     @Nullable
     public String secondaryMethodDiscountToken;
 
-    //TODO remove duplication.
-    public PayerCost getPayerCost(final int userSelectedPayerCost) {
-        if (userSelectedPayerCost == NO_SELECTED) {
-            return payerCosts.get(selectedPayerCostIndex);
-        } else {
-            return payerCosts.get(userSelectedPayerCost);
-        }
+    @NonNull
+    public List<PayerCost> getPayerCosts() {
+        return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
     }
 }

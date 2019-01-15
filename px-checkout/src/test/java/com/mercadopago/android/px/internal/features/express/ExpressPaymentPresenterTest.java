@@ -1,15 +1,14 @@
 package com.mercadopago.android.px.internal.features.express;
 
 import com.mercadopago.android.px.internal.features.express.slider.HubAdapter;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
-import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.internal.view.ElementDescriptorView;
-import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.CardMetadata;
@@ -32,7 +31,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyListOf;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -144,9 +142,8 @@ public class ExpressPaymentPresenterTest {
 
         expressPaymentPresenter.onSliderOptionSelected(currentElementPosition);
 
-        verify(view).hideInstallmentsSelection();
-        verify(view).showInstallmentsDescriptionRow(currentElementPosition,
-            PaymentMethodDescriptorView.Model.SELECTED_PAYER_COST_NONE);
+        verify(view).updateViewForPosition(currentElementPosition, PayerCost.NO_SELECTED,
+            false);
         verifyNoMoreInteractions(view);
     }
 
@@ -155,14 +152,12 @@ public class ExpressPaymentPresenterTest {
         final int paymentMethodIndex = 0;
         final int selectedPayerCostIndex = 1;
         final PayerCost firstPayerCost = mock(PayerCost.class);
-        final List<PayerCost> payerCostList =
-            Arrays.asList(mock(PayerCost.class), firstPayerCost, mock(PayerCost.class));
-        when(amountConfiguration.getPayerCosts()).thenReturn(payerCostList);
+        final List<PayerCost> payerCostList = Arrays.asList(mock(PayerCost.class), firstPayerCost, mock(PayerCost.class));
+        when(amountConfiguration.getAppliedPayerCost(false)).thenReturn(payerCostList);
 
         expressPaymentPresenter.onPayerCostSelected(paymentMethodIndex, payerCostList.get(selectedPayerCostIndex));
 
-        verify(view).hideInstallmentsSelection();
-        verify(view).showInstallmentsDescriptionRow(paymentMethodIndex, selectedPayerCostIndex);
+        verify(view).updateViewForPosition(paymentMethodIndex, selectedPayerCostIndex, false);
         verify(view).collapseInstallmentsSelection();
         verifyNoMoreInteractions(view);
     }
@@ -171,13 +166,12 @@ public class ExpressPaymentPresenterTest {
         expressPaymentPresenter.attachView(view);
 
         verify(view).showToolbarElementDescriptor(any(ElementDescriptorView.Model.class));
-        verify(view).configureAdapters(anyListOf(DrawableFragmentItem.class), any(Site.class), anyInt(),
+        verify(view).configureAdapters(anyListOf(DrawableFragmentItem.class), any(Site.class),
             any(HubAdapter.Model.class));
     }
 
     private void verifyOnViewResumed() {
         expressPaymentPresenter.onViewResumed();
-
         verify(paymentRepository).hasPayment();
         verify(paymentRepository).attach(expressPaymentPresenter);
     }

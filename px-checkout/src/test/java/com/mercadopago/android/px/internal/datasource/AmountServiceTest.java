@@ -110,6 +110,8 @@ public class AmountServiceTest {
         when(discountRepository.getCurrentConfiguration().getDiscount()).thenReturn(null);
         when(userSelectionRepository.hasPayerCostSelected()).thenReturn(true);
         when(userSelectionRepository.getPayerCost()).thenReturn(payerCost);
+
+        // 10 de payer cost total = + 1 pref = 9 adicionales
         when(payerCost.getTotalAmount()).thenReturn(BigDecimal.TEN);
 
         assertEquals(new BigDecimal("9"), amountService.getAppliedCharges());

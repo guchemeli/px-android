@@ -1,6 +1,5 @@
 package com.mercadopago.android.px.internal.features.express;
 
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.base.MvpView;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
@@ -21,8 +20,7 @@ public interface ExpressPayment {
 
     interface View extends MvpView {
 
-        void configureAdapters(@NonNull List<DrawableFragmentItem> items, @NonNull final Site site,
-            final int selectedPayerCost, @NonNull HubAdapter
+        void configureAdapters(@NonNull List<DrawableFragmentItem> items, @NonNull final Site site, @NonNull HubAdapter
             .Model paymentMethodViewModel);
 
         void cancel();
@@ -53,11 +51,11 @@ public interface ExpressPayment {
 
         void showErrorSnackBar(@NonNull final MercadoPagoError error);
 
-        void showInstallmentsDescriptionRow(final int paymentMethodIndex, final int payerCostSelected);
+        void updateViewForPosition(final int paymentMethodIndex,
+            final int payerCostSelected,
+            final boolean isSplitUserPreference);
 
         void showInstallmentsList(List<PayerCost> payerCostList, final int payerCostSelected);
-
-        void hideInstallmentsSelection();
 
         void showToolbarElementDescriptor(@NonNull final ElementDescriptorView.Model elementDescriptorModel);
 
@@ -90,12 +88,10 @@ public interface ExpressPayment {
 
         void onPayerCostSelected(final int paymentMethodIndex, final PayerCost payerCostSelected);
 
-        void fromBundle(@NonNull Bundle bundle);
-
-        Bundle toBundle(@NonNull Bundle bundle);
-
         void hasFinishPaymentAnimation();
 
         void manageNoConnection();
+
+        void onSplitChanged(boolean isChecked, int currentItem);
     }
 }

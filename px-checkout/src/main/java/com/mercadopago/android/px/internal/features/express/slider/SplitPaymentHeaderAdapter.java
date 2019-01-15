@@ -27,7 +27,6 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
 
     public abstract static class Model {
         public abstract void visit(final LabeledSwitch labeledSwitch);
-
         public abstract void visit(final boolean isChecked);
     }
 
@@ -36,7 +35,6 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
         public void visit(final LabeledSwitch labeledSwitch) {
             labeledSwitch.setVisibility(View.GONE);
         }
-
         @Override
         public void visit(final boolean isChecked) {
             // do nothing
@@ -97,7 +95,7 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
     }
 
     @Override
-    public void updateData(final int currentIndex, final int payerCostSelected) {
+    public void updateData(final int currentIndex, final int payerCostSelected, final boolean userWantsToSplit) {
         // Empty data case
         if (currentIndex >= data.size()) {
             new Empty().visit(view);

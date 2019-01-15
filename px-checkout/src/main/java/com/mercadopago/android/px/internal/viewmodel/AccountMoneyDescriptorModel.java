@@ -11,31 +11,31 @@ import com.mercadopago.android.px.internal.util.textformatter.AmountLabeledForma
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.model.AccountMoneyMetadata;
 
-public class AccountMoneyDescriptor extends PaymentMethodDescriptorView.Model {
+public class AccountMoneyDescriptorModel extends PaymentMethodDescriptorView.Model {
 
     private final AccountMoneyMetadata accountMoneyMetadata;
 
     @NonNull
     public static PaymentMethodDescriptorView.Model createFrom(
         @NonNull final AccountMoneyMetadata accountMoneyMetadata) {
-        return new AccountMoneyDescriptor(accountMoneyMetadata);
+        return new AccountMoneyDescriptorModel(accountMoneyMetadata);
     }
 
-    /* default */ AccountMoneyDescriptor(@NonNull final AccountMoneyMetadata accountMoneyMetadata) {
+    /* default */ AccountMoneyDescriptorModel(@NonNull final AccountMoneyMetadata accountMoneyMetadata) {
         this.accountMoneyMetadata = accountMoneyMetadata;
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return TextUtil.isEmpty(accountMoneyMetadata.displayInfo.sliderTitle);
     }
 
     @Override
     public void updateSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context, @NonNull final TextView textView) {
-        final AmountLabeledFormatter amountLabeledFormatter =
-            new AmountLabeledFormatter(spannableStringBuilder, context)
-                .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
-        amountLabeledFormatter.apply(accountMoneyMetadata.displayInfo.sliderTitle);
+
+        if (TextUtil.isEmpty(accountMoneyMetadata.displayInfo.sliderTitle)) {
+            spannableStringBuilder.append(TextUtil.SPACE);
+        } else {
+            final AmountLabeledFormatter amountLabeledFormatter =
+                new AmountLabeledFormatter(spannableStringBuilder, context)
+                    .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
+            amountLabeledFormatter.apply(accountMoneyMetadata.displayInfo.sliderTitle);
+        }
     }
 }

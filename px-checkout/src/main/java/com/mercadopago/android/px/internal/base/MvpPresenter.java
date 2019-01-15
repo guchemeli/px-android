@@ -34,11 +34,12 @@ public abstract class MvpPresenter<V extends MvpView, R extends ResourcesProvide
         }
     }
 
-    public void fromBundle(@NonNull final Bundle bundle) {}
+    public void fromBundle(@NonNull final Bundle bundle) {
+    }
 
     @NonNull
     public Bundle toBundle(@NonNull final Bundle bundle) {
-        return new Bundle();
+        return bundle;
     }
 
     public boolean isViewAttached() {

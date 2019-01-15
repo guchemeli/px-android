@@ -7,7 +7,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
-import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.textformatter.AmountLabeledFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.CFTFormatter;
 import com.mercadopago.android.px.internal.util.textformatter.InterestFormatter;
@@ -16,30 +15,33 @@ import com.mercadopago.android.px.internal.util.textformatter.TextFormatter;
 import com.mercadopago.android.px.internal.view.PaymentMethodDescriptorView;
 import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
- * Model used to instantiate InstallmentsDescriptorView For payment methods with payer costs: credit_card only
+ * Model used to instantiate PaymentMethodDescriptorView for payment methods with payer costs. This model is used for
+ * credit_card
  */
-public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDescriptorView.Model {
+public final class CreditCardDescriptorModel extends PaymentMethodDescriptorView.Model {
+
+    private final String currencyId;
+    private final AmountConfiguration amountConfiguration;
 
     @NonNull
     public static PaymentMethodDescriptorView.Model createFrom(
-        @NonNull final PaymentSettingRepository paymentConfiguration,
+        @NonNull final String currencyId,
         @NonNull final AmountConfiguration amountConfiguration) {
-
-        final CheckoutPreference checkoutPreference = paymentConfiguration.getCheckoutPreference();
-        final String currencyId = checkoutPreference.getSite().getCurrencyId();
-
-        return new InstallmentsDescriptorWithPayerCost(currencyId, amountConfiguration.getPayerCosts(),
-            amountConfiguration.getDefaultPayerCostIndex());
+        return new CreditCardDescriptorModel(currencyId, amountConfiguration);
     }
 
-    private InstallmentsDescriptorWithPayerCost(@NonNull final String currencyId,
-        @NonNull final List<PayerCost> payerCostList, final int currentPayerCost) {
-        super(currencyId, payerCostList, currentPayerCost);
+    @Override
+    public boolean hasPayerCostList() {
+        return amountConfiguration.getAppliedPayerCost(userWantToSplit).size() > 1;
+    }
+
+    private CreditCardDescriptorModel(@NonNull final String currencyId,
+        @NonNull final AmountConfiguration amountConfiguration) {
+        this.currencyId = currencyId;
+        this.amountConfiguration = amountConfiguration;
     }
 
     @Override
@@ -55,29 +57,29 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
         @NonNull final Context context,
         @NonNull final TextView textView) {
 
-
-        final Spannable amount = TextFormatter.withCurrencyId(getCurrencyId())
-            .amount(getCurrentPayerCost().getInstallmentAmount())
+        final Spannable amount = TextFormatter.withCurrencyId(currencyId)
+            .amount(getCurrent().getInstallmentAmount())
             .normalDecimals()
             .into(textView)
             .toSpannable();
 
-        final AmountLabeledFormatter amountLabeledFormatter = new AmountLabeledFormatter(spannableStringBuilder, context)
-            .withInstallment(getCurrentPayerCost().getInstallments())
-            .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_black))
-            .withSemiBoldStyle();
+        final AmountLabeledFormatter amountLabeledFormatter =
+            new AmountLabeledFormatter(spannableStringBuilder, context)
+                .withInstallment(getCurrent().getInstallments())
+                .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_black))
+                .withSemiBoldStyle();
         amountLabeledFormatter.apply(amount);
     }
 
     /**
      * Updates total amount the user will pay with credit card, only if there are interests involved.
      */
-
     private void updateTotalAmountDescriptionSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context) {
-        if (BigDecimal.ZERO.compareTo(getCurrentPayerCost().getInstallmentRate()) < 0) {
+        if (BigDecimal.ZERO.compareTo(getCurrent().getInstallmentRate()) < 0) {
             final PayerCostFormatter payerCostFormatter =
-                new PayerCostFormatter(spannableStringBuilder, context, getCurrentPayerCost(), getCurrencyId())
+                new PayerCostFormatter(spannableStringBuilder, context,
+                    getCurrent(), currencyId)
                     .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
             payerCostFormatter.apply();
         }
@@ -85,7 +87,7 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
 
     private void updateInterestDescriptionSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context) {
-        if (hasMultipleInstallments() && BigDecimal.ZERO.compareTo(getCurrentPayerCost().getInstallmentRate()) == 0) {
+        if (getCurrent().getInstallments() > 1 && BigDecimal.ZERO.compareTo(getCurrent().getInstallmentRate()) == 0) {
             final InterestFormatter interestFormatter = new InterestFormatter(spannableStringBuilder, context)
                 .withTextColor(ContextCompat.getColor(context, R.color.px_discount_description));
             interestFormatter.apply();
@@ -94,9 +96,13 @@ public final class InstallmentsDescriptorWithPayerCost extends PaymentMethodDesc
 
     private void updateCFTSpannable(@NonNull final SpannableStringBuilder spannableStringBuilder,
         @NonNull final Context context) {
-
-        final CFTFormatter cftFormatter = new CFTFormatter(spannableStringBuilder, context, getCurrentPayerCost())
+        final CFTFormatter cftFormatter = new CFTFormatter(spannableStringBuilder, context, getCurrent())
             .withTextColor(ContextCompat.getColor(context, R.color.ui_meli_grey));
         cftFormatter.build();
+    }
+
+    @NonNull
+    private PayerCost getCurrent() {
+        return amountConfiguration.getCurrentPayerCost(userWantToSplit, payerCostSelected);
     }
 }

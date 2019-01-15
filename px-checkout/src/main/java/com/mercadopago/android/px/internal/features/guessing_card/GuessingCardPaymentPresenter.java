@@ -79,7 +79,7 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
 
     @Override
     public void setPaymentMethod(@Nullable final PaymentMethod paymentMethod) {
-        userSelectionRepository.select(paymentMethod);
+        userSelectionRepository.select(paymentMethod, null);
         if (paymentMethod == null) {
             clearCardSettings();
         }

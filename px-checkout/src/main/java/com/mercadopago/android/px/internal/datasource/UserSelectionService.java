@@ -13,7 +13,8 @@ import com.mercadopago.android.px.model.PaymentMethod;
 
 public class UserSelectionService implements UserSelectionRepository {
 
-    private static final String PREF_SELECTED_PM = "PREF_SELECTED_PAYMENT_METHOD";
+    private static final String PREF_PRIMARY_SELECTED_PM = "PREF_PRIMARY_SELECTED_PAYMENT_METHOD";
+    private static final String PREF_SECONDARY_SELECTED_PM = "PREF_SECONDARY_SELECTED_PAYMENT_METHOD";
     private static final String PREF_SELECTED_PAYER_COST = "PREF_SELECTED_INSTALLMENT";
     private static final String PREF_SELECTED_ISSUER = "PREF_SELECTED_ISSUER";
     private static final String PREF_PAYMENT_TYPE = "PREF_SELECTED_PAYMENT_TYPE";
@@ -32,7 +33,8 @@ public class UserSelectionService implements UserSelectionRepository {
 
     @Override
     public void removePaymentMethodSelection() {
-        sharedPreferences.edit().remove(PREF_SELECTED_PM).apply();
+        sharedPreferences.edit().remove(PREF_PRIMARY_SELECTED_PM).apply();
+        sharedPreferences.edit().remove(PREF_SECONDARY_SELECTED_PM).apply();
         removePayerCostSelection();
         removeIssuerSelection();
     }
@@ -66,14 +68,20 @@ public class UserSelectionService implements UserSelectionRepository {
      * it's important to select and then add the installments there is a side effect after changing the payment method
      * that deletes the old payer cost cache
      *
-     * @param paymentMethod new payment method selected.
+     * @param primary new payment method selected.
+     * @param secondary payment method selected.
      */
     @Override
-    public void select(@Nullable final PaymentMethod paymentMethod) {
-        if (paymentMethod == null) {
+    public void select(@Nullable final PaymentMethod primary, @Nullable final PaymentMethod secondary) {
+        if (primary == null) {
             removePaymentMethodSelection();
         } else {
-            sharedPreferences.edit().putString(PREF_SELECTED_PM, jsonUtil.toJson(paymentMethod)).apply();
+            sharedPreferences.edit().putString(PREF_PRIMARY_SELECTED_PM, jsonUtil.toJson(primary)).apply();
+
+            if (secondary != null) {
+                sharedPreferences.edit().putString(PREF_SECONDARY_SELECTED_PM, jsonUtil.toJson(secondary)).apply();
+            }
+
             removePayerCostSelection();
         }
     }
@@ -89,12 +97,12 @@ public class UserSelectionService implements UserSelectionRepository {
     }
 
     @Override
-    public void select(@Nullable final Card card) {
+    public void select(@Nullable final Card card, @Nullable final PaymentMethod secondaryPaymentMethod) {
         if (card == null) {
             removeCardSelection();
         } else {
             this.card = card;
-            select(card.getPaymentMethod());
+            select(card.getPaymentMethod(), secondaryPaymentMethod);
             select(card.getIssuer());
         }
     }
@@ -107,7 +115,15 @@ public class UserSelectionService implements UserSelectionRepository {
     @Override
     @Nullable
     public PaymentMethod getPaymentMethod() {
-        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SELECTED_PM, TextUtil.EMPTY), PaymentMethod.class);
+        return jsonUtil.fromJson(sharedPreferences.getString(PREF_PRIMARY_SELECTED_PM, TextUtil.EMPTY),
+            PaymentMethod.class);
+    }
+
+    @Nullable
+    @Override
+    public PaymentMethod getSecondaryPaymentMethod() {
+        return jsonUtil.fromJson(sharedPreferences.getString(PREF_SECONDARY_SELECTED_PM, TextUtil.EMPTY),
+            PaymentMethod.class);
     }
 
     @Override

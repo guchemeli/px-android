@@ -3,6 +3,7 @@ package com.mercadopago.android.px.internal.view;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatTextView;
 import android.util.AttributeSet;
 import com.mercadopago.android.px.R;
@@ -25,7 +26,7 @@ public class MPTextView extends AppCompatTextView {
         this(context, attrs, 0);
     }
 
-    public MPTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public MPTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
         readAttr(context, attrs);

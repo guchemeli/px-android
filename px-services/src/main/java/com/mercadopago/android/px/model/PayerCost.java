@@ -3,7 +3,6 @@ package com.mercadopago.android.px.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import com.mercadopago.android.px.internal.util.ParcelableUtil;
 import java.io.Serializable;
@@ -14,7 +13,8 @@ import java.util.Map;
 
 public class PayerCost implements Parcelable, Serializable {
 
-    public static final int NO_INSTALLMENTS = 1;
+    public static final int NO_SELECTED = -1;
+
     private static final String CFT = "CFT";
     private static final String TEA = "TEA";
     private Integer installments;
@@ -71,14 +71,14 @@ public class PayerCost implements Parcelable, Serializable {
     }
 
     public Map<String, String> getRates() {
-        Map<String, String> ratesMap = new HashMap<>();
+        final Map<String, String> ratesMap = new HashMap<>();
 
         if (isValidLabels()) {
-            for (String label : labels) {
+            for (final String label : labels) {
                 if (label.contains(CFT) || label.contains(TEA)) {
-                    String[] ratesRaw = label.split("\\|");
-                    for (String rate : ratesRaw) {
-                        String[] rates = rate.split("_");
+                    final String[] ratesRaw = label.split("\\|");
+                    for (final String rate : ratesRaw) {
+                        final String[] rates = rate.split("_");
                         ratesMap.put(rates[0], rates[1]);
                     }
                 }
@@ -240,5 +240,15 @@ public class PayerCost implements Parcelable, Serializable {
         result = 31 * result + totalAmount.hashCode();
         result = 31 * result + installmentAmount.hashCode();
         return result;
+    }
+
+    public static PayerCost getPayerCost(@NonNull final List<PayerCost> payerCosts,
+        final int userSelectedPayerCost,
+        final int defaultSelected) {
+        if (userSelectedPayerCost == NO_SELECTED) {
+            return payerCosts.get(defaultSelected);
+        } else {
+            return payerCosts.get(userSelectedPayerCost);
+        }
     }
 }

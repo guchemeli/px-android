@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.core.PaymentProcessor;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
+import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.EscManager;
@@ -56,6 +57,7 @@ public class PaymentServiceTest {
     @Mock private GroupsRepository groupsRepository;
     @Mock private PaymentMethodSearch paymentMethodSearch;
     @Mock private List<ExpressMetadata> expressMetadata;
+    @Mock private AmountConfigurationRepository amountConfigurationRepository;
 
     @Mock private ExpressMetadata node;
     @Mock private CardMetadata cardMetadata;
@@ -78,7 +80,8 @@ public class PaymentServiceTest {
             escManager,
             tokenRepository,
             instructionsRepository,
-            groupsRepository);
+            groupsRepository,
+            amountConfigurationRepository);
 
         when(paymentSettingRepository.getCheckoutPreference()).thenReturn(mock(CheckoutPreference.class));
         when(discountRepository.getCurrentConfiguration()).thenReturn(WITHOUT_DISCOUNT);
@@ -89,9 +92,9 @@ public class PaymentServiceTest {
         final Card card = creditCardPresetMock();
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, false);
 
-        verify(userSelectionRepository).select(card);
+        verify(userSelectionRepository).select(card, null);
     }
 
     @Test
@@ -99,7 +102,7 @@ public class PaymentServiceTest {
         creditCardPresetMock();
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, false);
 
         verify(userSelectionRepository).select(payerCost);
     }
@@ -109,9 +112,9 @@ public class PaymentServiceTest {
         final Card card = creditCardPresetMock();
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, false);
 
-        verify(userSelectionRepository).select(card);
+        verify(userSelectionRepository).select(card, null);
         verify(userSelectionRepository).select(payerCost);
     }
 
@@ -122,7 +125,7 @@ public class PaymentServiceTest {
         when(tokenRepository.createToken(card)).thenReturn(new StubFailMpCall(mock(ApiException.class)));
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, false);
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);
@@ -143,7 +146,7 @@ public class PaymentServiceTest {
         when(tokenRepository.createToken(card)).thenReturn(tokenMPCall);
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, false);
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);
@@ -158,7 +161,7 @@ public class PaymentServiceTest {
         when(escManager.hasEsc(card)).thenReturn(false);
 
         paymentService.attach(handler);
-        paymentService.startExpressPayment(expressMetadata.get(0), payerCost);
+        paymentService.startExpressPayment(expressMetadata.get(0), payerCost, false);
 
         verify(escManager).hasEsc(card);
         verifyNoMoreInteractions(escManager);

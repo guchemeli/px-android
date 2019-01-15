@@ -7,9 +7,6 @@ import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.configuration.InternalConfiguration;
-import com.mercadopago.android.px.internal.datasource.CheckoutStore;
-import com.mercadopago.android.px.internal.features.hooks.Hook;
-import com.mercadopago.android.px.internal.features.hooks.HookHelper;
 import com.mercadopago.android.px.internal.features.providers.CheckoutProvider;
 import com.mercadopago.android.px.internal.navigation.DefaultPaymentMethodDriver;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -27,7 +24,6 @@ import com.mercadopago.android.px.model.Cause;
 import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Payment;
-import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
@@ -37,7 +33,6 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.services.Callback;
 import java.util.List;
-import java.util.Map;
 
 public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvider> implements PaymentServiceHandler,
     PostPaymentAction.ActionController {
@@ -154,7 +149,7 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
             .drive(new DefaultPaymentMethodDriver.PaymentMethodDriverCallback() {
                 @Override
                 public void driveToCardVault(@NonNull final Card card) {
-                    userSelectionRepository.select(card);
+                    userSelectionRepository.select(card, null);
                     getView().showSavedCardFlow(card);
                 }
 
@@ -384,38 +379,6 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
 
     public CheckoutPreference getCheckoutPreference() {
         return paymentSettingRepository.getCheckoutPreference();
-    }
-
-    //### Hooks #####################
-
-    private boolean showHook2(final PaymentData paymentData) {
-        return showHook2(paymentData, Constants.Activities.HOOK_2);
-    }
-
-    private boolean showHook2(final PaymentData paymentData, final int requestCode) {
-        final Map<String, Object> data = CheckoutStore.getInstance().getData();
-        final Hook hook = HookHelper.activateAfterPaymentMethodConfig(
-            CheckoutStore.getInstance().getCheckoutHooks(), paymentData, data);
-        if (hook != null && getView() != null) {
-            getView().showHook(hook, requestCode);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean showHook3(final PaymentData paymentData, final int requestCode) {
-        final Map<String, Object> data = CheckoutStore.getInstance().getData();
-        final Hook hook = HookHelper.activateBeforePayment(
-            CheckoutStore.getInstance().getCheckoutHooks(), paymentData, data);
-        if (hook != null && getView() != null) {
-            getView().showHook(hook, requestCode);
-            return true;
-        }
-        return false;
-    }
-
-    public void hook2Continue() {
-        showReviewAndConfirm();
     }
 
     private void finishCheckout() {

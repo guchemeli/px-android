@@ -18,7 +18,7 @@ public interface PaymentRepository {
     void startPayment();
 
     void startExpressPayment(@NonNull final ExpressMetadata selectedPaymentMethod,
-        @Nullable final PayerCost payerCost);
+        @Nullable final PayerCost payerCost, final boolean splitPayment);
 
     boolean isExplodingAnimationCompatible();
 

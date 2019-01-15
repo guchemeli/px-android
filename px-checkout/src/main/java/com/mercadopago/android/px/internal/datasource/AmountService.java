@@ -7,7 +7,6 @@ import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.model.Discount;
-import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import java.math.BigDecimal;
 
 public class AmountService implements AmountRepository {
@@ -34,7 +33,7 @@ public class AmountService implements AmountRepository {
         final BigDecimal installmentTotalAmount = getInstallmentTotalAmount();
         final int cmp = amount.compareTo(installmentTotalAmount);
         // if amount  > installment amount ; return amount else installmentAmount
-        return cmp > 0 ? amount : installmentTotalAmount;
+        return cmp == 0 ? amount : installmentTotalAmount;
     }
 
     private BigDecimal amountWithoutPayerCosts() {
@@ -66,9 +65,9 @@ public class AmountService implements AmountRepository {
         final BigDecimal installmentTotalAmount = getInstallmentTotalAmount();
         final int compare = amountWithoutPayerCosts.compareTo(installmentTotalAmount);
         // if amount  > installment amount ; return only charges else charges plus diff
-        return compare > 0 ? chargeRepository.getChargeAmount() : installmentTotalAmount
-            .subtract(amountWithoutPayerCosts)
-            .add(chargeRepository.getChargeAmount());
+        return compare == 0 ? chargeRepository.getChargeAmount() :
+            installmentTotalAmount.subtract(amountWithoutPayerCosts)
+                .add(chargeRepository.getChargeAmount());
     }
 
     private BigDecimal getDiscountAmount() {
@@ -80,6 +79,6 @@ public class AmountService implements AmountRepository {
     private BigDecimal getInstallmentTotalAmount() {
         return userSelectionRepository.hasPayerCostSelected() ? userSelectionRepository.getPayerCost()
             .getTotalAmount()
-            : BigDecimal.ZERO;
+            : amountWithoutPayerCosts();
     }
 }

@@ -10,7 +10,7 @@ import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Site;
 import java.util.List;
 
-import static com.mercadopago.android.px.model.AmountConfiguration.NO_SELECTED;
+import static com.mercadopago.android.px.model.PayerCost.NO_SELECTED;
 
 public class InstallmentsAdapter extends RecyclerView.Adapter<InstallmentRowHolder> {
 
