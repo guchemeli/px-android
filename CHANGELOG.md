@@ -1,3 +1,7 @@
+## VERSION 4.5.1
+_10_01_2019_
+* FIX - Crash in groups disk cache.
+
 ## VERSION 4.5.0
 _02_01_2019_
 * FEATURE - Account money as a first class member.
