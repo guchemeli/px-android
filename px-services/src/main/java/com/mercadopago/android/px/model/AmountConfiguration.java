@@ -39,10 +39,6 @@ public class AmountConfiguration implements Serializable {
         return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
     }
 
-    public int getDefaultPayerCostIndex() {
-        return selectedPayerCostIndex;
-    }
-
     public boolean allowSplit() {
         return split != null;
     }
