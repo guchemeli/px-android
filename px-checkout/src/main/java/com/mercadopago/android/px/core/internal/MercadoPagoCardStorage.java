@@ -9,6 +9,7 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 /**
  * Provides access to card storage flow
  */
+@SuppressWarnings("unused")
 public final class MercadoPagoCardStorage {
 
     private MercadoPagoCardStorage() {

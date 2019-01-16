@@ -27,12 +27,12 @@ public class PaymentListenerMapper
 
             @Override
             public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-
+                val.onPaymentFinished(businessPayment);
             }
 
             @Override
             public void onPaymentError(@NonNull final MercadoPagoError error) {
-
+                val.onPaymentError(error);
             }
         };
     }
