@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandlerWrapper;
 import com.mercadopago.android.px.internal.datasource.EscManagerImp;
@@ -106,7 +107,7 @@ public final class PaymentProcessorActivity extends AppCompatActivity
         final ConfigurationModule configurationModule = session.getConfigurationModule();
         final PaymentSettingRepository paymentSettings = configurationModule.getPaymentSettings();
 
-        final PaymentProcessor paymentProcessor = paymentSettings
+        final SplitPaymentProcessor paymentProcessor = paymentSettings
             .getPaymentConfiguration()
             .getPaymentProcessor();
 
@@ -116,16 +117,12 @@ public final class PaymentProcessorActivity extends AppCompatActivity
 
         final CheckoutPreference checkoutPreference = paymentSettings.getCheckoutPreference();
 
-        final PaymentProcessor.CheckoutData checkoutData =
-            new PaymentProcessor.CheckoutData(paymentData, checkoutPreference);
+        final SplitPaymentProcessor.CheckoutData checkoutData =
+            new SplitPaymentProcessor.CheckoutData(paymentData, checkoutPreference);
 
         final Fragment fragment = paymentProcessor.getFragment(checkoutData, this);
-        final Bundle fragmentBundle = paymentProcessor.getFragmentBundle(checkoutData, this);
+
         if (fragment != null) {
-            //TODO remove when fragment bundle != null.
-            if (fragmentBundle != null && fragment.getArguments() == null) {
-                fragment.setArguments(fragmentBundle);
-            }
             supportFragmentManager.beginTransaction()
                 .replace(R.id.px_main_container, fragment, TAG_PROCESSOR_FRAGMENT)
                 .commit();

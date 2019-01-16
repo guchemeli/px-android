@@ -2,7 +2,6 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.configuration.DiscountParamsConfiguration;
-import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.constants.ProcessingModes;
 import com.mercadopago.android.px.internal.datasource.cache.GroupsCache;
@@ -90,12 +89,15 @@ public class GroupsService implements GroupsRepository {
 
     @NonNull /* default */ MPCall<PaymentMethodSearch> newRequest() {
         //TODO add preference service.
+
+        final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
         final boolean expressPaymentEnabled =
             paymentSettingRepository.getAdvancedConfiguration().isExpressPaymentEnabled();
 
         final boolean hasSplitPaymentProcessor =
-            paymentSettingRepository.getPaymentConfiguration().getPaymentProcessor() instanceof SplitPaymentProcessor;
-        final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
+            paymentSettingRepository.getPaymentConfiguration().getPaymentProcessor()
+                .supportsSplitPayment(checkoutPreference);
+
         final Integer defaultInstallments = checkoutPreference.getPaymentPreference().getDefaultInstallments();
 
         final Collection<String> excludedPaymentTypesSet = new HashSet<>(checkoutPreference.getExcludedPaymentTypes());

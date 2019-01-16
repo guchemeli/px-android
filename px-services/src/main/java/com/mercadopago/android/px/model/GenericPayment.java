@@ -6,20 +6,42 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 @SuppressWarnings("unused")
-public class GenericPayment implements IPayment, Parcelable {
+public class GenericPayment implements I2Payment, Parcelable {
 
-    public final Long id;
-    public final String status;
-    public final String statusDetail;
+    @Nullable public final Long id;
+    @NonNull public final String status;
+    @NonNull public final String statusDetail;
     @Nullable public final String statementDescription;
     @Nullable public final String paymentMethodId;
     @Nullable public final String paymentTypeId;
 
+    private GenericPayment(final Builder builder) {
+        id = builder.paymentId;
+        status = builder.status;
+        statusDetail = builder.statusDetail;
+        statementDescription = builder.statementDescription;
+        paymentMethodId = builder.paymentMethodId;
+        paymentTypeId = builder.paymentTypeId;
+    }
+
+    private GenericPayment(final Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        status = in.readString();
+        statusDetail = in.readString();
+        statementDescription = in.readString();
+        paymentMethodId = in.readString();
+        paymentTypeId = in.readString();
+    }
+
     /**
      * Constructor for non-splited payment ; where is not neccessary to say which payment method have failed.
-     **/
-    public GenericPayment(final Long paymentId,
-        @NonNull final String status,
+     */
+    @Deprecated
+    public GenericPayment(@NonNull final Long paymentId, @NonNull final String status,
         @NonNull final String statusDetail) {
         id = paymentId;
         this.status = status;
@@ -29,7 +51,8 @@ public class GenericPayment implements IPayment, Parcelable {
         paymentTypeId = null;
     }
 
-    public GenericPayment(final Long paymentId,
+    @Deprecated
+    public GenericPayment(@Nullable final Long paymentId,
         @NonNull final String status,
         @NonNull final String statusDetail,
         @NonNull final String statementDescription) {
@@ -41,30 +64,26 @@ public class GenericPayment implements IPayment, Parcelable {
         paymentTypeId = null;
     }
 
-    private GenericPayment(final Long id, final String status, final String statusDetail,
-        @Nullable final String statementDescription,
-        @NonNull final String paymentMethodId,
-        @NonNull final String paymentTypeId) {
-        this.id = id;
-        this.status = status;
-        this.statusDetail = processStatusDetail(status, statusDetail);
-        this.statementDescription = statementDescription;
-        this.paymentMethodId = paymentMethodId;
-        this.paymentTypeId = paymentTypeId;
+    @Nullable
+    @Override
+    public String getPaymentTypeId() {
+        return paymentTypeId;
     }
 
-    public static GenericPayment forSplitPayment(@NonNull final GenericPayment genericPayment,
-        @NonNull final String paymentMethodId, @NonNull final String paymentTypeId) {
-        return new GenericPayment(genericPayment.id, genericPayment.status, genericPayment.statusDetail,
-            genericPayment.statementDescription,
-            paymentMethodId, paymentTypeId);
+    @Nullable
+    @Override
+    public String getPaymentMethodId() {
+        return paymentMethodId;
     }
 
-    public static GenericPayment from(final IPayment payment) {
-        return new GenericPayment(payment.getId(),
-            payment.getPaymentStatus(),
-            payment.getPaymentStatusDetail(),
-            payment.getStatementDescription());
+    @NonNull
+    public static GenericPayment with(final I2Payment payment) {
+        return new GenericPayment.Builder(payment.getPaymentStatus(), payment.getPaymentStatusDetail())
+            .setPaymentId(payment.getId())
+            .setStatementDescription(payment.getStatementDescription())
+            .setPaymentMethodId(payment.getPaymentMethodId())
+            .setPaymentTypeId(payment.getPaymentTypeId())
+            .createGenericPayment();
     }
 
     /**
@@ -82,7 +101,6 @@ public class GenericPayment implements IPayment, Parcelable {
         }
 
         if (Payment.StatusCodes.STATUS_REJECTED.equals(status)) {
-
             if (Payment.StatusDetail.isKnownErrorDetail(statusDetail)) {
                 return statusDetail;
             } else {
@@ -149,16 +167,43 @@ public class GenericPayment implements IPayment, Parcelable {
         dest.writeString(paymentTypeId);
     }
 
-    protected GenericPayment(final Parcel in) {
-        if (in.readByte() == 0) {
-            id = null;
-        } else {
-            id = in.readLong();
+    public static class Builder {
+
+        @Nullable /* default */ Long paymentId;
+        @NonNull /* default */ final String status;
+        @NonNull /* default */ final String statusDetail;
+
+        @Nullable /* default */ String statementDescription;
+        @Nullable /* default */ String paymentMethodId;
+        @Nullable /* default */ String paymentTypeId;
+
+        public Builder(@NonNull final String status, @NonNull final String statusDetail) {
+            this.status = status;
+            this.statusDetail = statusDetail;
         }
-        status = in.readString();
-        statusDetail = in.readString();
-        statementDescription = in.readString();
-        paymentMethodId = in.readString();
-        paymentTypeId = in.readString();
+
+        public Builder setStatementDescription(@Nullable final String statementDescription) {
+            this.statementDescription = statementDescription;
+            return this;
+        }
+
+        public Builder setPaymentId(@Nullable final Long paymentId) {
+            this.paymentId = paymentId;
+            return this;
+        }
+
+        public Builder setPaymentMethodId(@Nullable final String statementDescription) {
+            this.statementDescription = statementDescription;
+            return this;
+        }
+
+        public Builder setPaymentTypeId(@Nullable final String statementDescription) {
+            this.statementDescription = statementDescription;
+            return this;
+        }
+
+        public GenericPayment createGenericPayment() {
+            return new GenericPayment(this);
+        }
     }
 }

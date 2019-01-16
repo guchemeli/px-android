@@ -2,7 +2,7 @@ package com.mercadopago.android.px.internal.datasource;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.internal.callbacks.MPCall;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
@@ -49,7 +49,7 @@ public class PaymentServiceTest {
     @Mock private PaymentSettingRepository paymentSettingRepository;
     @Mock private DiscountRepository discountRepository;
     @Mock private AmountRepository amountRepository;
-    @Mock private PaymentProcessor paymentProcessor;
+    @Mock private SplitPaymentProcessor paymentProcessor;
     @Mock private Context context;
     @Mock private EscManager escManager;
     @Mock private TokenRepository tokenRepository;

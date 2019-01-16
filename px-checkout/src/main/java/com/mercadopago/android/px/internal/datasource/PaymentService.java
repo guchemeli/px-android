@@ -3,7 +3,7 @@ package com.mercadopago.android.px.internal.datasource;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandlerWrapper;
 import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
@@ -45,7 +45,7 @@ public class PaymentService implements PaymentRepository {
     @NonNull private final PaymentSettingRepository paymentSettingRepository;
     @NonNull private final DiscountRepository discountRepository;
     @NonNull private final AmountRepository amountRepository;
-    @NonNull private final PaymentProcessor paymentProcessor;
+    @NonNull private final SplitPaymentProcessor paymentProcessor;
     @NonNull private final Context context;
     @NonNull private final TokenRepository tokenRepository;
     @NonNull private final GroupsRepository groupsRepository;
@@ -63,7 +63,7 @@ public class PaymentService implements PaymentRepository {
         @NonNull final PluginRepository pluginRepository,
         @NonNull final DiscountRepository discountRepository,
         @NonNull final AmountRepository amountRepository,
-        @NonNull final PaymentProcessor paymentProcessor,
+        @NonNull final SplitPaymentProcessor paymentProcessor,
         @NonNull final Context context,
         @NonNull final EscManager escManager,
         @NonNull final TokenRepository tokenRepository,
@@ -252,19 +252,19 @@ public class PaymentService implements PaymentRepository {
     }
 
     private void pay() {
-        if (paymentProcessor.shouldShowFragmentOnPayment()) {
+        final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
+        if (paymentProcessor.shouldShowFragmentOnPayment(checkoutPreference)) {
             handlerWrapper.onVisualPayment();
         } else {
-            final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
-            final PaymentProcessor.CheckoutData checkoutData =
-                new PaymentProcessor.CheckoutData(getPaymentDataList(), checkoutPreference);
-            paymentProcessor.startPayment(checkoutData, context, handlerWrapper);
+            final SplitPaymentProcessor.CheckoutData checkoutData =
+                new SplitPaymentProcessor.CheckoutData(getPaymentDataList(), checkoutPreference);
+            paymentProcessor.startPayment(context, checkoutData, handlerWrapper);
         }
     }
 
     @Override
     public boolean isExplodingAnimationCompatible() {
-        return !paymentProcessor.shouldShowFragmentOnPayment();
+        return !paymentProcessor.shouldShowFragmentOnPayment(paymentSettingRepository.getCheckoutPreference());
     }
 
     /**
@@ -340,7 +340,7 @@ public class PaymentService implements PaymentRepository {
 
     @Override
     public int getPaymentTimeout() {
-        return paymentProcessor.getPaymentTimeout();
+        return paymentProcessor.getPaymentTimeout(paymentSettingRepository.getCheckoutPreference());
     }
 
     public MercadoPagoError getError() {

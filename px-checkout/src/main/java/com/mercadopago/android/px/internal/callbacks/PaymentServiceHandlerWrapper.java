@@ -8,6 +8,7 @@ import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.I2Payment;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Payment;
@@ -68,7 +69,10 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
 
     @Override
     public void onPaymentFinished(@NonNull final Payment payment) {
-        if (handleEsc(payment)) {
+        // TODO remove - v5 when paymentTypeId is mandatory for payments
+        final boolean shouldRecoverEsc = verifyAndHandleEsc(payment);
+
+        if (shouldRecoverEsc) {
             onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
         } else {
             //Must be after store
@@ -95,11 +99,8 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
     @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
 
-        boolean shouldRecoverEsc = false;
-
-        if (genericPayment.paymentTypeId == null || PaymentTypes.isCardPaymentType(genericPayment.paymentTypeId)) {
-            shouldRecoverEsc = handleEsc(genericPayment);
-        }
+        // TODO remove - v5 when paymentTypeId is mandatory for payments
+        final boolean shouldRecoverEsc = verifyAndHandleEsc(genericPayment);
 
         if (shouldRecoverEsc) {
             onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
@@ -125,9 +126,20 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
         }
     }
 
+    private boolean verifyAndHandleEsc(@NonNull final I2Payment genericPayment) {
+        boolean shouldRecoverEsc = false;
+        final String paymentTypeId = genericPayment.getPaymentTypeId();
+        if (paymentTypeId == null ||
+            PaymentTypes.isCardPaymentType(paymentTypeId)) {
+            shouldRecoverEsc = handleEsc(genericPayment);
+        }
+        return shouldRecoverEsc;
+    }
+
     @Override
     public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-        handleEsc(businessPayment);
+        // TODO remove - v5 when paymentTypeId is mandatory for payments
+        verifyAndHandleEsc(businessPayment);
         paymentRepository.storePayment(businessPayment);
         addAndProcess(new BusinessPaymentMessage(businessPayment));
     }

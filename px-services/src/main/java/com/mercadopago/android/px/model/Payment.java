@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class Payment implements IPayment {
+public class Payment implements I2Payment {
 
     private Boolean binaryMode;
     private String callForAuthorizeId;
@@ -246,18 +246,23 @@ public class Payment implements IPayment {
         this.payer = payer;
     }
 
-    public String getPaymentMethodId() {
-        return paymentMethodId;
-    }
-
-    public void setPaymentMethodId(String paymentMethodId) {
-        this.paymentMethodId = paymentMethodId;
-    }
-
+    @Nullable
+    @Override
     public String getPaymentTypeId() {
         return paymentTypeId;
     }
 
+    @Override
+    public String getPaymentMethodId() {
+        return paymentMethodId;
+    }
+
+    @Deprecated
+    public void setPaymentMethodId(String paymentMethodId) {
+        this.paymentMethodId = paymentMethodId;
+    }
+
+    @Deprecated
     public void setPaymentTypeId(String paymentTypeId) {
         this.paymentTypeId = paymentTypeId;
     }
@@ -266,22 +271,27 @@ public class Payment implements IPayment {
         return refunds;
     }
 
+    @Deprecated
     public void setRefunds(List<Refund> refunds) {
         this.refunds = refunds;
     }
 
+    @Deprecated
     public String getStatementDescriptor() {
         return statementDescriptor;
     }
 
+    @Deprecated
     public void setStatementDescriptor(String statementDescriptor) {
         this.statementDescriptor = statementDescriptor;
     }
 
+    @Deprecated
     public void setStatus(String status) {
         this.status = status;
     }
 
+    @Deprecated
     public void setStatusDetail(String statusDetail) {
         this.statusDetail = statusDetail;
     }
@@ -290,6 +300,7 @@ public class Payment implements IPayment {
         return transactionAmount;
     }
 
+    @Deprecated
     public void setTransactionAmount(BigDecimal transactionAmount) {
         this.transactionAmount = transactionAmount;
     }
@@ -298,6 +309,7 @@ public class Payment implements IPayment {
         return transactionAmountRefunded;
     }
 
+    @Deprecated
     public void setTransactionAmountRefunded(BigDecimal transactionAmountRefunded) {
         this.transactionAmountRefunded = transactionAmountRefunded;
     }
@@ -306,6 +318,7 @@ public class Payment implements IPayment {
         return transactionDetails;
     }
 
+    @Deprecated
     public void setTransactionDetails(TransactionDetails transactionDetails) {
         this.transactionDetails = transactionDetails;
     }

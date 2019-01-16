@@ -2,9 +2,13 @@ package com.mercadopago.android.px.internal.datasource;
 
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 
-public class MercadoPagoPaymentConfiguration extends PaymentConfiguration {
+public final class MercadoPagoPaymentConfiguration {
 
-    public MercadoPagoPaymentConfiguration() {
-        super(new MercadoPagoPaymentProcessor());
+    private MercadoPagoPaymentConfiguration() {
+    }
+
+    public static PaymentConfiguration create() {
+        return new PaymentConfiguration.Builder(new MercadoPagoPaymentProcessor())
+            .build();
     }
 }
