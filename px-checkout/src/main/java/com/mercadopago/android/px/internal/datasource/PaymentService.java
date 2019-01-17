@@ -305,9 +305,9 @@ public class PaymentService implements PaymentRepository {
                 .setTransactionAmount(currentConfiguration.split.amount);
 
             secondaryPaymentData.setCampaign(discountModel.getCampaign());
-            paymentData.setDiscount(currentConfiguration.split.getPrimaryDiscount(discountModel.getDiscount()));
+            paymentData.setDiscount(currentConfiguration.split.primaryPaymentMethodDiscount);
             secondaryPaymentData
-                .setDiscount(currentConfiguration.split.getSecondaryDiscount(discountModel.getDiscount()));
+                .setDiscount(currentConfiguration.split.secondaryPaymentMethodDiscount);
             paymentDataList.add(secondaryPaymentData);
         } else {
             paymentData.setDiscount(discountModel.getDiscount());

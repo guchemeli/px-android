@@ -3,7 +3,6 @@ package com.mercadopago.android.px.model;
 import android.support.annotation.Keep;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.internal.util.TextUtil;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -44,46 +43,14 @@ public class Split implements Serializable {
     public int selectedPayerCostIndex;
 
     @Nullable
-    public String primaryMethodDiscountToken;
+    public Discount primaryPaymentMethodDiscount;
 
     @Nullable
-    public String secondaryMethodDiscountToken;
-
-    @Nullable
-    public BigDecimal primaryCouponAmount;
-
-    @Nullable
-    public BigDecimal secondaryCouponAmount;
+    public Discount secondaryPaymentMethodDiscount;
 
     @NonNull
     public List<PayerCost>
     getPayerCosts() {
         return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
-    }
-
-    @Nullable
-    public Discount getSecondaryDiscount(@Nullable final Discount toOverride) {
-        if (TextUtil.isEmpty(secondaryMethodDiscountToken) || toOverride == null) {
-            return null;
-        }
-        return new Discount.Builder(secondaryMethodDiscountToken, toOverride.getCurrencyId(),
-            secondaryCouponAmount)
-            .setAmountOff(toOverride.getAmountOff())
-            .setName(toOverride.getName())
-            .setPercentOff(toOverride.getPercentOff())
-            .build();
-    }
-
-    @Nullable
-    public Discount getPrimaryDiscount(@Nullable final Discount toOverride) {
-        if (TextUtil.isEmpty(primaryMethodDiscountToken) || toOverride == null) {
-            return null;
-        }
-        return new Discount.Builder(primaryMethodDiscountToken, toOverride.getCurrencyId(),
-            primaryCouponAmount)
-            .setAmountOff(toOverride.getAmountOff())
-            .setName(toOverride.getName())
-            .setPercentOff(toOverride.getPercentOff())
-            .build();
     }
 }
