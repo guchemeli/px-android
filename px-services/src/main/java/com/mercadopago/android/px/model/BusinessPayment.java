@@ -223,6 +223,11 @@ public class BusinessPayment implements I2Payment, Parcelable {
         return paymentMethodId;
     }
 
+    @Override
+    public void process(@NonNull final I2PaymentHandler handler) {
+        handler.process(this);
+    }
+
     public enum Decorator {
         APPROVED("APPROVED"),
         REJECTED("REJECTED"),

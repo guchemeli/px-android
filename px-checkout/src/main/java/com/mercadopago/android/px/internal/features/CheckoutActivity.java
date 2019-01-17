@@ -29,7 +29,7 @@ import com.mercadopago.android.px.internal.viewmodel.CheckoutStateModel;
 import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.I2Payment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
@@ -242,7 +242,6 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             resolveCodes(resultCode, data);
             break;
         }
-
     }
 
     public void resolveCodes(final int resultCode, final Intent data) {
@@ -333,11 +332,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
         if (PaymentProcessorActivity.isBusiness(data)) {
             final BusinessPayment businessPayment = PaymentProcessorActivity.getBusinessPayment(data);
             presenter.onPaymentFinished(businessPayment);
-        } else if (PaymentProcessorActivity.isGeneric(data)) {
-            final GenericPayment genericPayment = PaymentProcessorActivity.getGenericPayment(data);
-            presenter.onPaymentFinished(genericPayment);
         } else {
-            final Payment payment = PaymentProcessorActivity.getPayment(data);
+            final I2Payment payment = PaymentProcessorActivity.getPayment(data);
             presenter.onPaymentFinished(payment);
         }
     }

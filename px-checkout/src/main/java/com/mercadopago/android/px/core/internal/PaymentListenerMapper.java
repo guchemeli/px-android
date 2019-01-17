@@ -22,7 +22,7 @@ public class PaymentListenerMapper
 
             @Override
             public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-                val.onPaymentFinished(genericPayment);
+                val.onPaymentFinished(genericPayment.to());
             }
 
             @Override

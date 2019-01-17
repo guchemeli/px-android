@@ -24,10 +24,13 @@ import com.mercadopago.android.px.internal.util.ErrorUtil;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.I2PaymentHandler;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.model.internal.I2ParcelablePayment;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.List;
 
@@ -36,11 +39,11 @@ import static com.mercadopago.android.px.internal.features.Constants.RESULT_PAYM
 import static com.mercadopago.android.px.internal.util.ErrorUtil.ERROR_REQUEST_CODE;
 
 public final class PaymentProcessorActivity extends AppCompatActivity
-    implements PaymentProcessor.OnPaymentListener {
+    implements SplitPaymentProcessor.OnPaymentListener,
+    PaymentProcessor.OnPaymentListener {
 
     private static final String TAG_PROCESSOR_FRAGMENT = "TAG_PROCESSOR_FRAGMENT";
     private static final String EXTRA_BUSINESS_PAYMENT = "extra_business_payment";
-    private static final String EXTRA_GENERIC_PAYMENT = "extra_generic_payment";
     private static final String EXTRA_PAYMENT = "extra_payment";
     private static final String EXTRA_RECOVERY = "extra_recovery";
 
@@ -55,23 +58,14 @@ public final class PaymentProcessorActivity extends AppCompatActivity
         return intent != null && intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_BUSINESS_PAYMENT);
     }
 
-    public static boolean isGeneric(@Nullable final Intent intent) {
-        return intent != null && intent.getExtras() != null && intent.getExtras().containsKey(EXTRA_GENERIC_PAYMENT);
-    }
-
     @Nullable
-    public static Payment getPayment(final Intent intent) {
-        return (Payment) intent.getExtras().get(EXTRA_PAYMENT);
+    public static I2ParcelablePayment getPayment(final Intent intent) {
+        return (I2ParcelablePayment) intent.getExtras().get(EXTRA_PAYMENT);
     }
 
     @Nullable
     public static BusinessPayment getBusinessPayment(final Intent intent) {
         return (BusinessPayment) intent.getExtras().get(EXTRA_BUSINESS_PAYMENT);
-    }
-
-    @Nullable
-    public static GenericPayment getGenericPayment(final Intent intent) {
-        return (GenericPayment) intent.getExtras().get(EXTRA_GENERIC_PAYMENT);
     }
 
     @Nullable
@@ -165,27 +159,25 @@ public final class PaymentProcessorActivity extends AppCompatActivity
             }
 
             @Override
-            public void onPaymentFinished(@NonNull final Payment payment) {
-                final Intent intent = new Intent();
-                intent.putExtra(EXTRA_PAYMENT, payment);
-                setResult(RESULT_PAYMENT, intent);
-                finish();
-            }
+            public void onPaymentFinished(@NonNull final I2Payment payment) {
 
-            @Override
-            public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-                final Intent intent = new Intent();
-                intent.putExtra(EXTRA_GENERIC_PAYMENT, (Parcelable) genericPayment);
-                setResult(RESULT_PAYMENT, intent);
-                finish();
-            }
+                payment.process(new I2PaymentHandler() {
+                    @Override
+                    public void process(@NonNull final BusinessPayment businessPayment) {
+                        final Intent intent = new Intent();
+                        intent.putExtra(EXTRA_BUSINESS_PAYMENT, (Parcelable) businessPayment);
+                        setResult(RESULT_PAYMENT, intent);
+                        finish();
+                    }
 
-            @Override
-            public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-                final Intent intent = new Intent();
-                intent.putExtra(EXTRA_BUSINESS_PAYMENT, (Parcelable) businessPayment);
-                setResult(RESULT_PAYMENT, intent);
-                finish();
+                    @Override
+                    public void process(@NonNull final I2Payment payment) {
+                        final Intent intent = new Intent();
+                        intent.putExtra(EXTRA_PAYMENT, (Parcelable) new I2ParcelablePayment(payment));
+                        setResult(RESULT_PAYMENT, intent);
+                        finish();
+                    }
+                });
             }
 
             @Override
@@ -206,13 +198,18 @@ public final class PaymentProcessorActivity extends AppCompatActivity
     }
 
     @Override
+    public void onPaymentFinished(@NonNull final I2Payment payment) {
+        paymentServiceHandlerWrapper.onPaymentFinished(payment);
+    }
+
+    @Override
     public void onPaymentFinished(@NonNull final Payment payment) {
         paymentServiceHandlerWrapper.onPaymentFinished(payment);
     }
 
     @Override
     public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        paymentServiceHandlerWrapper.onPaymentFinished(genericPayment);
+        paymentServiceHandlerWrapper.onPaymentFinished(genericPayment.to());
     }
 
     @Override

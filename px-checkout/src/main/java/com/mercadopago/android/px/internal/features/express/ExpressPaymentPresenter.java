@@ -26,15 +26,12 @@ import com.mercadopago.android.px.internal.viewmodel.mappers.PaymentMethodDrawab
 import com.mercadopago.android.px.internal.viewmodel.mappers.SplitHeaderMapper;
 import com.mercadopago.android.px.internal.viewmodel.mappers.SummaryViewModelMapper;
 import com.mercadopago.android.px.model.AmountConfiguration;
-import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardMetadata;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
-import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.I2Payment;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.exceptions.ApiException;
@@ -216,29 +213,14 @@ import java.util.List;
         confirmPayment(paymentMethodSelectedIndex);
     }
 
+    /**
+     * When there is no visual interaction needed this callback is called.
+     *
+     * @param payment plugin payment.
+     */
     @Override
-    public void onPaymentFinished(@NonNull final Payment payment) {
+    public void onPaymentFinished(@NonNull final I2Payment payment) {
         getView().finishLoading(explodeDecoratorMapper.map(payment));
-    }
-
-    /**
-     * When there is no visual interaction needed this callback is called.
-     *
-     * @param genericPayment plugin payment.
-     */
-    @Override
-    public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        getView().finishLoading(explodeDecoratorMapper.map(genericPayment));
-    }
-
-    /**
-     * When there is no visual interaction needed this callback is called.
-     *
-     * @param businessPayment plugin payment.
-     */
-    @Override
-    public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-        getView().finishLoading(explodeDecoratorMapper.map(businessPayment));
     }
 
     @Override
@@ -345,7 +327,7 @@ import java.util.List;
 
     @Override
     public void hasFinishPaymentAnimation() {
-        final IPayment payment = paymentRepository.getPayment();
+        final I2Payment payment = paymentRepository.getPayment();
         if (payment != null) {
             getView().showPaymentResult(payment);
         }

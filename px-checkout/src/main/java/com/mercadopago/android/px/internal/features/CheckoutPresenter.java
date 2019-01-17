@@ -21,7 +21,8 @@ import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Cause;
-import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.I2PaymentHandler;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -446,21 +447,20 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     @Override
-    public void onPaymentFinished(@NonNull final Payment payment) {
-        getView().hideProgress();
-        getView().showPaymentResult(paymentRepository.createPaymentResult(payment));
-    }
+    public void onPaymentFinished(@NonNull final I2Payment payment) {
+        payment.process(new I2PaymentHandler() {
+            @Override
+            public void process(@NonNull final I2Payment payment) {
+                getView().hideProgress();
+                getView().showPaymentResult(paymentRepository.createPaymentResult(payment));
+            }
 
-    @Override
-    public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-        getView().hideProgress();
-        getView().showPaymentResult(paymentRepository.createPaymentResult(genericPayment));
-    }
-
-    @Override
-    public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
-        getView().hideProgress();
-        getView().showBusinessResult(businessModelMapper.map(businessPayment));
+            @Override
+            public void process(@NonNull final BusinessPayment businessPayment) {
+                getView().hideProgress();
+                getView().showBusinessResult(businessModelMapper.map(businessPayment));
+            }
+        });
     }
 
     @Override

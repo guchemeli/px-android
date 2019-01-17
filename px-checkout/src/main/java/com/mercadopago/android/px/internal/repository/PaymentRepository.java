@@ -5,8 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.model.ExpressMetadata;
-import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.I2Payment;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentRecovery;
@@ -27,10 +26,7 @@ public interface PaymentRepository {
     List<PaymentData> getPaymentDataList();
 
     @NonNull
-    PaymentResult createPaymentResult(IPayment genericPayment);
-
-    @NonNull
-    PaymentResult createPaymentResult(@NonNull GenericPayment payment);
+    PaymentResult createPaymentResult(@NonNull final I2Payment genericPayment);
 
     int getPaymentTimeout();
 
@@ -38,10 +34,10 @@ public interface PaymentRepository {
 
     void detach(@NonNull final PaymentServiceHandler handler);
 
-    void storePayment(@NonNull final IPayment iPayment);
+    void storePayment(@NonNull final I2Payment iPayment);
 
     @Nullable
-    IPayment getPayment();
+    I2Payment getPayment();
 
     boolean hasPayment();
 

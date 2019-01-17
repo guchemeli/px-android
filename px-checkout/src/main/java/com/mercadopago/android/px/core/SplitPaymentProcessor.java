@@ -6,9 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.Size;
 import android.support.v4.app.Fragment;
-import com.mercadopago.android.px.model.BusinessPayment;
-import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.Payment;
+import com.mercadopago.android.px.model.I2Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
@@ -79,11 +77,7 @@ public interface SplitPaymentProcessor extends Parcelable {
 
     interface OnPaymentListener {
 
-        void onPaymentFinished(@NonNull final Payment payment);
-
-        void onPaymentFinished(@NonNull final GenericPayment genericPayment);
-
-        void onPaymentFinished(@NonNull final BusinessPayment businessPayment);
+        void onPaymentFinished(@NonNull final I2Payment payment);
 
         void onPaymentError(@NonNull final MercadoPagoError error);
     }

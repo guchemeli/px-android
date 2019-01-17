@@ -6,22 +6,64 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 @SuppressWarnings("unused")
-public class GenericPayment implements I2Payment, Parcelable {
+@Deprecated
+public final class GenericPayment implements IPayment, Parcelable {
 
     @Nullable public final Long id;
     @NonNull public final String status;
     @NonNull public final String statusDetail;
     @Nullable public final String statementDescription;
-    @Nullable public final String paymentMethodId;
-    @Nullable public final String paymentTypeId;
 
     private GenericPayment(final Builder builder) {
         id = builder.paymentId;
         status = builder.status;
         statusDetail = builder.statusDetail;
         statementDescription = builder.statementDescription;
-        paymentMethodId = builder.paymentMethodId;
-        paymentTypeId = builder.paymentTypeId;
+    }
+
+    public I2Payment to() {
+        return new I2Payment() {
+            @NonNull
+            @Override
+            public String getPaymentTypeId() {
+                return null;
+            }
+
+            @NonNull
+            @Override
+            public String getPaymentMethodId() {
+                return null;
+            }
+
+            @Override
+            public void process(@NonNull final I2PaymentHandler handler) {
+                handler.process(this);
+            }
+
+            @Nullable
+            @Override
+            public Long getId() {
+                return id;
+            }
+
+            @Nullable
+            @Override
+            public String getStatementDescription() {
+                return statementDescription;
+            }
+
+            @NonNull
+            @Override
+            public String getPaymentStatus() {
+                return status;
+            }
+
+            @NonNull
+            @Override
+            public String getPaymentStatusDetail() {
+                return statusDetail;
+            }
+        };
     }
 
     private GenericPayment(final Parcel in) {
@@ -33,8 +75,6 @@ public class GenericPayment implements I2Payment, Parcelable {
         status = in.readString();
         statusDetail = in.readString();
         statementDescription = in.readString();
-        paymentMethodId = in.readString();
-        paymentTypeId = in.readString();
     }
 
     /**
@@ -47,8 +87,6 @@ public class GenericPayment implements I2Payment, Parcelable {
         this.status = status;
         this.statusDetail = processStatusDetail(status, statusDetail);
         statementDescription = null;
-        paymentMethodId = null;
-        paymentTypeId = null;
     }
 
     @Deprecated
@@ -60,30 +98,6 @@ public class GenericPayment implements I2Payment, Parcelable {
         this.status = status;
         this.statusDetail = processStatusDetail(status, statusDetail);
         this.statementDescription = statementDescription;
-        paymentMethodId = null;
-        paymentTypeId = null;
-    }
-
-    @Nullable
-    @Override
-    public String getPaymentTypeId() {
-        return paymentTypeId;
-    }
-
-    @Nullable
-    @Override
-    public String getPaymentMethodId() {
-        return paymentMethodId;
-    }
-
-    @NonNull
-    public static GenericPayment with(final I2Payment payment) {
-        return new GenericPayment.Builder(payment.getPaymentStatus(), payment.getPaymentStatusDetail())
-            .setPaymentId(payment.getId())
-            .setStatementDescription(payment.getStatementDescription())
-            .setPaymentMethodId(payment.getPaymentMethodId())
-            .setPaymentTypeId(payment.getPaymentTypeId())
-            .createGenericPayment();
     }
 
     /**
@@ -163,8 +177,6 @@ public class GenericPayment implements I2Payment, Parcelable {
         dest.writeString(status);
         dest.writeString(statusDetail);
         dest.writeString(statementDescription);
-        dest.writeString(paymentMethodId);
-        dest.writeString(paymentTypeId);
     }
 
     public static class Builder {
@@ -172,10 +184,7 @@ public class GenericPayment implements I2Payment, Parcelable {
         @Nullable /* default */ Long paymentId;
         @NonNull /* default */ final String status;
         @NonNull /* default */ final String statusDetail;
-
         @Nullable /* default */ String statementDescription;
-        @Nullable /* default */ String paymentMethodId;
-        @Nullable /* default */ String paymentTypeId;
 
         public Builder(@NonNull final String status, @NonNull final String statusDetail) {
             this.status = status;
@@ -189,16 +198,6 @@ public class GenericPayment implements I2Payment, Parcelable {
 
         public Builder setPaymentId(@Nullable final Long paymentId) {
             this.paymentId = paymentId;
-            return this;
-        }
-
-        public Builder setPaymentMethodId(@Nullable final String statementDescription) {
-            this.statementDescription = statementDescription;
-            return this;
-        }
-
-        public Builder setPaymentTypeId(@Nullable final String statementDescription) {
-            this.statementDescription = statementDescription;
             return this;
         }
 

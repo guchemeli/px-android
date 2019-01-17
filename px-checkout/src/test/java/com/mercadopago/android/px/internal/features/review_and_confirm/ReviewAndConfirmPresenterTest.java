@@ -14,7 +14,7 @@ import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.I2Payment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -86,13 +86,13 @@ public class ReviewAndConfirmPresenterTest {
 
     @Test
     public void whenIsPaymentAndAnimationIsFinishedThenShowResult() {
-        final IPayment payment = mock(Payment.class);
+        final I2Payment payment = mock(Payment.class);
         whenIPaymentAndAnimationIsFinishedThenShowResult(payment);
     }
 
     @Test
     public void whenIsGenericPaymentAndAnimationIsFinishedThenShowResult() {
-        final IPayment payment = mock(GenericPayment.class);
+        final I2Payment payment = mock(GenericPayment.class);
         whenIPaymentAndAnimationIsFinishedThenShowResult(payment);
     }
 
@@ -339,7 +339,7 @@ public class ReviewAndConfirmPresenterTest {
         verify(view).showConfirmButton();
     }
 
-    private void whenIPaymentAndAnimationIsFinishedThenShowResult(final IPayment payment) {
+    private void whenIPaymentAndAnimationIsFinishedThenShowResult(final I2Payment payment) {
         final PaymentResult paymentResult = mock(PaymentResult.class);
 
         when(paymentRepository.getPayment()).thenReturn(payment);

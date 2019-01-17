@@ -22,8 +22,7 @@ import com.mercadopago.android.px.internal.viewmodel.mappers.CardMapper;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
-import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.I2Payment;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
@@ -56,7 +55,7 @@ public class PaymentService implements PaymentRepository {
     @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
     @NonNull /* default */ final PluginRepository pluginRepository;
 
-    @Nullable private IPayment payment;
+    @Nullable private I2Payment payment;
 
     public PaymentService(@NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
@@ -97,13 +96,13 @@ public class PaymentService implements PaymentRepository {
     }
 
     @Override
-    public void storePayment(@NonNull final IPayment iPayment) {
+    public void storePayment(@NonNull final I2Payment iPayment) {
         payment = iPayment;
     }
 
     @Nullable
     @Override
-    public IPayment getPayment() {
+    public I2Payment getPayment() {
         return payment;
     }
 
@@ -307,31 +306,17 @@ public class PaymentService implements PaymentRepository {
         return paymentDataList;
     }
 
-    @NonNull
-    @Override
-    public PaymentResult createPaymentResult(@NonNull final IPayment payment) {
-        return new PaymentResult.Builder()
-            .setPaymentData(getPaymentDataList())
-            .setPaymentId(payment.getId())
-            .setPaymentStatus(payment.getPaymentStatus())
-            .setStatementDescription(payment.getStatementDescription())
-            .setPaymentStatusDetail(payment.getPaymentStatusDetail())
-            .build();
-    }
-
     /**
-     * Transforms IPayment into a {@link PaymentResult}
-     *
      * @param payment The payment model
      * @return The transformed {@link PaymentResult}
      */
     @NonNull
     @Override
-    public PaymentResult createPaymentResult(@NonNull final GenericPayment payment) {
+    public PaymentResult createPaymentResult(@NonNull final I2Payment payment) {
         return new PaymentResult.Builder()
             .setPaymentData(getPaymentDataList())
             .setPaymentId(payment.getId())
-            .setPaymentMethodId(payment.paymentMethodId)
+            .setPaymentMethodId(payment.getPaymentMethodId())
             .setPaymentStatus(payment.getPaymentStatus())
             .setStatementDescription(payment.getStatementDescription())
             .setPaymentStatusDetail(payment.getPaymentStatusDetail())

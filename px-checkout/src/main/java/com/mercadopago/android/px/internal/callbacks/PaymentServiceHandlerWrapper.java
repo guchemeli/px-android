@@ -7,11 +7,10 @@ import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.GenericPayment;
 import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.I2PaymentHandler;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Instruction;
-import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.PaymentTypes;
@@ -67,65 +66,6 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
         addAndProcess(new RecoverPaymentEscInvalidMessage(recovery));
     }
 
-    @Override
-    public void onPaymentFinished(@NonNull final Payment payment) {
-        // TODO remove - v5 when paymentTypeId is mandatory for payments
-        final boolean shouldRecoverEsc = verifyAndHandleEsc(payment);
-
-        if (shouldRecoverEsc) {
-            onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
-        } else {
-            //Must be after store
-            paymentRepository.storePayment(payment);
-            final PaymentResult paymentResult = paymentRepository.createPaymentResult(payment);
-            if (paymentResult.isOffPayment()) {
-                instructionsRepository.getInstructions(paymentResult).enqueue(new Callback<List<Instruction>>() {
-                    @Override
-                    public void success(final List<Instruction> instructions) {
-                        addAndProcess(new PaymentMessage(payment));
-                    }
-
-                    @Override
-                    public void failure(final ApiException apiException) {
-                        addAndProcess(new PaymentMessage(payment));
-                    }
-                });
-            } else {
-                addAndProcess(new PaymentMessage(payment));
-            }
-        }
-    }
-
-    @Override
-    public void onPaymentFinished(@NonNull final GenericPayment genericPayment) {
-
-        // TODO remove - v5 when paymentTypeId is mandatory for payments
-        final boolean shouldRecoverEsc = verifyAndHandleEsc(genericPayment);
-
-        if (shouldRecoverEsc) {
-            onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
-        } else {
-            paymentRepository.storePayment(genericPayment);
-            //Must be after store
-            final PaymentResult paymentResult = paymentRepository.createPaymentResult(genericPayment);
-            if (paymentResult.isOffPayment()) {
-                instructionsRepository.getInstructions(paymentResult).enqueue(new Callback<List<Instruction>>() {
-                    @Override
-                    public void success(final List<Instruction> instructions) {
-                        addAndProcess(new GenericPaymentMessage(genericPayment));
-                    }
-
-                    @Override
-                    public void failure(final ApiException apiException) {
-                        addAndProcess(new GenericPaymentMessage(genericPayment));
-                    }
-                });
-            } else {
-                addAndProcess(new GenericPaymentMessage(genericPayment));
-            }
-        }
-    }
-
     private boolean verifyAndHandleEsc(@NonNull final I2Payment genericPayment) {
         boolean shouldRecoverEsc = false;
         final String paymentTypeId = genericPayment.getPaymentTypeId();
@@ -137,11 +77,45 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
     }
 
     @Override
-    public void onPaymentFinished(@NonNull final BusinessPayment businessPayment) {
+    public void onPaymentFinished(@NonNull final I2Payment payment) {
         // TODO remove - v5 when paymentTypeId is mandatory for payments
-        verifyAndHandleEsc(businessPayment);
-        paymentRepository.storePayment(businessPayment);
-        addAndProcess(new BusinessPaymentMessage(businessPayment));
+        payment.process(new I2PaymentHandler() {
+            @Override
+            public void process(@NonNull final I2Payment payment) {
+                final boolean shouldRecoverEsc = verifyAndHandleEsc(payment);
+
+                if (shouldRecoverEsc) {
+                    onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
+                } else {
+                    paymentRepository.storePayment(payment);
+                    //Must be after store
+                    final PaymentResult paymentResult = paymentRepository.createPaymentResult(payment);
+                    if (paymentResult.isOffPayment()) {
+                        instructionsRepository.getInstructions(paymentResult)
+                            .enqueue(new Callback<List<Instruction>>() {
+                                @Override
+                                public void success(final List<Instruction> instructions) {
+                                    addAndProcess(new PaymentMessage(payment));
+                                }
+
+                                @Override
+                                public void failure(final ApiException apiException) {
+                                    addAndProcess(new PaymentMessage(payment));
+                                }
+                            });
+                    } else {
+                        addAndProcess(new PaymentMessage(payment));
+                    }
+                }
+            }
+
+            @Override
+            public void process(@NonNull final BusinessPayment businessPayment) {
+                verifyAndHandleEsc(businessPayment);
+                paymentRepository.storePayment(businessPayment);
+                addAndProcess(new BusinessPaymentMessage(businessPayment));
+            }
+        });
     }
 
     @Override
@@ -215,9 +189,9 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
 
     private static class PaymentMessage implements Message {
 
-        @NonNull private final Payment payment;
+        @NonNull private final I2Payment payment;
 
-        /* default */ PaymentMessage(@NonNull final Payment payment) {
+        /* default */ PaymentMessage(@NonNull final I2Payment payment) {
             this.payment = payment;
         }
 
@@ -238,20 +212,6 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
         @Override
         public void processMessage(@NonNull final PaymentServiceHandler handler) {
             handler.onPaymentError(error);
-        }
-    }
-
-    private static class GenericPaymentMessage implements Message {
-        @NonNull private final GenericPayment genericPayment;
-
-        /* default */ GenericPaymentMessage(
-            @NonNull final GenericPayment genericPayment) {
-            this.genericPayment = genericPayment;
-        }
-
-        @Override
-        public void processMessage(@NonNull final PaymentServiceHandler handler) {
-            handler.onPaymentFinished(genericPayment);
         }
     }
 

@@ -1,13 +1,17 @@
 package com.mercadopago.android.px.model;
 
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 
+/**
+ *
+ */
 public interface I2Payment extends IPayment {
 
-    @Nullable
+    @NonNull
     String getPaymentTypeId();
 
-    @Nullable
+    @NonNull
     String getPaymentMethodId();
 
+    void process(@NonNull final I2PaymentHandler handler);
 }
