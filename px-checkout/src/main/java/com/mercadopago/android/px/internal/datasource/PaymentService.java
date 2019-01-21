@@ -19,6 +19,7 @@ import com.mercadopago.android.px.internal.repository.TokenRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.viewmodel.mappers.AccountMoneyMapper;
 import com.mercadopago.android.px.internal.viewmodel.mappers.CardMapper;
+import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
@@ -286,22 +287,30 @@ public class PaymentService implements PaymentRepository {
         paymentData.setPayerCost(userSelectionRepository.getPayerCost());
         paymentData.setToken(paymentSettingRepository.getToken());
         paymentData.setIssuer(userSelectionRepository.getIssuer());
-        paymentData.setCampaign(discountModel.getCampaign());
-        paymentData.setDiscount(discountModel.getDiscount());
         paymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
         paymentData.setTransactionAmount(amountRepository.getAmountToPay());
+
+        paymentData.setCampaign(discountModel.getCampaign());
 
         paymentDataList.add(paymentData);
 
         if (secondaryPaymentMethod != null) {
+
+            final AmountConfiguration currentConfiguration = amountConfigurationRepository.getCurrentConfiguration();
+
             final PaymentData secondaryPaymentData = new PaymentData();
             secondaryPaymentData.setPaymentMethod(secondaryPaymentMethod);
             secondaryPaymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
-            secondaryPaymentData.setCampaign(discountModel.getCampaign());
-            secondaryPaymentData.setDiscount(discountModel.getDiscount());
             secondaryPaymentData
-                .setTransactionAmount(amountConfigurationRepository.getCurrentConfiguration().split.amount);
+                .setTransactionAmount(currentConfiguration.split.amount);
+
+            secondaryPaymentData.setCampaign(discountModel.getCampaign());
+            paymentData.setDiscount(currentConfiguration.split.primaryPaymentMethodDiscount);
+            secondaryPaymentData
+                .setDiscount(currentConfiguration.split.secondaryPaymentMethodDiscount);
             paymentDataList.add(secondaryPaymentData);
+        } else {
+            paymentData.setDiscount(discountModel.getDiscount());
         }
 
         return paymentDataList;

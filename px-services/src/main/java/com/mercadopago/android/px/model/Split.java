@@ -43,13 +43,14 @@ public class Split implements Serializable {
     public int selectedPayerCostIndex;
 
     @Nullable
-    public String primaryMethodDiscountToken;
+    public Discount primaryPaymentMethodDiscount;
 
     @Nullable
-    public String secondaryMethodDiscountToken;
+    public Discount secondaryPaymentMethodDiscount;
 
     @NonNull
-    public List<PayerCost> getPayerCosts() {
+    public List<PayerCost>
+    getPayerCosts() {
         return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
     }
 }

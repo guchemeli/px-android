@@ -29,18 +29,9 @@ public class AmountConfiguration implements Serializable {
      */
     @Nullable public Split split;
 
-    /**
-     * null if there is no discount configuration associated.
-     */
-    @Nullable public String discountToken;
-
     @NonNull
     public List<PayerCost> getPayerCosts() {
         return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
-    }
-
-    public int getDefaultPayerCostIndex() {
-        return selectedPayerCostIndex;
     }
 
     public boolean allowSplit() {
