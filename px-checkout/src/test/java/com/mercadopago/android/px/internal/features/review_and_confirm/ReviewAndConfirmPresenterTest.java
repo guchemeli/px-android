@@ -92,7 +92,7 @@ public class ReviewAndConfirmPresenterTest {
 
     @Test
     public void whenIsGenericPaymentAndAnimationIsFinishedThenShowResult() {
-        final I2Payment payment = mock(GenericPayment.class);
+        final I2Payment payment = mock(I2Payment.class);
         whenIPaymentAndAnimationIsFinishedThenShowResult(payment);
     }
 
@@ -282,7 +282,7 @@ public class ReviewAndConfirmPresenterTest {
 
     @Test
     public void whenGenericPaymentFinishedThenFinishLoadingWithExplodeDecorator() {
-        final GenericPayment genericPayment = mock(GenericPayment.class);
+        final I2Payment genericPayment = mock(I2Payment.class);
         when(genericPayment.getPaymentStatus()).thenReturn(Payment.StatusCodes.STATUS_APPROVED);
         when(genericPayment.getPaymentStatusDetail())
             .thenReturn(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT);

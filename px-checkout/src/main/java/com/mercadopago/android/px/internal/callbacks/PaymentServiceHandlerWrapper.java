@@ -2,6 +2,7 @@ package com.mercadopago.android.px.internal.callbacks;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import com.mercadopago.android.px.internal.repository.EscManager;
 import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
@@ -25,10 +26,48 @@ import java.util.Queue;
 public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler {
 
     @Nullable private WeakReference<PaymentServiceHandler> handler;
-    @NonNull private final PaymentRepository paymentRepository;
     @NonNull private final EscManager escManager;
     @NonNull private final InstructionsRepository instructionsRepository;
     @NonNull private final Queue<Message> messages;
+    @NonNull /* default */ final PaymentRepository paymentRepository;
+
+    @NonNull private final I2PaymentHandler paymentHandler = new I2PaymentHandler() {
+        @Override
+        public void process(@NonNull final I2Payment payment) {
+            final boolean shouldRecoverEsc = verifyAndHandleEsc(payment);
+
+            if (shouldRecoverEsc) {
+                onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
+            } else {
+                paymentRepository.storePayment(payment);
+                //Must be after store
+                final PaymentResult paymentResult = paymentRepository.createPaymentResult(payment);
+                if (paymentResult.isOffPayment()) {
+                    instructionsRepository.getInstructions(paymentResult)
+                        .enqueue(new Callback<List<Instruction>>() {
+                            @Override
+                            public void success(final List<Instruction> instructions) {
+                                addAndProcess(new PaymentMessage(payment));
+                            }
+
+                            @Override
+                            public void failure(final ApiException apiException) {
+                                addAndProcess(new PaymentMessage(payment));
+                            }
+                        });
+                } else {
+                    addAndProcess(new PaymentMessage(payment));
+                }
+            }
+        }
+
+        @Override
+        public void process(@NonNull final BusinessPayment businessPayment) {
+            verifyAndHandleEsc(businessPayment);
+            paymentRepository.storePayment(businessPayment);
+            addAndProcess(new BusinessPaymentMessage(businessPayment));
+        }
+    };
 
     public PaymentServiceHandlerWrapper(
         @NonNull final PaymentRepository paymentRepository,
@@ -79,43 +118,13 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
     @Override
     public void onPaymentFinished(@NonNull final I2Payment payment) {
         // TODO remove - v5 when paymentTypeId is mandatory for payments
-        payment.process(new I2PaymentHandler() {
-            @Override
-            public void process(@NonNull final I2Payment payment) {
-                final boolean shouldRecoverEsc = verifyAndHandleEsc(payment);
+        payment.process(getHandler());
+    }
 
-                if (shouldRecoverEsc) {
-                    onRecoverPaymentEscInvalid(paymentRepository.createRecoveryForInvalidESC());
-                } else {
-                    paymentRepository.storePayment(payment);
-                    //Must be after store
-                    final PaymentResult paymentResult = paymentRepository.createPaymentResult(payment);
-                    if (paymentResult.isOffPayment()) {
-                        instructionsRepository.getInstructions(paymentResult)
-                            .enqueue(new Callback<List<Instruction>>() {
-                                @Override
-                                public void success(final List<Instruction> instructions) {
-                                    addAndProcess(new PaymentMessage(payment));
-                                }
-
-                                @Override
-                                public void failure(final ApiException apiException) {
-                                    addAndProcess(new PaymentMessage(payment));
-                                }
-                            });
-                    } else {
-                        addAndProcess(new PaymentMessage(payment));
-                    }
-                }
-            }
-
-            @Override
-            public void process(@NonNull final BusinessPayment businessPayment) {
-                verifyAndHandleEsc(businessPayment);
-                paymentRepository.storePayment(businessPayment);
-                addAndProcess(new BusinessPaymentMessage(businessPayment));
-            }
-        });
+    @VisibleForTesting
+    @NonNull
+        /* default */ I2PaymentHandler getHandler() {
+        return paymentHandler;
     }
 
     @Override
