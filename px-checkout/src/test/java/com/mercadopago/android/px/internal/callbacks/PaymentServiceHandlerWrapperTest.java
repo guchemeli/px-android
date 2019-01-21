@@ -102,17 +102,9 @@ public class PaymentServiceHandlerWrapperTest {
     public void whenPaymentFinishedWithBusinessVerifyEscManaged() {
         final BusinessPayment payment = mock(BusinessPayment.class);
 
-        final Answer<I2Payment> answer = new Answer<I2Payment>() {
-            @Override
-            public I2Payment answer(final InvocationOnMock invocation) throws Throwable {
-                invocation.callRealMethod();
-                return null;
-            }
-        };
 
-        doAnswer(answer).when(payment).process(any(I2PaymentHandler.class));
-
-        paymentServiceHandlerWrapper.onPaymentFinished(payment);
+        final I2PaymentHandler handler = paymentServiceHandlerWrapper.getHandler();
+        handler.process(payment);
 
         verify(escManager).manageEscForPayment(paymentRepository.getPaymentDataList(), payment.getPaymentStatus(),
             payment.getPaymentStatusDetail());
