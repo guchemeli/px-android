@@ -45,7 +45,7 @@ public final class DebitCardDescriptorModel extends PaymentMethodDescriptorView.
         @NonNull final Context context,
         @NonNull final TextView textView) {
 
-        if (amountConfiguration.isSplitPossible(userWantToSplit)) {
+        if (amountConfiguration.allowSplit()) {
             final Spannable amount = TextFormatter.withCurrencyId(currencyId)
                 .amount(getCurrent().getInstallmentAmount())
                 .normalDecimals()
