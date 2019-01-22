@@ -15,7 +15,7 @@ import com.mercadopago.android.px.model.PayerCost;
 
 /**
  * Model used to instantiate PaymentMethodDescriptorView for payment methods with payer costs. This model is used for
- * credit_card
+ * debit_card
  */
 public final class DebitCardDescriptorModel extends PaymentMethodDescriptorView.Model {
 
