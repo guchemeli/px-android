@@ -4,6 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.core.SplitPaymentProcessor;
+import com.mercadopago.android.px.core.internal.CheckoutDataMapper;
+import com.mercadopago.android.px.core.internal.PaymentListenerMapper;
+import com.mercadopago.android.px.core.internal.PaymentProcessorMapper;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,13 +15,9 @@ import java.util.Collection;
 @SuppressWarnings("unused")
 public class PaymentConfiguration {
 
-    @NonNull private final PaymentProcessor paymentProcessor;
     @NonNull private final ArrayList<ChargeRule> charges;
 
-    protected PaymentConfiguration(@NonNull final PaymentProcessor paymentProcessor) {
-        this.paymentProcessor = paymentProcessor;
-        charges = new ArrayList<>();
-    }
+    private final SplitPaymentProcessor paymentProcessor;
 
     /* default */ PaymentConfiguration(@NonNull final Builder builder) {
         paymentProcessor = builder.paymentProcessor;
@@ -25,7 +25,7 @@ public class PaymentConfiguration {
     }
 
     @NonNull
-    public PaymentProcessor getPaymentProcessor() {
+    public SplitPaymentProcessor getPaymentProcessor() {
         return paymentProcessor;
     }
 
@@ -48,15 +48,30 @@ public class PaymentConfiguration {
 
     public static final class Builder {
 
-        /* default */ @NonNull final PaymentProcessor paymentProcessor;
+        /* default */ @NonNull final SplitPaymentProcessor paymentProcessor;
         /* default */ @NonNull final ArrayList<PaymentMethodPlugin> paymentMethodPluginList;
         /* default */ @NonNull ArrayList<ChargeRule> charges;
 
         /**
          * @param paymentProcessor your custom payment processor.
+         * @param paymentProcessor
          */
-        public Builder(@NonNull final PaymentProcessor paymentProcessor) {
+        public Builder(@NonNull final SplitPaymentProcessor paymentProcessor) {
             this.paymentProcessor = paymentProcessor;
+            paymentMethodPluginList = new ArrayList<>();
+            charges = new ArrayList<>();
+        }
+
+        /**
+         * @param paymentProcessor your custom payment processor.
+         * @deprecated you should migrate to split payment processor
+         */
+        @Deprecated
+        public Builder(@NonNull final PaymentProcessor paymentProcessor) {
+            this.paymentProcessor =
+                new PaymentProcessorMapper(new PaymentListenerMapper(), new CheckoutDataMapper())
+                    .map(paymentProcessor);
+
             paymentMethodPluginList = new ArrayList<>();
             charges = new ArrayList<>();
         }

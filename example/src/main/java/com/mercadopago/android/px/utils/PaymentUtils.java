@@ -1,14 +1,11 @@
 package com.mercadopago.android.px.utils;
 
 import android.support.annotation.NonNull;
-import com.mercadopago.android.px.model.Payment;
-import com.mercadopago.android.px.model.PaymentData;
-import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.ExitAction;
 import com.mercadopago.android.px.model.GenericPayment;
+import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.example.R;
-import java.math.BigDecimal;
 
 public final class PaymentUtils {
 
@@ -26,16 +23,10 @@ public final class PaymentUtils {
     }
 
     @NonNull
-    public static GenericPayment getGenericPaymentApprovedAccountMoney() {
-        return new GenericPayment(123L, Payment.StatusCodes.STATUS_APPROVED,
-            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED);
-    }
-
-    private static PaymentData getPaymentDataWithAccountMoneyPlugin(final BigDecimal amount) {
-        final PaymentData paymentData = new PaymentData();
-        final PaymentMethod paymentMethod = new PaymentMethod("account_money", "Dinero en cuenta", "account_money");
-        paymentData.setPaymentMethod(paymentMethod);
-        paymentData.setTransactionAmount(amount);
-        return paymentData;
+    public static GenericPayment getGenericPaymentApproved() {
+        return new GenericPayment.Builder(
+            Payment.StatusCodes.STATUS_APPROVED,
+            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED
+        ).setPaymentId(123L).createGenericPayment();
     }
 }

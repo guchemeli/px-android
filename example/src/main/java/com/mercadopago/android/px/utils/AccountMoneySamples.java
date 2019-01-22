@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.mercadopago.android.px.utils.PaymentUtils.getGenericPaymentApproved;
+
 public final class AccountMoneySamples {
 
     private static final String MERCHANT_PUBLIC_KEY = "TEST-4763b824-93d7-4ca2-a7f7-93539c3ee5bd";
@@ -38,8 +40,7 @@ public final class AccountMoneySamples {
     }
 
     private static MercadoPagoCheckout.Builder startCheckoutWithGenericPayment() {
-        final GenericPayment payment = new GenericPayment(123L, Payment.StatusCodes.STATUS_APPROVED,
-            Payment.StatusDetail.STATUS_DETAIL_ACCREDITED);
+        final GenericPayment payment = getGenericPaymentApproved();
         final PaymentProcessor paymentProcessor = new SamplePaymentProcessorNoView(payment);
         final PaymentConfiguration paymentConfiguration = new PaymentConfiguration.Builder(paymentProcessor).build();
 
