@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public final class Payment implements IPayment, I2Payment {
+public final class Payment implements IPayment, IPaymentDescriptor {
 
     private Boolean binaryMode;
     private String callForAuthorizeId;
@@ -259,8 +259,8 @@ public final class Payment implements IPayment, I2Payment {
     }
 
     @Override
-    public void process(@NonNull final I2PaymentHandler handler) {
-        handler.process(this);
+    public void process(@NonNull final IPaymentDescriptorHandler handler) {
+        handler.visit(this);
     }
 
     @Deprecated

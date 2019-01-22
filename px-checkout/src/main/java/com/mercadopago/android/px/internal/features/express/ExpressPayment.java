@@ -9,8 +9,7 @@ import com.mercadopago.android.px.internal.view.ElementDescriptorView;
 import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentItem;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
-import com.mercadopago.android.px.model.I2Payment;
-import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Site;
@@ -40,7 +39,7 @@ public interface ExpressPayment {
 
         void showErrorScreen(@NonNull final MercadoPagoError error);
 
-        void showPaymentResult(@NonNull final I2Payment paymentResult);
+        void showPaymentResult(@NonNull final IPaymentDescriptor paymentResult);
 
         void onRecoverPaymentEscInvalid(final PaymentRecovery recovery);
 

@@ -29,7 +29,7 @@ import com.mercadopago.android.px.internal.viewmodel.CheckoutStateModel;
 import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
@@ -333,7 +333,7 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
             final BusinessPayment businessPayment = PaymentProcessorActivity.getBusinessPayment(data);
             presenter.onPaymentFinished(businessPayment);
         } else {
-            final I2Payment payment = PaymentProcessorActivity.getPayment(data);
+            final IPaymentDescriptor payment = PaymentProcessorActivity.getPayment(data);
             presenter.onPaymentFinished(payment);
         }
     }

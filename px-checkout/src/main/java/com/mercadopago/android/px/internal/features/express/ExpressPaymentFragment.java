@@ -61,7 +61,7 @@ import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentI
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
-import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Site;
@@ -419,7 +419,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
     //TODO refactor
     @Override
-    public void showPaymentResult(@NonNull final I2Payment paymentResult) {
+    public void showPaymentResult(@NonNull final IPaymentDescriptor paymentResult) {
         if (getActivity() != null) {
             if (paymentResult instanceof BusinessPayment) {
                 ((CheckoutActivity) getActivity()).presenter.onPaymentFinished((BusinessPayment) paymentResult);

@@ -11,7 +11,7 @@ import com.mercadopago.android.px.internal.util.ParcelableUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
 
 @SuppressWarnings("unused")
-public class BusinessPayment implements I2Payment, Parcelable {
+public class BusinessPayment implements IPaymentDescriptor, Parcelable {
 
     @NonNull private final String title;
     @NonNull private final Decorator decorator;
@@ -224,8 +224,8 @@ public class BusinessPayment implements I2Payment, Parcelable {
     }
 
     @Override
-    public void process(@NonNull final I2PaymentHandler handler) {
-        handler.process(this);
+    public void process(@NonNull final IPaymentDescriptorHandler handler) {
+        handler.visit(this);
     }
 
     public enum Decorator {

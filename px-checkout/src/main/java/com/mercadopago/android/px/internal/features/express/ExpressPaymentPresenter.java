@@ -30,7 +30,7 @@ import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.CardMetadata;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
-import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentRecovery;
@@ -219,7 +219,7 @@ import java.util.List;
      * @param payment plugin payment.
      */
     @Override
-    public void onPaymentFinished(@NonNull final I2Payment payment) {
+    public void onPaymentFinished(@NonNull final IPaymentDescriptor payment) {
         getView().finishLoading(explodeDecoratorMapper.map(payment));
     }
 
@@ -327,7 +327,7 @@ import java.util.List;
 
     @Override
     public void hasFinishPaymentAnimation() {
-        final I2Payment payment = paymentRepository.getPayment();
+        final IPaymentDescriptor payment = paymentRepository.getPayment();
         if (payment != null) {
             getView().showPaymentResult(payment);
         }

@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.mercadopago.android.px.model.internal.IParcelablePaymentDescriptor;
 
 @SuppressWarnings("unused")
 @Deprecated
@@ -19,51 +20,6 @@ public final class GenericPayment implements IPayment, Parcelable {
         status = builder.status;
         statusDetail = builder.statusDetail;
         statementDescription = builder.statementDescription;
-    }
-
-    public I2Payment to() {
-        return new I2Payment() {
-            @NonNull
-            @Override
-            public String getPaymentTypeId() {
-                return null;
-            }
-
-            @NonNull
-            @Override
-            public String getPaymentMethodId() {
-                return null;
-            }
-
-            @Override
-            public void process(@NonNull final I2PaymentHandler handler) {
-                handler.process(this);
-            }
-
-            @Nullable
-            @Override
-            public Long getId() {
-                return id;
-            }
-
-            @Nullable
-            @Override
-            public String getStatementDescription() {
-                return statementDescription;
-            }
-
-            @NonNull
-            @Override
-            public String getPaymentStatus() {
-                return status;
-            }
-
-            @NonNull
-            @Override
-            public String getPaymentStatusDetail() {
-                return statusDetail;
-            }
-        };
     }
 
     private GenericPayment(final Parcel in) {

@@ -8,9 +8,9 @@ import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.I2Payment;
-import com.mercadopago.android.px.model.I2PaymentHandler;
 import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
+import com.mercadopago.android.px.model.IPaymentDescriptorHandler;
 import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
@@ -31,9 +31,9 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
     @NonNull private final Queue<Message> messages;
     @NonNull /* default */ final PaymentRepository paymentRepository;
 
-    @NonNull private final I2PaymentHandler paymentHandler = new I2PaymentHandler() {
+    @NonNull private final IPaymentDescriptorHandler paymentHandler = new IPaymentDescriptorHandler() {
         @Override
-        public void process(@NonNull final I2Payment payment) {
+        public void visit(@NonNull final IPaymentDescriptor payment) {
             final boolean shouldRecoverEsc = verifyAndHandleEsc(payment);
 
             if (shouldRecoverEsc) {
@@ -62,7 +62,7 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
         }
 
         @Override
-        public void process(@NonNull final BusinessPayment businessPayment) {
+        public void visit(@NonNull final BusinessPayment businessPayment) {
             verifyAndHandleEsc(businessPayment);
             paymentRepository.storePayment(businessPayment);
             addAndProcess(new BusinessPaymentMessage(businessPayment));
@@ -105,25 +105,25 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
         addAndProcess(new RecoverPaymentEscInvalidMessage(recovery));
     }
 
-    private boolean verifyAndHandleEsc(@NonNull final I2Payment genericPayment) {
+    private boolean verifyAndHandleEsc(@NonNull final IPaymentDescriptor genericPayment) {
         boolean shouldRecoverEsc = false;
         final String paymentTypeId = genericPayment.getPaymentTypeId();
-        if (paymentTypeId == null ||
-            PaymentTypes.isCardPaymentType(paymentTypeId)) {
+        if (paymentTypeId == null || PaymentTypes.isCardPaymentType(paymentTypeId)) {
             shouldRecoverEsc = handleEsc(genericPayment);
         }
         return shouldRecoverEsc;
     }
 
     @Override
-    public void onPaymentFinished(@NonNull final I2Payment payment) {
+    public void onPaymentFinished(@NonNull final IPaymentDescriptor payment) {
         // TODO remove - v5 when paymentTypeId is mandatory for payments
         payment.process(getHandler());
     }
 
+    /* default */
     @VisibleForTesting
     @NonNull
-        /* default */ I2PaymentHandler getHandler() {
+    IPaymentDescriptorHandler getHandler() {
         return paymentHandler;
     }
 
@@ -198,9 +198,9 @@ public final class PaymentServiceHandlerWrapper implements PaymentServiceHandler
 
     private static class PaymentMessage implements Message {
 
-        @NonNull private final I2Payment payment;
+        @NonNull private final IPaymentDescriptor payment;
 
-        /* default */ PaymentMessage(@NonNull final I2Payment payment) {
+        /* default */ PaymentMessage(@NonNull final IPaymentDescriptor payment) {
             this.payment = payment;
         }
 

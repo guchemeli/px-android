@@ -16,7 +16,7 @@ import com.mercadopago.android.px.internal.viewmodel.PostPaymentAction;
 import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
@@ -70,7 +70,7 @@ import java.util.Set;
 
     @Override
     public void hasFinishPaymentAnimation() {
-        final I2Payment payment = paymentRepository.getPayment();
+        final IPaymentDescriptor payment = paymentRepository.getPayment();
         if (payment instanceof BusinessPayment) {
             getView().showResult(businessModelMapper.map((BusinessPayment) payment));
         } else {
@@ -160,7 +160,7 @@ import java.util.Set;
     }
 
     @Override
-    public void onPaymentFinished(@NonNull final I2Payment payment) {
+    public void onPaymentFinished(@NonNull final IPaymentDescriptor payment) {
         getView().hideConfirmButton();
         getView().finishLoading(explodeDecoratorMapper.map(payment));
     }

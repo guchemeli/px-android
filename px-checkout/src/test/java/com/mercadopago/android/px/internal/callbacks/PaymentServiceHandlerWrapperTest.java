@@ -5,8 +5,8 @@ import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.I2Payment;
-import com.mercadopago.android.px.model.I2PaymentHandler;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
+import com.mercadopago.android.px.model.IPaymentDescriptorHandler;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentRecovery;
@@ -17,12 +17,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.mockito.stubbing.Answer;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -85,8 +82,8 @@ public class PaymentServiceHandlerWrapperTest {
         when(paymentResult.isOffPayment()).thenReturn(false);
         when(paymentRepository.createPaymentResult(payment)).thenReturn(paymentResult);
 
-        final I2PaymentHandler handler = paymentServiceHandlerWrapper.getHandler();
-        handler.process(payment);
+        final IPaymentDescriptorHandler handler = paymentServiceHandlerWrapper.getHandler();
+        handler.visit(payment);
 
         verify(escManager).manageEscForPayment(paymentRepository.getPaymentDataList(), payment.getPaymentStatus(),
             payment.getPaymentStatusDetail());
@@ -103,8 +100,8 @@ public class PaymentServiceHandlerWrapperTest {
         final BusinessPayment payment = mock(BusinessPayment.class);
 
 
-        final I2PaymentHandler handler = paymentServiceHandlerWrapper.getHandler();
-        handler.process(payment);
+        final IPaymentDescriptorHandler handler = paymentServiceHandlerWrapper.getHandler();
+        handler.visit(payment);
 
         verify(escManager).manageEscForPayment(paymentRepository.getPaymentDataList(), payment.getPaymentStatus(),
             payment.getPaymentStatusDetail());
@@ -119,12 +116,12 @@ public class PaymentServiceHandlerWrapperTest {
     @Test
     public void whenPaymentFinishedWithGenericPaymentVerifyEscManaged() {
         final PaymentResult paymentResult = mock(PaymentResult.class);
-        final I2Payment payment = mock(I2Payment.class);
+        final IPaymentDescriptor payment = mock(IPaymentDescriptor.class);
         when(paymentResult.isOffPayment()).thenReturn(false);
         when(paymentRepository.createPaymentResult(payment)).thenReturn(paymentResult);
 
-        final I2PaymentHandler handler = paymentServiceHandlerWrapper.getHandler();
-        handler.process(payment);
+        final IPaymentDescriptorHandler handler = paymentServiceHandlerWrapper.getHandler();
+        handler.visit(payment);
 
         verify(escManager).manageEscForPayment(paymentRepository.getPaymentDataList(), payment.getPaymentStatus(),
             payment.getPaymentStatusDetail());
@@ -150,13 +147,13 @@ public class PaymentServiceHandlerWrapperTest {
 
     @Test
     public void whenPaymentFinishedWithGenericPaymentAndEscIsInvalidatedVerifyRecoveryCalled() {
-        final I2Payment payment = mock(I2Payment.class);
+        final IPaymentDescriptor payment = mock(IPaymentDescriptor.class);
 
         when(escManager.manageEscForPayment(paymentRepository.getPaymentDataList(), payment.getPaymentStatus(),
             payment.getPaymentStatusDetail())).thenReturn(true);
 
-        final I2PaymentHandler handler = paymentServiceHandlerWrapper.getHandler();
-        handler.process(payment);
+        final IPaymentDescriptorHandler handler = paymentServiceHandlerWrapper.getHandler();
+        handler.visit(payment);
 
         verify(paymentRepository).createRecoveryForInvalidESC();
 
@@ -176,8 +173,8 @@ public class PaymentServiceHandlerWrapperTest {
         when(escManager.manageEscForPayment(paymentRepository.getPaymentDataList(), payment.getPaymentStatus(),
             payment.getPaymentStatusDetail())).thenReturn(true);
 
-        final I2PaymentHandler handler = paymentServiceHandlerWrapper.getHandler();
-        handler.process(payment);
+        final IPaymentDescriptorHandler handler = paymentServiceHandlerWrapper.getHandler();
+        handler.visit(payment);
 
         verify(escManager).manageEscForPayment(paymentRepository.getPaymentDataList(), payment.getPaymentStatus(),
             payment.getPaymentStatusDetail());

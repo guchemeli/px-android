@@ -13,8 +13,7 @@ import com.mercadopago.android.px.internal.viewmodel.BusinessPaymentModel;
 import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -86,13 +85,13 @@ public class ReviewAndConfirmPresenterTest {
 
     @Test
     public void whenIsPaymentAndAnimationIsFinishedThenShowResult() {
-        final I2Payment payment = mock(Payment.class);
+        final IPaymentDescriptor payment = mock(Payment.class);
         whenIPaymentAndAnimationIsFinishedThenShowResult(payment);
     }
 
     @Test
     public void whenIsGenericPaymentAndAnimationIsFinishedThenShowResult() {
-        final I2Payment payment = mock(I2Payment.class);
+        final IPaymentDescriptor payment = mock(IPaymentDescriptor.class);
         whenIPaymentAndAnimationIsFinishedThenShowResult(payment);
     }
 
@@ -282,7 +281,7 @@ public class ReviewAndConfirmPresenterTest {
 
     @Test
     public void whenGenericPaymentFinishedThenFinishLoadingWithExplodeDecorator() {
-        final I2Payment genericPayment = mock(I2Payment.class);
+        final IPaymentDescriptor genericPayment = mock(IPaymentDescriptor.class);
         when(genericPayment.getPaymentStatus()).thenReturn(Payment.StatusCodes.STATUS_APPROVED);
         when(genericPayment.getPaymentStatusDetail())
             .thenReturn(Payment.StatusDetail.STATUS_DETAIL_PENDING_WAITING_PAYMENT);
@@ -339,7 +338,7 @@ public class ReviewAndConfirmPresenterTest {
         verify(view).showConfirmButton();
     }
 
-    private void whenIPaymentAndAnimationIsFinishedThenShowResult(final I2Payment payment) {
+    private void whenIPaymentAndAnimationIsFinishedThenShowResult(final IPaymentDescriptor payment) {
         final PaymentResult paymentResult = mock(PaymentResult.class);
 
         when(paymentRepository.getPayment()).thenReturn(payment);

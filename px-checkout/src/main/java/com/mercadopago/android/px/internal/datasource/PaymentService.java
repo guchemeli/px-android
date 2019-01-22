@@ -22,7 +22,7 @@ import com.mercadopago.android.px.internal.viewmodel.mappers.CardMapper;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
-import com.mercadopago.android.px.model.I2Payment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
@@ -55,7 +55,7 @@ public class PaymentService implements PaymentRepository {
     @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
     @NonNull /* default */ final PluginRepository pluginRepository;
 
-    @Nullable private I2Payment payment;
+    @Nullable private IPaymentDescriptor payment;
 
     public PaymentService(@NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
@@ -96,13 +96,13 @@ public class PaymentService implements PaymentRepository {
     }
 
     @Override
-    public void storePayment(@NonNull final I2Payment iPayment) {
+    public void storePayment(@NonNull final IPaymentDescriptor iPayment) {
         payment = iPayment;
     }
 
     @Nullable
     @Override
-    public I2Payment getPayment() {
+    public IPaymentDescriptor getPayment() {
         return payment;
     }
 
@@ -312,7 +312,7 @@ public class PaymentService implements PaymentRepository {
      */
     @NonNull
     @Override
-    public PaymentResult createPaymentResult(@NonNull final I2Payment payment) {
+    public PaymentResult createPaymentResult(@NonNull final IPaymentDescriptor payment) {
         return new PaymentResult.Builder()
             .setPaymentData(getPaymentDataList())
             .setPaymentId(payment.getId())

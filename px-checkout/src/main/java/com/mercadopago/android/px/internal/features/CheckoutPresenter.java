@@ -21,8 +21,8 @@ import com.mercadopago.android.px.internal.viewmodel.mappers.BusinessModelMapper
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.Cause;
-import com.mercadopago.android.px.model.I2Payment;
-import com.mercadopago.android.px.model.I2PaymentHandler;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
+import com.mercadopago.android.px.model.IPaymentDescriptorHandler;
 import com.mercadopago.android.px.model.IPayment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
@@ -447,16 +447,16 @@ public class CheckoutPresenter extends MvpPresenter<CheckoutView, CheckoutProvid
     }
 
     @Override
-    public void onPaymentFinished(@NonNull final I2Payment payment) {
-        payment.process(new I2PaymentHandler() {
+    public void onPaymentFinished(@NonNull final IPaymentDescriptor payment) {
+        payment.process(new IPaymentDescriptorHandler() {
             @Override
-            public void process(@NonNull final I2Payment payment) {
+            public void visit(@NonNull final IPaymentDescriptor payment) {
                 getView().hideProgress();
                 getView().showPaymentResult(paymentRepository.createPaymentResult(payment));
             }
 
             @Override
-            public void process(@NonNull final BusinessPayment businessPayment) {
+            public void visit(@NonNull final BusinessPayment businessPayment) {
                 getView().hideProgress();
                 getView().showBusinessResult(businessModelMapper.map(businessPayment));
             }
