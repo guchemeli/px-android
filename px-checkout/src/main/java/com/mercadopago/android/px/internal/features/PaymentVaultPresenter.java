@@ -2,14 +2,13 @@ package com.mercadopago.android.px.internal.features;
 
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
-import com.mercadopago.android.px.internal.base.MvpPresenter;
+import com.mercadopago.android.px.internal.base.BasePresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.datasource.CheckoutStore;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookHelper;
-import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
 import com.mercadopago.android.px.internal.navigation.DefaultPayerInformationDriver;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -34,10 +33,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, PaymentVaultProvider>
+public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
     implements AmountView.OnClick {
-
-    private static final String MISMATCHING_PAYMENT_METHOD_ERROR = "Payment method in search not found";
 
     @NonNull
     private final PaymentSettingRepository paymentSettingRepository;
@@ -135,13 +132,13 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
         final PaymentPreference paymentPreference =
             paymentSettingRepository.getCheckoutPreference().getPaymentPreference();
         if (!paymentPreference.validMaxInstallments()) {
-            throw new IllegalStateException(getResourcesProvider().getInvalidMaxInstallmentsErrorMessage());
+            throw new IllegalStateException("Invalid max installments number");
         }
         if (!paymentPreference.validDefaultInstallments()) {
-            throw new IllegalStateException(getResourcesProvider().getInvalidDefaultInstallmentsErrorMessage());
+            throw new IllegalStateException("Invalid installments number by default");
         }
         if (!paymentPreference.excludedPaymentTypesValid()) {
-            throw new IllegalStateException(getResourcesProvider().getAllPaymentTypesExcludedErrorMessage());
+            throw new IllegalStateException("All payments types excluded");
         }
     }
 
@@ -150,7 +147,7 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     /* default */ void initPaymentMethodSearch() {
-        getView().setTitle(getResourcesProvider().getTitle());
+        getView().setMainTitle();
         showPaymentMethodGroup();
     }
 
@@ -357,13 +354,11 @@ public class PaymentVaultPresenter extends MvpPresenter<PaymentVaultView, Paymen
     }
 
     private void showEmptyPaymentMethodsError() {
-        final String errorMessage = getResourcesProvider().getEmptyPaymentMethodsErrorMessage();
-        getView().showError(new MercadoPagoError(errorMessage, false), "");
+        getView().showEmptyPaymentMethodsError();
     }
 
     private void showMismatchingPaymentMethodError() {
-        final String errorMessage = getResourcesProvider().getStandardErrorMessage();
-        getView().showError(new MercadoPagoError(errorMessage, MISMATCHING_PAYMENT_METHOD_ERROR, false), "");
+        getView().showMismatchingPaymentMethodError();
     }
 
     public PaymentMethodSearchItem getSelectedSearchItem() {

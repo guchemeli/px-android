@@ -23,7 +23,6 @@ import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.hooks.HookActivity;
 import com.mercadopago.android.px.internal.features.plugins.PaymentMethodPluginActivity;
-import com.mercadopago.android.px.internal.features.providers.PaymentVaultProviderImpl;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.features.uicontrollers.paymentmethodsearch.PaymentMethodInfoController;
 import com.mercadopago.android.px.internal.features.uicontrollers.paymentmethodsearch.PaymentMethodSearchCustomOption;
@@ -61,7 +60,7 @@ import java.util.List;
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_SILENT_ERROR;
 
-public class PaymentVaultActivity extends PXActivity
+public class PaymentVaultActivity extends PXActivity<PaymentVaultPresenter>
     implements PaymentVaultView {
 
     public static final int COLUMN_SPACING_DP_VALUE = 20;
@@ -69,6 +68,7 @@ public class PaymentVaultActivity extends PXActivity
     private static final int PAYER_INFORMATION_REQUEST_CODE = 22;
     private static final int REQ_CARD_VAULT = 102;
     private static final String EXTRA_SELECTED_SEARCH_ITEM = "selectedSearchItem";
+    private static final String MISMATCHING_PAYMENT_METHOD_ERROR = "Payment method in search not found";
 
     // Local vars
     protected boolean mActivityActive;
@@ -81,7 +81,6 @@ public class PaymentVaultActivity extends PXActivity
     protected RecyclerView mSearchItemsRecyclerView;
     protected AppBarLayout mAppBar;
 
-    protected PaymentVaultPresenter presenter;
     protected CollapsingToolbarLayout mAppBarLayout;
     protected MPTextView mTimerTextView;
 
@@ -143,7 +142,6 @@ public class PaymentVaultActivity extends PXActivity
 
     private void configurePresenter() {
         presenter.attachView(this);
-        presenter.attachResourcesProvider(new PaymentVaultProviderImpl(getApplicationContext()));
     }
 
     protected void setContentView() {
@@ -469,6 +467,15 @@ public class PaymentVaultActivity extends PXActivity
     }
 
     @Override
+    public void setMainTitle() {
+        if (mAppBarLayout != null) {
+            final String mainVerb = getString(Session.getSession(this).getMainVerb());
+            final String title = getString(R.string.px_title_activity_payment_vault, mainVerb);
+            mAppBarLayout.setTitle(title);
+        }
+    }
+
+    @Override
     public void startSavedCardFlow(final Card card) {
         new Constants.Activities.CardVaultActivityBuilder()
             .setCard(card)
@@ -598,6 +605,18 @@ public class PaymentVaultActivity extends PXActivity
     @Override
     public void showDetailDialog(@NonNull final DiscountConfigurationModel discountModel) {
         DiscountDetailDialog.showDialog(getSupportFragmentManager(), discountModel);
+    }
+
+    @Override
+    public void showEmptyPaymentMethodsError() {
+        final String errorMessage = getString(R.string.px_no_payment_methods_found);
+        showError(new MercadoPagoError(errorMessage, false), "");
+    }
+
+    @Override
+    public void showMismatchingPaymentMethodError() {
+        final String errorMessage = getString(R.string.px_standard_error_message);
+        showError(new MercadoPagoError(errorMessage, MISMATCHING_PAYMENT_METHOD_ERROR, false), "");
     }
 
     @Override
