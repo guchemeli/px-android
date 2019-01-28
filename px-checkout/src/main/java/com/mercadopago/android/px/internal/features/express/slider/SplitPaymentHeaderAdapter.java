@@ -27,6 +27,7 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
 
     public abstract static class Model {
         public abstract void visit(final LabeledSwitch labeledSwitch);
+
         public abstract void visit(final boolean isChecked);
     }
 
@@ -35,6 +36,7 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
         public void visit(final LabeledSwitch labeledSwitch) {
             labeledSwitch.setVisibility(View.GONE);
         }
+
         @Override
         public void visit(final boolean isChecked) {
             // do nothing
@@ -63,7 +65,7 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
                     .withTextColor(ContextCompat.getColor(labeledSwitch.getContext(), R.color.ui_meli_black))
                     .apply(TextFormatter
                         .withCurrencyId(currencyId)
-                        .amount(split.amount)
+                        .amount(split.getVisibleAmountToPay())
                         .normalDecimals()
                         .toSpannable());
 
