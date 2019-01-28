@@ -410,13 +410,17 @@ public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
     }
 
     private void trackInitialScreen() {
-        new SelectMethodView(paymentMethodSearch, mercadoPagoESC.getESCCardIds(),
-            paymentSettingRepository.getCheckoutPreference()).track();
+        final SelectMethodView selectMethodView =
+            new SelectMethodView(paymentMethodSearch, mercadoPagoESC.getESCCardIds(),
+                paymentSettingRepository.getCheckoutPreference());
+        setCurrentViewTracker(selectMethodView);
     }
 
     private void trackChildScreen() {
-        new SelectMethodChildView(paymentMethodSearch, selectedSearchItem,
-            paymentSettingRepository.getCheckoutPreference()).track();
+        final SelectMethodChildView selectMethodChildView =
+            new SelectMethodChildView(paymentMethodSearch, selectedSearchItem,
+                paymentSettingRepository.getCheckoutPreference());
+        setCurrentViewTracker(selectMethodChildView);
     }
 
     @Override
