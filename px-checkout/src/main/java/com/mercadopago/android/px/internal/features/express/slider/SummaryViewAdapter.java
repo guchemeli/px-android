@@ -22,7 +22,6 @@ public class SummaryViewAdapter extends ViewAdapter<List<SummaryView.Model>, Sum
         if (!nextModel.equals(currentModel)) {
             view.update(nextModel);
         }
-
         currentIndex = index;
         currentModel = nextModel;
     }
