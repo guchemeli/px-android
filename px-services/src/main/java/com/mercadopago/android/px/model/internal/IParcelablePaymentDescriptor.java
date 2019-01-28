@@ -9,9 +9,9 @@ import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.IPaymentDescriptorHandler;
 
 /**
- *
+ * Parcelable version for IPayment description.
  */
-public class IParcelablePaymentDescriptor implements IPaymentDescriptor, Parcelable {
+public final class IParcelablePaymentDescriptor implements IPaymentDescriptor, Parcelable {
 
     private final String paymentTypeId;
     private final String paymentMethodId;

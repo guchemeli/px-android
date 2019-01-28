@@ -53,4 +53,10 @@ public class Split implements Serializable {
     getPayerCosts() {
         return payerCosts == null ? new ArrayList<PayerCost>() : payerCosts;
     }
+
+    @NonNull
+    public BigDecimal getVisibleAmountToPay() {
+        return secondaryPaymentMethodDiscount == null ? amount
+            : amount.subtract(secondaryPaymentMethodDiscount.getCouponAmount());
+    }
 }
