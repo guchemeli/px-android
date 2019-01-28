@@ -154,7 +154,6 @@ public class ExpressPaymentPresenterTest {
         final PayerCost firstPayerCost = mock(PayerCost.class);
         final List<PayerCost> payerCostList = Arrays.asList(mock(PayerCost.class), firstPayerCost, mock(PayerCost.class));
         when(amountConfiguration.getAppliedPayerCost(false)).thenReturn(payerCostList);
-
         expressPaymentPresenter.onPayerCostSelected(paymentMethodIndex, payerCostList.get(selectedPayerCostIndex));
 
         verify(view).updateViewForPosition(paymentMethodIndex, selectedPayerCostIndex, false);
@@ -172,6 +171,7 @@ public class ExpressPaymentPresenterTest {
 
     private void verifyOnViewResumed() {
         expressPaymentPresenter.onViewResumed();
+
         verify(paymentRepository).hasPayment();
         verify(paymentRepository).attach(expressPaymentPresenter);
     }

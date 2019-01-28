@@ -2,12 +2,13 @@ package com.mercadopago.android.px.internal.features;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.internal.base.MvpPresenter;
+import com.mercadopago.android.px.internal.base.BasePresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
-import com.mercadopago.android.px.internal.features.providers.IssuersProvider;
+import com.mercadopago.android.px.internal.repository.IssuersRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.CardInfo;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -16,8 +17,9 @@ import com.mercadopago.android.px.tracking.internal.views.IssuersViewTrack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersProvider> {
+public class IssuersPresenter extends BasePresenter<IssuersActivityView> {
 
+    @NonNull private IssuersRepository issuersRepository;
     @Nullable private PaymentMethod paymentMethod;
     //Local vars
     @Nullable private List<Issuer> mIssuers;
@@ -28,7 +30,9 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
     //Card Info
     private String mBin = "";
 
-    public IssuersPresenter(@Nullable final PaymentMethod paymentMethod, final boolean comesFromStorageFlow) {
+    public IssuersPresenter(@NonNull final IssuersRepository issuersRepository,
+        @Nullable final PaymentMethod paymentMethod, final boolean comesFromStorageFlow) {
+        this.issuersRepository = issuersRepository;
         this.paymentMethod = paymentMethod;
         this.comesFromStorageFlow = comesFromStorageFlow;
     }
@@ -53,21 +57,22 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
         setIssuers(issuers);
 
         if (mIssuers.isEmpty()) {
-            getView().showError(getResourcesProvider().getEmptyIssuersError(), "");
+            getView().showEmptyIssuersError(TextUtil.EMPTY);
         } else if (mIssuers.size() == 1) {
             final Issuer issuer = issuers.get(0);
             getView().finishWithResult(issuer);
         } else {
             getView().showHeader();
             getView().showIssuers(issuers, getDpadSelectionCallback());
-            new IssuersViewTrack(issuers, paymentMethod).track();
+            final IssuersViewTrack issuersViewTrack = new IssuersViewTrack(issuers, paymentMethod);
+            setCurrentViewTracker(issuersViewTrack);
         }
     }
 
     /* default */ void getIssuersAsync() {
         getView().showLoadingView();
 
-        getResourcesProvider().getIssuers(getPaymentMethod().getId(), mBin,
+        issuersRepository.getIssuers(getPaymentMethod().getId(), mBin).enqueue(
             new TaggedCallback<List<Issuer>>(ApiUtil.RequestOrigin.GET_ISSUERS) {
                 @Override
                 public void onSuccess(final List<Issuer> issuers) {
@@ -78,14 +83,12 @@ public class IssuersPresenter extends MvpPresenter<IssuersActivityView, IssuersP
                 @Override
                 public void onFailure(final MercadoPagoError error) {
                     getView().stopLoadingView();
-
                     setFailureRecovery(new FailureRecovery() {
                         @Override
                         public void recover() {
                             getIssuersAsync();
                         }
                     });
-
                     getView().showError(error, ApiUtil.RequestOrigin.GET_ISSUERS);
                 }
             });

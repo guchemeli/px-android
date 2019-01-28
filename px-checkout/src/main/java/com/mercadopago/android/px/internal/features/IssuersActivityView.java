@@ -6,10 +6,6 @@ import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.util.List;
 
-/**
- * Created by vaserber on 10/11/16.
- */
-
 public interface IssuersActivityView extends MvpView {
 
     void showIssuers(List<Issuer> issuersList, OnSelectedCallback<Integer> onSelectedCallback);
@@ -25,4 +21,6 @@ public interface IssuersActivityView extends MvpView {
     void finishWithResult(Issuer issuer);
 
     void finishWithResultForCardStorage(Long issuerId);
+
+    void showEmptyIssuersError(String requestOrigin);
 }

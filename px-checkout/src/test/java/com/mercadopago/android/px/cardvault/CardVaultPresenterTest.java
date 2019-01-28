@@ -201,7 +201,8 @@ public class CardVaultPresenterTest {
 
         presenter.initialize();
 
-        verify(payerCostSolver).solve(presenter, amountConfigurationRepository.getCurrentConfiguration().getPayerCosts());
+        verify(payerCostSolver)
+            .solve(presenter, amountConfigurationRepository.getCurrentConfiguration().getPayerCosts());
     }
 
     @Test

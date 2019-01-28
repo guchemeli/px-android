@@ -13,6 +13,7 @@ import com.mercadopago.android.px.internal.view.Receipt;
 import com.mercadopago.android.px.model.ExternalFragment;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
+import com.mercadopago.android.px.model.PaymentTypes;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,28 @@ public class Body extends Component<PaymentResultBodyProps, Void> {
             .setProcessingMode(props.processingMode)
             .build();
         return new Instructions(instructionsProps, getDispatcher());
+    }
+
+    private boolean isPaymentTypeOn(final com.mercadopago.android.px.model.PaymentMethod paymentMethod) {
+        return isCardType(paymentMethod)
+            || isAccountMoney(paymentMethod)
+            || isPluginType(paymentMethod);
+    }
+
+    private boolean isCardType(final com.mercadopago.android.px.model.PaymentMethod paymentMethod) {
+        return paymentMethod != null && paymentMethod.getPaymentTypeId() != null &&
+            paymentMethod.getPaymentTypeId().equals(PaymentTypes.CREDIT_CARD) ||
+            paymentMethod.getPaymentTypeId().equals(PaymentTypes.DEBIT_CARD) ||
+            paymentMethod.getPaymentTypeId().equals(PaymentTypes.PREPAID_CARD);
+    }
+
+    private boolean isAccountMoney(final com.mercadopago.android.px.model.PaymentMethod paymentMethod) {
+        return paymentMethod != null && paymentMethod.getPaymentTypeId() != null
+            && paymentMethod.getPaymentTypeId().equals(PaymentTypes.ACCOUNT_MONEY);
+    }
+
+    private boolean isPluginType(final com.mercadopago.android.px.model.PaymentMethod paymentMethod) {
+        return PaymentTypes.PLUGIN.equalsIgnoreCase(paymentMethod.getPaymentTypeId());
     }
 
     public boolean hasBodyError() {

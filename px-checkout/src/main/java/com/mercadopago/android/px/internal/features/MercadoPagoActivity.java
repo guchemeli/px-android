@@ -2,10 +2,11 @@ package com.mercadopago.android.px.internal.features;
 
 import android.app.Activity;
 import android.os.Bundle;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 
 @Deprecated
-public abstract class MercadoPagoActivity extends MercadoPagoBaseActivity {
+public abstract class MercadoPagoActivity extends PXActivity {
 
     private boolean mActivityActive;
     private FailureRecovery mFailureRecovery;

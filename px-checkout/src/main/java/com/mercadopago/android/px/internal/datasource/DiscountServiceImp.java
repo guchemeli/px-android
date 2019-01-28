@@ -18,7 +18,7 @@ import java.util.Map;
 public class DiscountServiceImp implements DiscountRepository {
 
     /* default */ ConfigurationSolver configurationSolver;
-    /* default */ Map<String, DiscountConfigurationModel> discountConfigurations;
+    /* default */ Map<String, DiscountConfigurationModel> discountsConfigurations;
 
     @Nullable private String defaultSelectedGuessingConfiguration;
     @NonNull private final GroupsRepository groupsRepository;
@@ -66,21 +66,21 @@ public class DiscountServiceImp implements DiscountRepository {
         return getConfiguration(configurationSolver.getConfigurationHashFor(customOptionId));
     }
 
-
-
     private DiscountConfigurationModel getConfiguration(@Nullable final String hash) {
         // TODO: remove
         init();
-        final DiscountConfigurationModel discountModel = discountConfigurations.get(hash);
+        final DiscountConfigurationModel discountModel = discountsConfigurations.get(hash);
         final DiscountConfigurationModel defaultConfig =
-            discountConfigurations.get(configurationSolver.getDefaultSelectedAmountConfiguration());
-        if(discountModel  == null && defaultConfig == null) return DiscountConfigurationModel.NONE;
+            discountsConfigurations.get(configurationSolver.getDefaultSelectedAmountConfiguration());
+        if (discountModel == null && defaultConfig == null) {
+            return DiscountConfigurationModel.NONE;
+        }
         return discountModel == null ? defaultConfig : discountModel;
     }
 
     //TODO: remove init call.
     private void init() {
-        if (configurationSolver != null && discountConfigurations != null) {
+        if (configurationSolver != null && discountsConfigurations != null) {
             return;
         }
 
@@ -90,7 +90,7 @@ public class DiscountServiceImp implements DiscountRepository {
                 configurationSolver =
                     new ConfigurationSolverImpl(paymentMethodSearch.getDefaultAmountConfiguration(),
                         paymentMethodSearch.getCustomSearchItems());
-                discountConfigurations = paymentMethodSearch.getDiscountConfigurations();
+                discountsConfigurations = paymentMethodSearch.getDiscountsConfigurations();
             }
 
             @Override
@@ -104,7 +104,7 @@ public class DiscountServiceImp implements DiscountRepository {
     public void addConfigurations(@NonNull final SummaryAmount summaryAmount) {
         // TODO: remove
         init();
-        discountConfigurations.putAll(summaryAmount.getDiscountConfigurations());
+        discountsConfigurations.putAll(summaryAmount.getDiscountsConfigurations());
         defaultSelectedGuessingConfiguration = summaryAmount.getDefaultAmountConfiguration();
     }
 }

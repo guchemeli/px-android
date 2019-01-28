@@ -16,7 +16,7 @@ public class SummaryAmount implements Serializable {
 
     @NonNull private String defaultAmountConfiguration;
     @NonNull private Map<String, AmountConfiguration> amountConfigurations;
-    @Nullable private Map<String, DiscountConfigurationModel> discountConfigurations;
+    @Nullable private Map<String, DiscountConfigurationModel> discountsConfigurations;
 
     @NonNull
     public String getDefaultAmountConfiguration() {
@@ -29,8 +29,8 @@ public class SummaryAmount implements Serializable {
     }
 
     @NonNull
-    public Map<String, DiscountConfigurationModel> getDiscountConfigurations() {
-        return discountConfigurations == null
-            ? new HashMap<String, DiscountConfigurationModel>() : discountConfigurations;
+    public Map<String, DiscountConfigurationModel> getDiscountsConfigurations() {
+        return discountsConfigurations == null
+            ? new HashMap<String, DiscountConfigurationModel>() : discountsConfigurations;
     }
 }

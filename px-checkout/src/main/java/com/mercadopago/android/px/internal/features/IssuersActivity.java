@@ -13,11 +13,11 @@ import android.widget.FrameLayout;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.IssuersAdapter;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.RecyclerItemClickListener;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.features.providers.IssuersProviderImpl;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardRepresentationModes;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.FrontCardView;
@@ -33,9 +33,7 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersActivityView {
-
-    protected IssuersPresenter mPresenter;
+public class IssuersActivity extends PXActivity<IssuersPresenter> implements IssuersActivityView {
 
     // Local vars
     protected boolean mActivityActive;
@@ -64,8 +62,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         super.onCreate(savedInstanceState);
         getActivityParameters();
 
-        mPresenter.attachView(this);
-        mPresenter.attachResourcesProvider(new IssuersProviderImpl(this));
+        presenter.attachView(this);
 
         mActivityActive = true;
 
@@ -74,10 +71,11 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         initializeControls();
 
         initialize();
-        mPresenter.initialize();
+        presenter.initialize();
     }
 
     private void getActivityParameters() {
+        final Session session = Session.getSession(this);
         List<Issuer> issuers;
         try {
             final Type listType = new TypeToken<List<Issuer>>() {
@@ -92,21 +90,22 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
         if (paymentMethod != null) {
             // Comes from card storage flow
-            mPresenter =
-                new IssuersPresenter(paymentMethod, true);
+            presenter =
+                new IssuersPresenter(session.getIssuersRepository(), paymentMethod, true);
         } else {
-            mPresenter =
+            presenter =
                 new IssuersPresenter(
-                    Session.getSession(this).getConfigurationModule().getUserSelectionRepository().getPaymentMethod(),
+                    session.getIssuersRepository(),
+                    session.getConfigurationModule().getUserSelectionRepository().getPaymentMethod(),
                     false);
         }
 
-        mPresenter.setCardInfo(JsonUtil.getInstance().fromJson(getIntent().getStringExtra("cardInfo"), CardInfo.class));
-        mPresenter.setIssuers(issuers);
+        presenter.setCardInfo(JsonUtil.getInstance().fromJson(getIntent().getStringExtra("cardInfo"), CardInfo.class));
+        presenter.setIssuers(issuers);
     }
 
     public void analyzeLowRes() {
-        if (mPresenter.isRequiredCardDrawn()) {
+        if (presenter.isRequiredCardDrawn()) {
             mLowResActive = ScaleUtil.isLowRes(this);
         } else {
             mLowResActive = true;
@@ -181,7 +180,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
     private void loadLowResViews() {
         loadToolbarArrow(mLowResToolbar);
-        mLowResTitleToolbar.setText(mPresenter.getResourcesProvider().getCardIssuersTitle());
+        mLowResTitleToolbar.setText(getString(R.string.px_card_issuers_title));
 
         if (FontCache.hasTypeface(FontCache.CUSTOM_REGULAR_FONT)) {
             mLowResTitleToolbar.setTypeface(FontCache.getTypeface(FontCache.CUSTOM_REGULAR_FONT));
@@ -199,7 +198,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    finish();
+                    onBackPressed();
                 }
             });
         }
@@ -207,15 +206,15 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
     private void loadNormalViews() {
         loadToolbarArrow(mNormalToolbar);
-        mNormalToolbar.setTitle(mPresenter.getResourcesProvider().getCardIssuersTitle());
+        mNormalToolbar.setTitle(getString(R.string.px_card_issuers_title));
         setCustomFontNormal();
 
         mFrontCardView = new FrontCardView(this, CardRepresentationModes.SHOW_FULL_FRONT_ONLY);
         mFrontCardView.setSize(CardRepresentationModes.MEDIUM_SIZE);
-        mFrontCardView.setPaymentMethod(mPresenter.getPaymentMethod());
-        if (mPresenter.getCardInfo() != null) {
-            mFrontCardView.setCardNumberLength(mPresenter.getCardInfo().getCardNumberLength());
-            mFrontCardView.setLastFourDigits(mPresenter.getCardInfo().getLastFourDigits());
+        mFrontCardView.setPaymentMethod(presenter.getPaymentMethod());
+        if (presenter.getCardInfo() != null) {
+            mFrontCardView.setCardNumberLength(presenter.getCardInfo().getCardNumberLength());
+            mFrontCardView.setLastFourDigits(presenter.getCardInfo().getLastFourDigits());
         }
         mFrontCardView.inflateInParent(mCardContainer, true);
         mFrontCardView.initializeControls();
@@ -257,7 +256,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
             new RecyclerItemClickListener.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    mPresenter.onItemSelected(position);
+                    presenter.onItemSelected(position);
                 }
             }));
     }
@@ -267,7 +266,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         if (mLowResActive) {
             mLowResToolbar.setVisibility(View.VISIBLE);
         } else {
-            mNormalToolbar.setTitle(mPresenter.getResourcesProvider().getCardIssuersTitle());
+            mNormalToolbar.setTitle(getString(R.string.px_card_issuers_title));
             setCustomFontNormal();
         }
     }
@@ -281,6 +280,14 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         }
     }
 
+    @Override
+    public void showEmptyIssuersError(final String requestOrigin) {
+        final String message = getString(R.string.px_standard_error_message);
+        final String detail = getString(R.string.px_error_message_detail_issuers);
+        final MercadoPagoError error = new MercadoPagoError(message, detail, false);
+        showError(error, requestOrigin);
+    }
+
     public void showApiException(ApiException apiException, String requestOrigin) {
         if (mActivityActive) {
             ErrorUtil.showApiExceptionError(this, apiException, requestOrigin);
@@ -292,7 +299,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ErrorUtil.ERROR_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                mPresenter.recoverFromFailure();
+                presenter.recoverFromFailure();
             } else {
                 setResult(resultCode, data);
                 finish();
@@ -342,6 +349,7 @@ public class IssuersActivity extends MercadoPagoBaseActivity implements IssuersA
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         setResult(RESULT_CANCELED);
         finish();
     }

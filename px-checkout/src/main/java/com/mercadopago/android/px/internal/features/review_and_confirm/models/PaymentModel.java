@@ -35,7 +35,7 @@ public class PaymentModel implements Parcelable {
         this.moreThanOnePaymentMethod = moreThanOnePaymentMethod;
     }
 
-    protected PaymentModel(Parcel in) {
+    protected PaymentModel(final Parcel in) {
         paymentMethodId = in.readString();
         lastFourDigits = in.readString();
         if (in.readByte() == 0) {
@@ -53,12 +53,12 @@ public class PaymentModel implements Parcelable {
 
     public static final Creator<PaymentModel> CREATOR = new Creator<PaymentModel>() {
         @Override
-        public PaymentModel createFromParcel(Parcel in) {
+        public PaymentModel createFromParcel(final Parcel in) {
             return new PaymentModel(in);
         }
 
         @Override
-        public PaymentModel[] newArray(int size) {
+        public PaymentModel[] newArray(final int size) {
             return new PaymentModel[size];
         }
     };

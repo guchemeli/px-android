@@ -1,4 +1,4 @@
-package com.mercadopago.android.px.internal.request;
+package com.mercadopago.android.px.model;
 
 import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
@@ -7,8 +7,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @SuppressWarnings("unused")
-public class
-PaymentMethodSearchBody {
+public class PaymentMethodSearchBody {
 
     @SerializedName("access_token")
     private final String privateKey;

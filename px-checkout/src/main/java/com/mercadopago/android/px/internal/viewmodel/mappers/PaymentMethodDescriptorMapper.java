@@ -33,7 +33,6 @@ public class PaymentMethodDescriptorMapper
         for (final ExpressMetadata expressMetadata : expressMetadataList) {
             models.add(createInstallmentsDescriptorModel(expressMetadata));
         }
-
         //Last card is Add new payment method card
         models.add(createAddNewPaymentModel());
 

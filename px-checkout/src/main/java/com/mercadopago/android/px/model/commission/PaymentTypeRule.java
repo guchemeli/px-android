@@ -4,15 +4,24 @@ import android.support.annotation.NonNull;
 import com.mercadopago.android.px.internal.repository.ChargeRepository;
 import java.math.BigDecimal;
 
-public final class PaymentMethodChargeRule extends PaymentMethodRule {
+public class PaymentTypeRule extends ChargeRule {
+
+    @NonNull
+    private final String paymentTypeId;
 
     /**
-     * @param paymentMethodId the payment type associated with the charge to shouldBeTriggered.
+     * @param paymentTypeId to compare
      * @param charge the charge amount to apply for this rule
      */
-    public PaymentMethodChargeRule(@NonNull final String paymentMethodId,
+    PaymentTypeRule(@NonNull final String paymentTypeId,
         @NonNull final BigDecimal charge) {
-        super(paymentMethodId, charge);
+        super(charge);
+        this.paymentTypeId = paymentTypeId;
+    }
+
+    @NonNull
+    public String getPaymentTypeId() {
+        return paymentTypeId;
     }
 
     @Override

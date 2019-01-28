@@ -110,6 +110,7 @@ public abstract class GuessingCardPresenter extends MvpPresenter<GuessingCardAct
         return new GuessingCardPaymentPresenter(
             session.getConfigurationModule().getUserSelectionRepository(),
             session.getConfigurationModule().getPaymentSettings(), session.getGroupsRepository(),
+            session.getIssuersRepository(),
             session.getConfigurationModule().getPaymentSettings().getAdvancedConfiguration(),
             paymentRecovery);
     }

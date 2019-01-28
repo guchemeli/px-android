@@ -316,6 +316,8 @@ public class PaymentService implements PaymentRepository {
     }
 
     /**
+     * Transforms IPayment into a {@link PaymentResult}
+     *
      * @param payment The payment model
      * @return The transformed {@link PaymentResult}
      */

@@ -127,7 +127,8 @@ public class InstallmentsPresenterTest {
         presenter.initialize();
 
         verify(view).hideLoadingView();
-        verify(payerCostSolver).solve(presenter, response.getAmountConfiguration(response.getDefaultAmountConfiguration()).getPayerCosts());
+        verify(payerCostSolver).solve(presenter,
+            response.getAmountConfiguration(response.getDefaultAmountConfiguration()).getPayerCosts());
     }
 
     @Test
@@ -137,7 +138,8 @@ public class InstallmentsPresenterTest {
 
         presenter.initialize();
 
-        verify(payerCostSolver).solve(presenter, amountConfigurationRepository.getCurrentConfiguration().getPayerCosts());
+        verify(payerCostSolver)
+            .solve(presenter, amountConfigurationRepository.getCurrentConfiguration().getPayerCosts());
     }
 
     @Test
@@ -164,7 +166,6 @@ public class InstallmentsPresenterTest {
 
         verify(view).showInstallments(payerCosts);
         verifyNoMoreInteractions(view);
-
     }
 
     @NonNull

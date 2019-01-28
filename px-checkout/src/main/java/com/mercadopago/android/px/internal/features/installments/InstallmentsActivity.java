@@ -16,7 +16,7 @@ import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.internal.features.MercadoPagoBaseActivity;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.features.express.installments.InstallmentsAdapter;
 import com.mercadopago.android.px.internal.features.uicontrollers.FontCache;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardRepresentationModes;
@@ -38,9 +38,8 @@ import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import java.math.BigDecimal;
 import java.util.List;
 
-public class InstallmentsActivity extends MercadoPagoBaseActivity implements InstallmentsView {
+public class InstallmentsActivity extends PXActivity<InstallmentsPresenter> implements InstallmentsView {
 
-    private InstallmentsPresenter presenter;
     private RecyclerView installmentsRecyclerView;
 
     //Local vars
@@ -77,7 +76,8 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity implements Ins
         configuration = configurationModule.getPaymentSettings();
         presenter = new InstallmentsPresenter(session.getAmountRepository(), configuration,
             configurationModule.getUserSelectionRepository(), session.getDiscountRepository(),
-            session.getSummaryAmountRepository(), session.getAmountConfigurationRepository(), session.providePayerCostSolver());
+            session.getSummaryAmountRepository(), session.getAmountConfigurationRepository(),
+            session.providePayerCostSolver());
 
         getActivityParameters();
         presenter.attachView(this);
@@ -296,8 +296,10 @@ public class InstallmentsActivity extends MercadoPagoBaseActivity implements Ins
 
     @Override
     public void onBackPressed() {
+        presenter.removeUserSelection();
         setResult(RESULT_CANCELED);
         finish();
+        super.onBackPressed();
     }
 
     @Override

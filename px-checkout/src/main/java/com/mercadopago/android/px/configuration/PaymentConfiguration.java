@@ -16,7 +16,6 @@ import java.util.Collection;
 public class PaymentConfiguration {
 
     @NonNull private final ArrayList<ChargeRule> charges;
-
     private final SplitPaymentProcessor paymentProcessor;
 
     /* default */ PaymentConfiguration(@NonNull final Builder builder) {

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.controllers.CheckoutErrorHandler;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.model.Cause;
@@ -16,7 +17,7 @@ import com.mercadopago.android.px.tracking.internal.views.ErrorViewTracker;
 
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
 
-public class ErrorActivity extends MercadoPagoBaseActivity {
+public class ErrorActivity extends PXActivity {
 
     private MercadoPagoError mMercadoPagoError;
     private TextView mErrorMessageTextView;

@@ -57,11 +57,11 @@ public final class OneTapSamples {
         int i = 1;
         options.add(new Pair<>("Saved cards with default installments", startSavedCardsDefaultInstallments()));
         options.add(
+
             new Pair<>(i++ + " - One tap - Should suggest account money (no cards)",
                 startOneTapWithAccountMoneyNoCards()));
-        options
-            .add(new Pair<>(i++ + " - One tap - Should suggest account money (debit and credit cards)",
-                startOneTapWithAccountMoneyAndCardsDebitCredit()));
+        options.add(new Pair<>(i++ + " - One tap - Should suggest account money (debit and credit cards)",
+            startOneTapWithAccountMoneyAndCardsDebitCredit()));
         options.add(new Pair<>(i++ + " - One tap - Should suggest debit card (excluded account money)",
             startOneTapWithAccountMoneyAndCardsDebitCreditAndExcludedAccountMoney()));
         options.add(new Pair<>(i++ + " - One tap - Should suggest credit card (excluded account money and debit)",
@@ -92,9 +92,8 @@ public final class OneTapSamples {
                 startOneTapWithLowAccountMoneyWithLowerAmountAndGreaterCap()));
         options.add(new Pair<>(i++ + " - One tap - Should suggest credit card (no account money) with direct discount",
             startOneTapNoAccountMoneyWithCreditCardAndDirectDiscount()));
-        options
-            .add(new Pair<>(
-                i++ + " - One tap - Should suggest credit card (no account money) with not available discount",
+        options.add(
+            new Pair<>(i++ + " - One tap - Should suggest credit card (no account money) with not available discount",
                 startOneTapNoAccountMoneyWithCreditCardAndNoAvailableDiscount()));
         options.add(new Pair<>(i++ + " - One tap - Should suggest credit card and get call for authorize result",
             startOneTapWithCreditCardAndShowCallForAuthorize()));

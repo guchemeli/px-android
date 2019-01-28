@@ -29,6 +29,7 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
     private final Animation listAppearAnimation;
     private final Animation logoAppearAnimation;
     private final Animation logoDisappearAnimation;
+
     private boolean showingBigLogo = false;
     private boolean animating = false;
 
@@ -116,6 +117,7 @@ public class SummaryView extends LinearLayout implements ViewTreeObserver.OnGlob
             bigHeaderDescriptor.setVisibility(VISIBLE);
             showingBigLogo = true;
             bigHeaderDescriptor.startAnimation(logoAppearAnimation);
+
             if (listener != null) {
                 listener.onBigHeaderDoesNotOverlaps();
             }

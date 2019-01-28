@@ -9,6 +9,7 @@ import com.mercadopago.android.px.internal.features.guessing_card.GuessingCardPa
 import com.mercadopago.android.px.internal.features.providers.GuessingCardProvider;
 import com.mercadopago.android.px.internal.features.uicontrollers.card.CardView;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.IssuersRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.BankDeals;
@@ -71,6 +72,7 @@ public class GuessingCardPaymentPresenterTest {
 
     @Mock private UserSelectionRepository userSelectionRepository;
     @Mock private GroupsRepository groupsRepository;
+    @Mock private IssuersRepository issuersRepository;
     @Mock private PaymentMethodSearch paymentMethodSearch;
     @Mock private AdvancedConfiguration advancedConfiguration;
     @Mock private PaymentSettingRepository paymentSettingRepository;
@@ -92,7 +94,7 @@ public class GuessingCardPaymentPresenterTest {
         when(advancedConfiguration.isBankDealsEnabled()).thenReturn(true);
         presenter =
             new GuessingCardPaymentPresenter(userSelectionRepository, paymentSettingRepository,
-                groupsRepository, advancedConfiguration,
+                groupsRepository, issuersRepository, advancedConfiguration,
                 new PaymentRecovery(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE)
             );
         presenter.attachView(mockedView);
@@ -609,6 +611,9 @@ public class GuessingCardPaymentPresenterTest {
             presenter.validateCardNumber() && presenter.validateCardName() && presenter.validateExpiryDate()
                 && presenter.validateSecurityCode() && presenter.validateIdentificationNumber();
 
+        when(issuersRepository.getIssuers(mockedPaymentMethod.getId(), presenter.getSavedBin()))
+            .thenReturn(new StubSuccessMpCall<>(Issuers.getIssuersListMLA()));
+
         assertTrue(valid);
         presenter.checkFinishWithCardToken();
         presenter.resolveTokenRequest(mockedToken);
@@ -666,7 +671,7 @@ public class GuessingCardPaymentPresenterTest {
             .thenReturn(Collections.singletonList(paymentMethodList.get(0)));
 
         presenter = new GuessingCardPaymentPresenter(userSelectionRepository, paymentSettingRepository,
-            groupsRepository, advancedConfiguration,
+            groupsRepository, issuersRepository, advancedConfiguration,
             new PaymentRecovery(Payment.StatusDetail.STATUS_DETAIL_CC_REJECTED_CALL_FOR_AUTHORIZE));
 
         presenter.attachView(mockedView);
@@ -1200,16 +1205,6 @@ public class GuessingCardPaymentPresenterTest {
                 taggedCallback.onFailure(failedResponse);
             } else {
                 taggedCallback.onSuccess(successfulTokenResponse);
-            }
-        }
-
-        @Override
-        public void getIssuersAsync(final String paymentMethodId, final String bin,
-            final TaggedCallback<List<Issuer>> taggedCallback) {
-            if (shouldFail) {
-                taggedCallback.onFailure(failedResponse);
-            } else {
-                taggedCallback.onSuccess(successfulIssuersResponse);
             }
         }
     }

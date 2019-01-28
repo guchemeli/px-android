@@ -16,19 +16,19 @@ public class PaymentMethodSearchItemAdapter extends RecyclerView.Adapter<Payment
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int position) {
-        CustomViewController item = mItems.get(position);
+    public ViewHolder onCreateViewHolder(final ViewGroup parent, final int position) {
+        final CustomViewController item = mItems.get(position);
         item.inflateInParent(parent, false);
         return new ViewHolder(item);
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public int getItemViewType(final int position) {
         return position;
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         PaymentMethodSearchViewController viewController = mItems.get(position);
         viewController.draw();
     }
@@ -38,12 +38,12 @@ public class PaymentMethodSearchItemAdapter extends RecyclerView.Adapter<Payment
         return mItems.size();
     }
 
-    public void addItems(List<PaymentMethodSearchViewController> items) {
+    public void addItems(final List<PaymentMethodSearchViewController> items) {
         mItems.addAll(items);
     }
 
     public void clear() {
-        int size = mItems.size();
+        final int size = mItems.size();
         mItems.clear();
         notifyItemRangeRemoved(0, size);
     }

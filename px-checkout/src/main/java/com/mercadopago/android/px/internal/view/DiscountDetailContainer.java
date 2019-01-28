@@ -68,8 +68,12 @@ public class DiscountDetailContainer extends CompactComponent<DiscountDetailCont
 
     private void configureOffTitle(final MPTextView textView, final Discount discount) {
         if (discount.hasPercentOff()) {
-            textView.setText(textView.getContext()
-                .getString(R.string.px_discount_percent_off, discount.getPercentOff()));
+            TextFormatter.withCurrencyId(discount.getCurrencyId())
+                .noSpace().noSymbol()
+                .amount(discount.getPercentOff())
+                .normalDecimals()
+                .into(textView)
+                .holder(R.string.px_discount_percent_off);
         } else {
             TextFormatter.withCurrencyId(discount.getCurrencyId())
                 .withSpace()

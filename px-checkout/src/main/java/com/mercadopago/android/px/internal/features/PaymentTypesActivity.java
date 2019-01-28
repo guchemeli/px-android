@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.PaymentTypesAdapter;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.RecyclerItemClickListener;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
@@ -31,7 +32,7 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class PaymentTypesActivity extends MercadoPagoBaseActivity implements PaymentTypesActivityView {
+public class PaymentTypesActivity extends PXActivity implements PaymentTypesActivityView {
 
     protected PaymentTypesPresenter mPresenter;
     //ViewMode

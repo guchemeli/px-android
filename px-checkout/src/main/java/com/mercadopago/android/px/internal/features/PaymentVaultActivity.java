@@ -16,6 +16,7 @@ import android.view.View;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.core.PaymentMethodPlugin;
 import com.mercadopago.android.px.internal.adapters.PaymentMethodSearchItemAdapter;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import com.mercadopago.android.px.internal.di.Session;
@@ -50,14 +51,17 @@ import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.PaymentPreference;
+import com.mercadopago.android.px.tracking.internal.events.FrictionEventTracker;
+import com.mercadopago.android.px.tracking.internal.views.SelectMethodView;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
+import static com.mercadopago.android.px.internal.features.Constants.RESULT_SILENT_ERROR;
 
-public class PaymentVaultActivity extends MercadoPagoBaseActivity
+public class PaymentVaultActivity extends PXActivity
     implements PaymentVaultView {
 
     public static final int COLUMN_SPACING_DP_VALUE = 20;
@@ -113,6 +117,28 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
 
         //Avoid automatic selection if activity restored on back pressed from next step
         initialize();
+        validatePaymentConfiguration();
+    }
+
+    //TODO remove method after session is persisted
+    private void validatePaymentConfiguration() {
+        final Session session = Session.getSession(this);
+        try {
+            session.getConfigurationModule().getPaymentSettings().getPaymentConfiguration().getCharges();
+            session.getConfigurationModule().getPaymentSettings().getPaymentConfiguration().getPaymentProcessor();
+        } catch (Exception e) {
+            FrictionEventTracker.with(SelectMethodView.PATH_PAYMENT_VAULT,
+                FrictionEventTracker.Id.SILENT, FrictionEventTracker.Style.SCREEN,
+                ErrorUtil.getStacktraceMessage(e));
+
+            exitCheckout(RESULT_SILENT_ERROR);
+        }
+    }
+
+    public void exitCheckout(final int resCode) {
+        overrideTransitionOut();
+        setResult(resCode);
+        finish();
     }
 
     private void configurePresenter() {
@@ -332,6 +358,9 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
         if (resultCode == RESULT_OK) {
             setResult(RESULT_OK, data);
             finish();
+        } else if (resultCode == RESULT_SILENT_ERROR) {
+            setResult(RESULT_SILENT_ERROR);
+            finish();
         } else if (resultCode == RESULT_CANCELED && data != null && data.hasExtra(EXTRA_ERROR)) {
             setResult(Activity.RESULT_CANCELED, data);
             finish();
@@ -354,6 +383,9 @@ public class PaymentVaultActivity extends MercadoPagoBaseActivity
             mSelectedIssuer = JsonUtil.getInstance().fromJson(data.getStringExtra("issuer"), Issuer.class);
             mSelectedCard = JsonUtil.getInstance().fromJson(data.getStringExtra("card"), Card.class);
             finishWithCardResult();
+        } else if (resultCode == RESULT_SILENT_ERROR) {
+            setResult(RESULT_SILENT_ERROR);
+            finish();
         } else {
             presenter.trackScreen();
 

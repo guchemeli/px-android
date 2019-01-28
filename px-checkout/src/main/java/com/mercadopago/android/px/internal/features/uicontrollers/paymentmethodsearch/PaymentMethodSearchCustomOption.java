@@ -11,80 +11,75 @@ import com.mercadopago.android.px.internal.util.MercadoPagoUtil;
 import com.mercadopago.android.px.internal.view.MPTextView;
 import com.mercadopago.android.px.model.CustomSearchItem;
 
-/**
- * Created by mreverter on 10/25/16.
- */
-
 public class PaymentMethodSearchCustomOption implements PaymentMethodSearchViewController {
-    protected CustomSearchItem mItem;
-    protected Context mContext;
-    protected View mView;
-    protected MPTextView mDescription;
-    protected MPTextView mComment;
-    protected MPTextView mDiscountInfo;
-    protected ImageView mIcon;
-    protected View.OnClickListener mListener;
+    protected CustomSearchItem item;
+    protected Context context;
+    protected View view;
+    protected MPTextView description;
+    protected MPTextView comment;
+    protected MPTextView discountInfo;
+    protected ImageView icon;
+    protected View.OnClickListener listener;
 
-    public PaymentMethodSearchCustomOption(Context context, CustomSearchItem item) {
-        mContext = context;
-        mItem = item;
+    public PaymentMethodSearchCustomOption(final Context context, final CustomSearchItem item) {
+        this.context = context;
+        this.item = item;
     }
 
     @Override
-    public View inflateInParent(ViewGroup parent, boolean attachToRoot) {
-        mView = LayoutInflater.from(mContext)
+    public View inflateInParent(final ViewGroup parent, final boolean attachToRoot) {
+        view = LayoutInflater.from(context)
             .inflate(R.layout.px_row_pm_search_item, parent, attachToRoot);
-        if (mListener != null) {
-            mView.setOnClickListener(mListener);
+        if (listener != null) {
+            view.setOnClickListener(listener);
         }
-        return mView;
+        return view;
     }
 
     @Override
     public View getView() {
-        return mView;
+        return view;
     }
 
     @Override
     public void initializeControls() {
-        mDescription = mView.findViewById(R.id.mpsdkDescription);
-        mComment = mView.findViewById(R.id.mpsdkComment);
-        mDiscountInfo = mView.findViewById(R.id.mpsdkDiscountInfo);
-        mIcon = mView.findViewById(R.id.mpsdkImage);
+        description = view.findViewById(R.id.mpsdkDescription);
+        comment = view.findViewById(R.id.mpsdkComment);
+        discountInfo = view.findViewById(R.id.mpsdkDiscountInfo);
+        icon = view.findViewById(R.id.mpsdkImage);
     }
 
     @Override
     public void draw() {
-
-        mDescription.setText(mItem.getDescription());
+        description.setText(item.getDescription());
 
         int resourceId = 0;
 
-        if (!TextUtils.isEmpty(mItem.getPaymentMethodId())) {
-            resourceId = MercadoPagoUtil.getPaymentMethodSearchItemIcon(mContext, mItem.getPaymentMethodId());
+        if (!TextUtils.isEmpty(item.getPaymentMethodId())) {
+            resourceId = MercadoPagoUtil.getPaymentMethodSearchItemIcon(context, item.getPaymentMethodId());
         }
 
         if (resourceId != 0) {
-            mIcon.setImageResource(resourceId);
+            icon.setImageResource(resourceId);
         } else {
-            mIcon.setVisibility(View.GONE);
+            icon.setVisibility(View.GONE);
         }
 
-        if (mItem.hasDiscountInfo()) {
-            mDiscountInfo.setVisibility(View.VISIBLE);
-            mDiscountInfo.setText(mItem.getDiscountInfo());
+        if (item.hasDiscountInfo()) {
+            discountInfo.setVisibility(View.VISIBLE);
+            discountInfo.setText(item.getDiscountInfo());
         } else {
-            mDiscountInfo.setVisibility(View.GONE);
+            discountInfo.setVisibility(View.GONE);
         }
 
-        mComment.setVisibility(View.GONE);
+        comment.setVisibility(View.GONE);
     }
 
     @Override
-    public void setOnClickListener(View.OnClickListener listener) {
-        mListener = listener;
-        if (mView != null) {
-            mView.setOnClickListener(listener);
+    public void setOnClickListener(final View.OnClickListener listener) {
+        this.listener = listener;
+        if (view != null) {
+            view.setOnClickListener(listener);
         }
     }
 }

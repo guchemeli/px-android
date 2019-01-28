@@ -40,7 +40,7 @@ import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingCont
 import com.mercadopago.android.px.internal.di.CardAssociationSession;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.Constants;
-import com.mercadopago.android.px.internal.features.MercadoPagoBaseActivity;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.features.ReviewPaymentMethodsActivity;
 import com.mercadopago.android.px.internal.features.card.CardExpiryDateTextWatcher;
 import com.mercadopago.android.px.internal.features.card.CardIdentificationNumberTextWatcher;
@@ -72,9 +72,13 @@ import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.tracking.internal.events.FrictionEventTracker;
+import com.mercadopago.android.px.tracking.internal.views.GuessingRootViewTracker;
 import java.util.List;
 
-public class GuessingCardActivity extends MercadoPagoBaseActivity implements GuessingCardActivityView,
+import static com.mercadopago.android.px.internal.features.Constants.RESULT_SILENT_ERROR;
+
+public class GuessingCardActivity extends PXActivity implements GuessingCardActivityView,
     CardExpiryDateEditTextCallback, View.OnTouchListener, View.OnClickListener {
 
     public static final int REVIEW_PAYMENT_METHODS_REQUEST_CODE = 21;
@@ -254,6 +258,28 @@ public class GuessingCardActivity extends MercadoPagoBaseActivity implements Gue
     protected void onRestoreInstanceState(final Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         mPresenter.onRestoreInstanceState(savedInstanceState);
+        validatePaymentConfiguration();
+    }
+
+    //TODO remove method after session is persisted
+    private void validatePaymentConfiguration() {
+        final Session session = Session.getSession(this);
+        try {
+            session.getConfigurationModule().getPaymentSettings().getPaymentConfiguration().getCharges();
+            session.getConfigurationModule().getPaymentSettings().getPaymentConfiguration().getPaymentProcessor();
+        } catch (Exception e) {
+            FrictionEventTracker.with(GuessingRootViewTracker.PATH,
+                FrictionEventTracker.Id.SILENT, FrictionEventTracker.Style.SCREEN, ErrorUtil.getStacktraceMessage(e))
+                .track();
+
+            exitCheckout(RESULT_SILENT_ERROR);
+        }
+    }
+
+    public void exitCheckout(final int resCode) {
+        overrideTransitionOut();
+        setResult(resCode);
+        finish();
     }
 
     private void analizeLowRes() {

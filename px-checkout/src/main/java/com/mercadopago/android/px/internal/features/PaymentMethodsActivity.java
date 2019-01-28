@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.adapters.PaymentMethodsAdapter;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.di.Session;
 import com.mercadopago.android.px.internal.features.providers.PaymentMethodsProvider;
 import com.mercadopago.android.px.internal.features.providers.PaymentMethodsProviderImpl;
@@ -25,7 +26,7 @@ import com.mercadopago.android.px.preferences.PaymentPreference;
 import java.lang.reflect.Type;
 import java.util.List;
 
-public class PaymentMethodsActivity extends MercadoPagoBaseActivity implements PaymentMethodsView {
+public class PaymentMethodsActivity extends PXActivity implements PaymentMethodsView {
 
     protected RecyclerView mRecyclerView;
     protected Toolbar mToolbar;

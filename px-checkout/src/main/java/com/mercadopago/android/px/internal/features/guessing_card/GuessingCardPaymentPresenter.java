@@ -9,6 +9,7 @@ import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingController;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.IssuersRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
@@ -35,6 +36,7 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     @NonNull /* default */ final PaymentSettingRepository paymentSettingRepository;
     @NonNull private final UserSelectionRepository userSelectionRepository;
     @NonNull private final GroupsRepository groupsRepository;
+    @NonNull private final IssuersRepository issuersRepository;
     @NonNull private final AdvancedConfiguration advancedConfiguration;
     @Nullable private List<BankDeal> bankDealList;
 
@@ -44,12 +46,14 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     public GuessingCardPaymentPresenter(@NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
         @NonNull final GroupsRepository groupsRepository,
+        @NonNull final IssuersRepository issuersRepository,
         @NonNull final AdvancedConfiguration advancedConfiguration,
         @NonNull final PaymentRecovery paymentRecovery) {
         super();
         this.userSelectionRepository = userSelectionRepository;
         this.paymentSettingRepository = paymentSettingRepository;
         this.groupsRepository = groupsRepository;
+        this.issuersRepository = issuersRepository;
         this.advancedConfiguration = advancedConfiguration;
         this.paymentRecovery = paymentRecovery;
     }
@@ -257,7 +261,7 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     /* default */ void getIssuers() {
         final PaymentMethod paymentMethod = getPaymentMethod();
         if (paymentMethod != null) {
-            getResourcesProvider().getIssuersAsync(paymentMethod.getId(), bin,
+            issuersRepository.getIssuers(paymentMethod.getId(), bin).enqueue(
                 new TaggedCallback<List<Issuer>>(ApiUtil.RequestOrigin.GET_ISSUERS) {
                     @Override
                     public void onSuccess(final List<Issuer> issuers) {

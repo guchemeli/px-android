@@ -11,6 +11,7 @@ import com.mercadopago.android.px.internal.services.GatewayService;
 import com.mercadopago.android.px.internal.services.IdentificationService;
 import com.mercadopago.android.px.internal.services.InstallmentService;
 import com.mercadopago.android.px.internal.services.InstructionsClient;
+import com.mercadopago.android.px.internal.services.IssuersService;
 import com.mercadopago.android.px.internal.services.PaymentService;
 import com.mercadopago.android.px.internal.services.PreferenceService;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
@@ -167,7 +168,7 @@ public class MercadoPagoServices {
     }
 
     public void getIssuers(final String paymentMethodId, final String bin, final Callback<List<Issuer>> callback) {
-        final PaymentService service = RetrofitUtil.getRetrofitClient(context).create(PaymentService.class);
+        final IssuersService service = RetrofitUtil.getRetrofitClient(context).create(IssuersService.class);
         service
             .getIssuers(API_ENVIRONMENT, publicKey, privateKey, paymentMethodId, bin, processingMode)
             .enqueue(callback);
@@ -225,7 +226,6 @@ public class MercadoPagoServices {
     }
 
     /**
-     *
      * @param preferenceBuilder
      * @param callback
      */
@@ -236,3 +236,4 @@ public class MercadoPagoServices {
         preferenceService.createPreference(preferenceBuilder.build(), privateKey).enqueue(callback);
     }
 }
+

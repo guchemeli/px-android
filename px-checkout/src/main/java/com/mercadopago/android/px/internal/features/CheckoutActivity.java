@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl;
 import com.mercadopago.android.px.internal.di.ConfigurationModule;
 import com.mercadopago.android.px.internal.di.Session;
@@ -34,11 +35,14 @@ import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.PaymentResult;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
+import com.mercadopago.android.px.tracking.internal.events.FinishCheckoutEventTracker;
 import com.mercadopago.android.px.tracking.internal.events.AbortOneTapEventTracker;
+import com.mercadopago.android.px.tracking.internal.events.FrictionEventTracker;
 
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_ERROR;
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.EXTRA_PAYMENT_RESULT;
 import static com.mercadopago.android.px.core.MercadoPagoCheckout.PAYMENT_RESULT_CODE;
+import static com.mercadopago.android.px.internal.features.Constants.RESULT_SILENT_ERROR;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_ACTION;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANCELED_RYC;
 import static com.mercadopago.android.px.internal.features.Constants.RESULT_CANCEL_PAYMENT;
@@ -50,7 +54,7 @@ import static com.mercadopago.android.px.internal.features.Constants.RESULT_PAYM
 import static com.mercadopago.android.px.internal.features.paymentresult.PaymentResultActivity.EXTRA_RESULT_CODE;
 import static com.mercadopago.android.px.model.ExitAction.EXTRA_CLIENT_RES_CODE;
 
-public class CheckoutActivity extends MercadoPagoBaseActivity implements CheckoutView, ExpressPaymentFragment.CallBack {
+public class CheckoutActivity extends PXActivity implements CheckoutView, ExpressPaymentFragment.CallBack {
 
     private static final String EXTRA_PAYMENT_METHOD_CHANGED = "paymentMethodChanged";
     private static final String EXTRA_PRIVATE_KEY = "extra_private_key";
@@ -133,6 +137,9 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
                     presenter.retrievePaymentMethodSearch();
                 }
             } catch (final Exception e) {
+                FrictionEventTracker.with(FinishCheckoutEventTracker.PATH,
+                    FrictionEventTracker.Id.SILENT, FrictionEventTracker.Style.NON_SCREEN, ErrorUtil.getStacktraceMessage(e))
+                    .track();
                 exitCheckout(RESULT_CANCELED);
             }
         }
@@ -381,6 +388,8 @@ public class CheckoutActivity extends MercadoPagoBaseActivity implements Checkou
     private void resolvePaymentVaultRequest(final int resultCode, final Intent data) {
         if (resultCode == RESULT_OK) {
             presenter.onPaymentMethodSelectionResponse();
+        } else if (resultCode == RESULT_SILENT_ERROR) {
+            cancelCheckout();
         } else if (isErrorResult(data)) {
             //TODO check when it happens.
             final MercadoPagoError mercadoPagoError =

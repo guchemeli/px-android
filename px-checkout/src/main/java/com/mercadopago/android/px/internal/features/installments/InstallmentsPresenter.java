@@ -2,8 +2,7 @@ package com.mercadopago.android.px.internal.features.installments;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.internal.base.DefaultProvider;
-import com.mercadopago.android.px.internal.base.MvpPresenter;
+import com.mercadopago.android.px.internal.base.BasePresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingController;
 import com.mercadopago.android.px.internal.features.express.installments.InstallmentsAdapter;
@@ -28,7 +27,7 @@ import com.mercadopago.android.px.services.Callback;
 import com.mercadopago.android.px.tracking.internal.views.InstallmentsViewTrack;
 import java.util.List;
 
-public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, DefaultProvider> implements
+public class InstallmentsPresenter extends BasePresenter<InstallmentsView> implements
     AmountView.OnClick, InstallmentsAdapter.ItemListener, PayerCostListener {
 
     @NonNull private final SummaryAmountRepository summaryAmountRepository;
@@ -186,5 +185,9 @@ public class InstallmentsPresenter extends MvpPresenter<InstallmentsView, Defaul
     public void displayInstallments(final List<PayerCost> payerCosts) {
         new InstallmentsViewTrack(payerCosts, userSelectionRepository).track();
         getView().showInstallments(payerCosts);
+    }
+
+    public void removeUserSelection() {
+        userSelectionRepository.reset();
     }
 }

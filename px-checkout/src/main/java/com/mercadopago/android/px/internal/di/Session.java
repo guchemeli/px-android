@@ -15,6 +15,7 @@ import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
 import com.mercadopago.android.px.internal.datasource.EscManagerImp;
 import com.mercadopago.android.px.internal.datasource.GroupsService;
 import com.mercadopago.android.px.internal.datasource.InstructionsService;
+import com.mercadopago.android.px.internal.datasource.IssuersService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESCImpl;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
@@ -32,6 +33,7 @@ import com.mercadopago.android.px.internal.repository.AmountRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
 import com.mercadopago.android.px.internal.repository.InstructionsRepository;
+import com.mercadopago.android.px.internal.repository.IssuersRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
@@ -69,6 +71,7 @@ public final class Session extends ApplicationModule
     private InternalConfiguration internalConfiguration;
     private InstructionsService instructionsRepository;
     private SummaryAmountRepository summaryAmountRepository;
+    private IssuersRepository issuersRepository;
 
     private Session(@NonNull final Context context) {
         super(context.getApplicationContext());
@@ -129,6 +132,7 @@ public final class Session extends ApplicationModule
         instructionsRepository = null;
         summaryAmountRepository = null;
         amountConfigurationRepository = null;
+        issuersRepository = null;
     }
 
     public GroupsRepository getGroupsRepository() {
@@ -308,5 +312,16 @@ public final class Session extends ApplicationModule
         return new PayerCostSolver(
             configurationModule.getPaymentSettings().getCheckoutPreference().getPaymentPreference(),
             configurationModule.getUserSelectionRepository());
+    }
+
+    public IssuersRepository getIssuersRepository() {
+        if (issuersRepository == null) {
+            final com.mercadopago.android.px.internal.services.IssuersService issuersService =
+                RetrofitUtil.getRetrofitClient(getContext()).create(
+                    com.mercadopago.android.px.internal.services.IssuersService.class);
+
+            issuersRepository = new IssuersService(issuersService, getConfigurationModule().getPaymentSettings());
+        }
+        return issuersRepository;
     }
 }

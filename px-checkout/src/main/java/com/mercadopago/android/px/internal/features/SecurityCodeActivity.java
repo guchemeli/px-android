@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.mercadopago.android.px.R;
+import com.mercadopago.android.px.internal.base.PXActivity;
 import com.mercadopago.android.px.internal.callbacks.card.CardSecurityCodeEditTextCallback;
 import com.mercadopago.android.px.internal.controllers.CheckoutTimer;
 import com.mercadopago.android.px.internal.di.Session;
@@ -42,7 +43,7 @@ import com.mercadopago.android.px.model.exceptions.CardTokenException;
 import com.mercadopago.android.px.model.exceptions.ExceptionHandler;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 
-public class SecurityCodeActivity extends MercadoPagoBaseActivity implements SecurityCodeActivityView {
+public class SecurityCodeActivity extends PXActivity implements SecurityCodeActivityView {
 
     private static final String CARD_INFO_BUNDLE = "cardInfoBundle";
     private static final String PAYMENT_RECOVERY_BUNDLE = "paymentRecoveryBundle";

@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
+import com.mercadopago.android.px.configuration.DiscountParamsConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.JsonUtil;
@@ -11,6 +12,7 @@ import com.mercadopago.android.px.model.Token;
 import com.mercadopago.android.px.model.commission.ChargeRule;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -21,6 +23,8 @@ public class PaymentSettingService implements PaymentSettingRepository {
     private static final String PREF_PUBLIC_KEY = "PREF_PUBLIC_KEY";
     private static final String PREF_PRIVATE_KEY = "PREF_PRIVATE_KEY";
     private static final String PREF_TOKEN = "PREF_TOKEN";
+    private static final String PREF_PRODUCT_ID = "PREF_PRODUCT_ID";
+    private static final String PREF_LABELS = "PREF_LABELS";
 
     @NonNull private final SharedPreferences sharedPreferences;
     @NonNull private final JsonUtil jsonUtil;
@@ -59,6 +63,10 @@ public class PaymentSettingService implements PaymentSettingRepository {
 
     @Override
     public void configure(@NonNull final AdvancedConfiguration advancedConfiguration) {
+        final SharedPreferences.Editor edit = sharedPreferences.edit();
+        edit.putString(PREF_PRODUCT_ID, advancedConfiguration.getDiscountParamsConfiguration().getProductId()).apply();
+        edit.putStringSet(PREF_LABELS, advancedConfiguration.getDiscountParamsConfiguration().getLabels());
+
         this.advancedConfiguration = advancedConfiguration;
     }
 
@@ -148,7 +156,11 @@ public class PaymentSettingService implements PaymentSettingRepository {
     @Override
     public AdvancedConfiguration getAdvancedConfiguration() {
         if (advancedConfiguration == null) {
-            return new AdvancedConfiguration.Builder().build();
+            return new AdvancedConfiguration.Builder()
+                .setDiscountParamsConfiguration(new DiscountParamsConfiguration.Builder()
+                    .setProductId(sharedPreferences.getString(PREF_PRODUCT_ID, ""))
+                    .setLabels(sharedPreferences.getStringSet(PREF_LABELS, Collections.<String>emptySet())).build())
+                .build();
         }
         return advancedConfiguration;
     }

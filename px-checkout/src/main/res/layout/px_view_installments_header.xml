@@ -3,7 +3,6 @@
        xmlns:tools="http://schemas.android.com/tools"
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
-
        tools:parentTag="android.widget.FrameLayout">
 
     <com.mercadopago.android.px.internal.view.TitlePager
@@ -37,9 +36,7 @@
             android:paddingLeft="@dimen/px_m_margin"
             android:paddingRight="@dimen/px_title_pager_padding_right"
             android:textSize="@dimen/px_s_text"/>
-
     </com.mercadopago.android.px.internal.view.TitlePager>
-
 
     <LinearLayout
         android:id="@+id/installments_title"
@@ -66,7 +63,6 @@
             android:layout_height="@dimen/px_xxxs_height"
             android:background="@color/px_expressCheckoutSeparatorLine"/>
     </LinearLayout>
-
 
     <ImageView
         android:id="@+id/arrow"
