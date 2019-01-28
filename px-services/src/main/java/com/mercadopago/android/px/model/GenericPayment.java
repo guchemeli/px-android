@@ -4,32 +4,49 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.mercadopago.android.px.model.internal.IParcelablePaymentDescriptor;
 
 @SuppressWarnings("unused")
-public class GenericPayment implements IPayment, Parcelable {
+@Deprecated
+public final class GenericPayment implements IPayment, Parcelable {
 
-    public final Long id;
-    public final String status;
-    public final String statusDetail;
+    @Nullable public final Long id;
+    @NonNull public final String status;
+    @NonNull public final String statusDetail;
     @Nullable public final String statementDescription;
-    @Nullable public final String paymentMethodId;
-    @Nullable public final String paymentTypeId;
+
+    private GenericPayment(final Builder builder) {
+        id = builder.paymentId;
+        status = builder.status;
+        statusDetail = builder.statusDetail;
+        statementDescription = builder.statementDescription;
+    }
+
+    private GenericPayment(final Parcel in) {
+        if (in.readByte() == 0) {
+            id = null;
+        } else {
+            id = in.readLong();
+        }
+        status = in.readString();
+        statusDetail = in.readString();
+        statementDescription = in.readString();
+    }
 
     /**
      * Constructor for non-splited payment ; where is not neccessary to say which payment method have failed.
-     **/
-    public GenericPayment(final Long paymentId,
-        @NonNull final String status,
+     */
+    @Deprecated
+    public GenericPayment(@NonNull final Long paymentId, @NonNull final String status,
         @NonNull final String statusDetail) {
         id = paymentId;
         this.status = status;
         this.statusDetail = processStatusDetail(status, statusDetail);
         statementDescription = null;
-        paymentMethodId = null;
-        paymentTypeId = null;
     }
 
-    public GenericPayment(final Long paymentId,
+    @Deprecated
+    public GenericPayment(@Nullable final Long paymentId,
         @NonNull final String status,
         @NonNull final String statusDetail,
         @NonNull final String statementDescription) {
@@ -37,34 +54,6 @@ public class GenericPayment implements IPayment, Parcelable {
         this.status = status;
         this.statusDetail = processStatusDetail(status, statusDetail);
         this.statementDescription = statementDescription;
-        paymentMethodId = null;
-        paymentTypeId = null;
-    }
-
-    private GenericPayment(final Long id, final String status, final String statusDetail,
-        @Nullable final String statementDescription,
-        @NonNull final String paymentMethodId,
-        @NonNull final String paymentTypeId) {
-        this.id = id;
-        this.status = status;
-        this.statusDetail = processStatusDetail(status, statusDetail);
-        this.statementDescription = statementDescription;
-        this.paymentMethodId = paymentMethodId;
-        this.paymentTypeId = paymentTypeId;
-    }
-
-    public static GenericPayment forSplitPayment(@NonNull final GenericPayment genericPayment,
-        @NonNull final String paymentMethodId, @NonNull final String paymentTypeId) {
-        return new GenericPayment(genericPayment.id, genericPayment.status, genericPayment.statusDetail,
-            genericPayment.statementDescription,
-            paymentMethodId, paymentTypeId);
-    }
-
-    public static GenericPayment from(final IPayment payment) {
-        return new GenericPayment(payment.getId(),
-            payment.getPaymentStatus(),
-            payment.getPaymentStatusDetail(),
-            payment.getStatementDescription());
     }
 
     /**
@@ -82,7 +71,6 @@ public class GenericPayment implements IPayment, Parcelable {
         }
 
         if (Payment.StatusCodes.STATUS_REJECTED.equals(status)) {
-
             if (Payment.StatusDetail.isKnownErrorDetail(statusDetail)) {
                 return statusDetail;
             } else {
@@ -145,20 +133,32 @@ public class GenericPayment implements IPayment, Parcelable {
         dest.writeString(status);
         dest.writeString(statusDetail);
         dest.writeString(statementDescription);
-        dest.writeString(paymentMethodId);
-        dest.writeString(paymentTypeId);
     }
 
-    protected GenericPayment(final Parcel in) {
-        if (in.readByte() == 0) {
-            id = null;
-        } else {
-            id = in.readLong();
+    public static class Builder {
+
+        @Nullable /* default */ Long paymentId;
+        @NonNull /* default */ final String status;
+        @NonNull /* default */ final String statusDetail;
+        @Nullable /* default */ String statementDescription;
+
+        public Builder(@NonNull final String status, @NonNull final String statusDetail) {
+            this.status = status;
+            this.statusDetail = statusDetail;
         }
-        status = in.readString();
-        statusDetail = in.readString();
-        statementDescription = in.readString();
-        paymentMethodId = in.readString();
-        paymentTypeId = in.readString();
+
+        public Builder setStatementDescription(@Nullable final String statementDescription) {
+            this.statementDescription = statementDescription;
+            return this;
+        }
+
+        public Builder setPaymentId(@Nullable final Long paymentId) {
+            this.paymentId = paymentId;
+            return this;
+        }
+
+        public GenericPayment createGenericPayment() {
+            return new GenericPayment(this);
+        }
     }
 }

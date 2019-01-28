@@ -3,7 +3,7 @@ package com.mercadopago.android.px.internal.datasource;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandler;
 import com.mercadopago.android.px.internal.callbacks.PaymentServiceHandlerWrapper;
 import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
@@ -23,8 +23,7 @@ import com.mercadopago.android.px.model.AmountConfiguration;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
 import com.mercadopago.android.px.model.ExpressMetadata;
-import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.PayerCost;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
@@ -46,7 +45,7 @@ public class PaymentService implements PaymentRepository {
     @NonNull private final PaymentSettingRepository paymentSettingRepository;
     @NonNull private final DiscountRepository discountRepository;
     @NonNull private final AmountRepository amountRepository;
-    @NonNull private final PaymentProcessor paymentProcessor;
+    @NonNull private final SplitPaymentProcessor paymentProcessor;
     @NonNull private final Context context;
     @NonNull private final TokenRepository tokenRepository;
     @NonNull private final GroupsRepository groupsRepository;
@@ -57,14 +56,14 @@ public class PaymentService implements PaymentRepository {
     @NonNull /* default */ final UserSelectionRepository userSelectionRepository;
     @NonNull /* default */ final PluginRepository pluginRepository;
 
-    @Nullable private IPayment payment;
+    @Nullable private IPaymentDescriptor payment;
 
     public PaymentService(@NonNull final UserSelectionRepository userSelectionRepository,
         @NonNull final PaymentSettingRepository paymentSettingRepository,
         @NonNull final PluginRepository pluginRepository,
         @NonNull final DiscountRepository discountRepository,
         @NonNull final AmountRepository amountRepository,
-        @NonNull final PaymentProcessor paymentProcessor,
+        @NonNull final SplitPaymentProcessor paymentProcessor,
         @NonNull final Context context,
         @NonNull final EscManager escManager,
         @NonNull final TokenRepository tokenRepository,
@@ -98,13 +97,13 @@ public class PaymentService implements PaymentRepository {
     }
 
     @Override
-    public void storePayment(@NonNull final IPayment iPayment) {
+    public void storePayment(@NonNull final IPaymentDescriptor iPayment) {
         payment = iPayment;
     }
 
     @Nullable
     @Override
-    public IPayment getPayment() {
+    public IPaymentDescriptor getPayment() {
         return payment;
     }
 
@@ -253,19 +252,19 @@ public class PaymentService implements PaymentRepository {
     }
 
     private void pay() {
-        if (paymentProcessor.shouldShowFragmentOnPayment()) {
+        final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
+        if (paymentProcessor.shouldShowFragmentOnPayment(checkoutPreference)) {
             handlerWrapper.onVisualPayment();
         } else {
-            final CheckoutPreference checkoutPreference = paymentSettingRepository.getCheckoutPreference();
-            final PaymentProcessor.CheckoutData checkoutData =
-                new PaymentProcessor.CheckoutData(getPaymentDataList(), checkoutPreference);
-            paymentProcessor.startPayment(checkoutData, context, handlerWrapper);
+            final SplitPaymentProcessor.CheckoutData checkoutData =
+                new SplitPaymentProcessor.CheckoutData(getPaymentDataList(), checkoutPreference);
+            paymentProcessor.startPayment(context, checkoutData, handlerWrapper);
         }
     }
 
     @Override
     public boolean isExplodingAnimationCompatible() {
-        return !paymentProcessor.shouldShowFragmentOnPayment();
+        return !paymentProcessor.shouldShowFragmentOnPayment(paymentSettingRepository.getCheckoutPreference());
     }
 
     /**
@@ -316,31 +315,17 @@ public class PaymentService implements PaymentRepository {
         return paymentDataList;
     }
 
-    @NonNull
-    @Override
-    public PaymentResult createPaymentResult(@NonNull final IPayment payment) {
-        return new PaymentResult.Builder()
-            .setPaymentData(getPaymentDataList())
-            .setPaymentId(payment.getId())
-            .setPaymentStatus(payment.getPaymentStatus())
-            .setStatementDescription(payment.getStatementDescription())
-            .setPaymentStatusDetail(payment.getPaymentStatusDetail())
-            .build();
-    }
-
     /**
-     * Transforms IPayment into a {@link PaymentResult}
-     *
      * @param payment The payment model
      * @return The transformed {@link PaymentResult}
      */
     @NonNull
     @Override
-    public PaymentResult createPaymentResult(@NonNull final GenericPayment payment) {
+    public PaymentResult createPaymentResult(@NonNull final IPaymentDescriptor payment) {
         return new PaymentResult.Builder()
             .setPaymentData(getPaymentDataList())
             .setPaymentId(payment.getId())
-            .setPaymentMethodId(payment.paymentMethodId)
+            .setPaymentMethodId(payment.getPaymentMethodId())
             .setPaymentStatus(payment.getPaymentStatus())
             .setStatementDescription(payment.getStatementDescription())
             .setPaymentStatusDetail(payment.getPaymentStatusDetail())
@@ -349,7 +334,7 @@ public class PaymentService implements PaymentRepository {
 
     @Override
     public int getPaymentTimeout() {
-        return paymentProcessor.getPaymentTimeout();
+        return paymentProcessor.getPaymentTimeout(paymentSettingRepository.getCheckoutPreference());
     }
 
     public MercadoPagoError getError() {

@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.Size;
 import android.support.v4.app.Fragment;
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.GenericPayment;
@@ -13,34 +12,26 @@ import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
 
+@Deprecated
 @SuppressWarnings("unused")
 public interface PaymentProcessor extends Serializable {
 
+    @Deprecated
     /* default */ final class CheckoutData {
 
         @NonNull public final PaymentData paymentData;
         @NonNull public final CheckoutPreference checkoutPreference;
-        @NonNull public final List<PaymentData> paymentDataList;
 
         @Deprecated
         public CheckoutData(@NonNull final PaymentData paymentData,
             @NonNull final CheckoutPreference checkoutPreference) {
             this.paymentData = paymentData;
             this.checkoutPreference = checkoutPreference;
-            paymentDataList = Collections.singletonList(paymentData);
-        }
-
-        public CheckoutData(@NonNull @Size(min = 1) final List<PaymentData> paymentData,
-            @NonNull final CheckoutPreference checkoutPreference) {
-            this.paymentData = paymentData.get(0);
-            paymentDataList = paymentData;
-            this.checkoutPreference = checkoutPreference;
         }
     }
 
+    @Deprecated
     interface OnPaymentListener {
 
         void onPaymentFinished(@NonNull final Payment payment);

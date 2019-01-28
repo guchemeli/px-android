@@ -7,7 +7,7 @@ import android.support.annotation.StringRes;
 import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.configuration.PaymentConfiguration;
 import com.mercadopago.android.px.core.MercadoPagoCheckout;
-import com.mercadopago.android.px.core.PaymentProcessor;
+import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.internal.configuration.InternalConfiguration;
 import com.mercadopago.android.px.internal.datasource.AmountConfigurationRepositoryImpl;
 import com.mercadopago.android.px.internal.datasource.AmountService;
@@ -245,7 +245,7 @@ public final class Session extends ApplicationModule
     public PaymentRepository getPaymentRepository() {
         if (paymentRepository == null) {
             final ConfigurationModule configurationModule = getConfigurationModule();
-            final PaymentProcessor paymentProcessor =
+            final SplitPaymentProcessor paymentProcessor =
                 getConfigurationModule().getPaymentSettings().getPaymentConfiguration().getPaymentProcessor();
             paymentRepository = new PaymentService(configurationModule.getUserSelectionRepository(),
                 configurationModule.getPaymentSettings(),

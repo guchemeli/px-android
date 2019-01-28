@@ -61,10 +61,8 @@ import com.mercadopago.android.px.internal.viewmodel.drawables.DrawableFragmentI
 import com.mercadopago.android.px.model.BusinessPayment;
 import com.mercadopago.android.px.model.Card;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
-import com.mercadopago.android.px.model.GenericPayment;
-import com.mercadopago.android.px.model.IPayment;
+import com.mercadopago.android.px.model.IPaymentDescriptor;
 import com.mercadopago.android.px.model.PayerCost;
-import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentRecovery;
 import com.mercadopago.android.px.model.Site;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -421,14 +419,12 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
 
     //TODO refactor
     @Override
-    public void showPaymentResult(@NonNull final IPayment paymentResult) {
+    public void showPaymentResult(@NonNull final IPaymentDescriptor paymentResult) {
         if (getActivity() != null) {
-            if (paymentResult instanceof GenericPayment) {
-                ((CheckoutActivity) getActivity()).presenter.onPaymentFinished((GenericPayment) paymentResult);
-            } else if (paymentResult instanceof Payment) {
-                ((CheckoutActivity) getActivity()).presenter.onPaymentFinished((Payment) paymentResult);
-            } else {
+            if (paymentResult instanceof BusinessPayment) {
                 ((CheckoutActivity) getActivity()).presenter.onPaymentFinished((BusinessPayment) paymentResult);
+            } else {
+                ((CheckoutActivity) getActivity()).presenter.onPaymentFinished(paymentResult);
             }
         }
     }
