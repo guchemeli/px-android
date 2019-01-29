@@ -63,7 +63,6 @@ public class PaymentVaultPresenterTest {
     @Mock private DiscountRepository discountRepository;
     @Mock private GroupsRepository groupsRepository;
     @Mock private PaymentVaultView view;
-    @Mock private PaymentVaultProvider paymentVaultProvider;
 
     @Mock private Site mockSite;
 
@@ -131,16 +130,18 @@ public class PaymentVaultPresenterTest {
         verify(view).showSearchItems(eq(paymentMethodSearch.getGroups()), any(OnSelectedCallback.class));
     }
 
-    /*
+
     @Test
-    public void ifPaymentMethodSearchHasPayerCustomOptionsShowThem() {
+    public void whenPaymentMethodSearchHasPayerCustomOptionsShowThem() {
         final PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getCompletePaymentMethodSearchMLA();
         when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
 
         presenter.initialize();
 
-        assertEquals(paymentMethodSearch.getCustomSearchItems(), stubView.customOptionsShown);
+        verify(view).showCustomOptions(eq(paymentMethodSearch.getCustomSearchItems()), any(OnSelectedCallback.class));
     }
+
+    /*
 
     @Test
     public void whenItemWithChildrenSelectedThenShowChildren() {
