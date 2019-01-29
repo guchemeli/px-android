@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
-    implements AmountView.OnClick {
+    implements AmountView.OnClick, PaymentVault.Actions {
 
     @NonNull
     private final PaymentSettingRepository paymentSettingRepository;
@@ -421,6 +421,15 @@ public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
             new SelectMethodChildView(paymentMethodSearch, selectedSearchItem,
                 paymentSettingRepository.getCheckoutPreference());
         setCurrentViewTracker(selectMethodChildView);
+    }
+
+    @Override
+    public void trackOnBackPressed() {
+        if (selectedSearchItem == null) {
+            tracker.trackAbort();
+        } else {
+            tracker.trackBack();
+        }
     }
 
     @Override
