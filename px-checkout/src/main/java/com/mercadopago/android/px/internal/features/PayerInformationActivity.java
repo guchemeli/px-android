@@ -196,8 +196,10 @@ public class PayerInformationActivity extends PXActivity implements PayerInforma
     }
 
     private void createPresenter() {
+        final Session session = Session.getSession(this);
         mPresenter =
-            new PayerInformationPresenter(Session.getSession(this).getConfigurationModule().getPaymentSettings());
+            new PayerInformationPresenter(session.getConfigurationModule().getPaymentSettings(),
+                session.getIdentificationRepository());
     }
 
     private void configurePresenter() {

@@ -4,10 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import com.mercadopago.android.px.R;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
-import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.di.Session;
-import com.mercadopago.android.px.model.IdentificationType;
-import java.util.List;
 
 public class PayerInformationProviderImpl implements PayerInformationProvider {
 
@@ -37,11 +34,6 @@ public class PayerInformationProviderImpl implements PayerInformationProvider {
     @Override
     public String getInvalidIdentificationBusinessNameErrorMessage() {
         return context.getString(R.string.px_invalid_identification_last_name);
-    }
-
-    @Override
-    public void getIdentificationTypesAsync(final TaggedCallback<List<IdentificationType>> taggedCallback) {
-        mercadoPago.getIdentificationTypes(taggedCallback);
     }
 
     @Override

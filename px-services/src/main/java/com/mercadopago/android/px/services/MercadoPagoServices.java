@@ -16,8 +16,8 @@ import com.mercadopago.android.px.internal.services.PaymentService;
 import com.mercadopago.android.px.internal.services.PreferenceService;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
 import com.mercadopago.android.px.internal.util.RetrofitUtil;
+import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.BankDeal;
-import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Installment;
@@ -41,6 +41,7 @@ import static com.mercadopago.android.px.services.BuildConfig.API_ENVIRONMENT;
 /**
  * MercadoPagoServices provides an interface to access to our main API methods.
  */
+@SuppressWarnings("unused")
 public class MercadoPagoServices {
 
     /* default */ final Context context;
@@ -115,12 +116,6 @@ public class MercadoPagoServices {
         service.createToken(publicKey, privateKey, savedCardToken).enqueue(callback);
     }
 
-    public void createToken(final CardToken cardToken, final Callback<Token> callback) {
-        cardToken.setDevice(context);
-        final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
-        service.createToken(publicKey, privateKey, cardToken).enqueue(callback);
-    }
-
     public void createToken(final SavedESCCardToken savedESCCardToken, final Callback<Token> callback) {
         savedESCCardToken.setDevice(context);
         final GatewayService service = RetrofitUtil.getRetrofitClient(context).create(GatewayService.class);
@@ -145,15 +140,21 @@ public class MercadoPagoServices {
     }
 
     public void getIdentificationTypes(final Callback<List<IdentificationType>> callback) {
-        final IdentificationService service =
-            RetrofitUtil.getRetrofitClient(context).create(IdentificationService.class);
-        service.getIdentificationTypes(publicKey, privateKey).enqueue(callback);
+        if (TextUtil.isNotEmpty(privateKey)) {
+            getIdentificationTypes(privateKey, callback);
+        } else {
+            final IdentificationService service =
+                RetrofitUtil.getRetrofitClient(context).create(IdentificationService.class);
+            service
+                .getIdentificationTypesNonAuthUser(publicKey);
+        }
     }
 
+    @Deprecated
     public void getIdentificationTypes(final String accessToken, final Callback<List<IdentificationType>> callback) {
         final IdentificationService service =
             RetrofitUtil.getRetrofitClient(context).create(IdentificationService.class);
-        service.getIdentificationTypes(null, accessToken).enqueue(callback);
+        service.getIdentificationTypesForAuthUser(accessToken).enqueue(callback);
     }
 
     public void getInstallments(final String bin,

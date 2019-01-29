@@ -6,7 +6,7 @@ public class Device {
 
     public Fingerprint fingerprint;
 
-    public Device(Context context) {
+    public Device(final Context context) {
         fingerprint = new Fingerprint(context);
     }
 }

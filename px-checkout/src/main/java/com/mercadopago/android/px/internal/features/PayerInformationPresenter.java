@@ -5,6 +5,7 @@ import com.mercadopago.android.px.internal.base.MvpPresenter;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.features.providers.PayerInformationProvider;
+import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
@@ -16,14 +17,12 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by mromar on 9/25/17.
- */
-
 public class PayerInformationPresenter extends MvpPresenter<PayerInformationView, PayerInformationProvider> {
 
     @NonNull
     private final PaymentSettingRepository paymentSettings;
+    @NonNull
+    private final IdentificationRepository identificationRepository;
 
     //Payer info
     private String mIdentificationNumber;
@@ -39,8 +38,10 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
     private static final int DEFAULT_IDENTIFICATION_NUMBER_LENGTH = 12;
     private static final String IDENTIFICATION_TYPE_CPF = "CPF";
 
-    public PayerInformationPresenter(@NonNull final PaymentSettingRepository paymentSettings) {
+    public PayerInformationPresenter(@NonNull final PaymentSettingRepository paymentSettings,
+        @NonNull final IdentificationRepository identificationRepository) {
         this.paymentSettings = paymentSettings;
+        this.identificationRepository = identificationRepository;
         mIdentification = new Identification();
     }
 
@@ -51,7 +52,7 @@ public class PayerInformationPresenter extends MvpPresenter<PayerInformationView
     private void getIdentificationTypesAsync() {
         getView().showProgressBar();
 
-        getResourcesProvider().getIdentificationTypesAsync(
+        identificationRepository.getIdentificationTypes().enqueue(
             new TaggedCallback<List<IdentificationType>>(ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES) {
                 @Override
                 public void onSuccess(final List<IdentificationType> identificationTypes) {

@@ -14,6 +14,7 @@ import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoServicesAdapter;
 import com.mercadopago.android.px.internal.di.Session;
+import com.mercadopago.android.px.internal.repository.BankDealsRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.ErrorUtil;
@@ -95,31 +96,33 @@ public class BankDealsActivity extends MercadoPagoActivity implements OnSelected
 
     /* default */ void getBankDeals() {
         ViewUtils.showProgressLayout(this);
-        mMercadoPago.getBankDeals(new TaggedCallback<List<BankDeal>>(ApiUtil.RequestOrigin.GET_BANK_DEALS) {
+        final BankDealsRepository bankDealsRepository = Session.getSession(this).getBankDealsRepository();
+        bankDealsRepository.getBankDealsAsync()
+            .enqueue(new TaggedCallback<List<BankDeal>>(ApiUtil.RequestOrigin.GET_BANK_DEALS) {
 
-            @Override
-            public void onSuccess(final List<BankDeal> bankDeals) {
-                solveBankDeals(bankDeals);
-            }
-
-            @Override
-            public void onFailure(final MercadoPagoError error) {
-                if (isActivityActive()) {
-                    setFailureRecovery(new FailureRecovery() {
-                        @Override
-                        public void recover() {
-                            getBankDeals();
-                        }
-                    });
-
-                    ErrorUtil.showApiExceptionError(getActivity(),
-                        error.getApiException(),
-                        ApiUtil.RequestOrigin.GET_BANK_DEALS);
-                } else {
-                    finishWithCancelResult();
+                @Override
+                public void onSuccess(final List<BankDeal> bankDeals) {
+                    solveBankDeals(bankDeals);
                 }
-            }
-        });
+
+                @Override
+                public void onFailure(final MercadoPagoError error) {
+                    if (isActivityActive()) {
+                        setFailureRecovery(new FailureRecovery() {
+                            @Override
+                            public void recover() {
+                                getBankDeals();
+                            }
+                        });
+
+                        ErrorUtil.showApiExceptionError(getActivity(),
+                            error.getApiException(),
+                            ApiUtil.RequestOrigin.GET_BANK_DEALS);
+                    } else {
+                        finishWithCancelResult();
+                    }
+                }
+            });
     }
 
     @Override

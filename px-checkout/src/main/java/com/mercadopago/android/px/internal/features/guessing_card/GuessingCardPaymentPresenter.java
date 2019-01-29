@@ -8,7 +8,10 @@ import com.mercadopago.android.px.configuration.AdvancedConfiguration;
 import com.mercadopago.android.px.internal.callbacks.FailureRecovery;
 import com.mercadopago.android.px.internal.callbacks.TaggedCallback;
 import com.mercadopago.android.px.internal.controllers.PaymentMethodGuessingController;
+import com.mercadopago.android.px.internal.repository.BankDealsRepository;
+import com.mercadopago.android.px.internal.repository.CardTokenRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.IssuersRepository;
 import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
@@ -16,6 +19,7 @@ import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.internal.util.JsonUtil;
 import com.mercadopago.android.px.internal.util.TextUtil;
 import com.mercadopago.android.px.model.BankDeal;
+import com.mercadopago.android.px.model.CardToken;
 import com.mercadopago.android.px.model.IdentificationType;
 import com.mercadopago.android.px.model.Issuer;
 import com.mercadopago.android.px.model.PaymentMethod;
@@ -37,6 +41,9 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     @NonNull private final UserSelectionRepository userSelectionRepository;
     @NonNull private final GroupsRepository groupsRepository;
     @NonNull private final IssuersRepository issuersRepository;
+    @NonNull private final CardTokenRepository cardTokenRepository;
+    @NonNull private final BankDealsRepository bankDealsRepository;
+    @NonNull private final IdentificationRepository identificationRepository;
     @NonNull private final AdvancedConfiguration advancedConfiguration;
     @Nullable private List<BankDeal> bankDealList;
 
@@ -47,6 +54,9 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
         @NonNull final PaymentSettingRepository paymentSettingRepository,
         @NonNull final GroupsRepository groupsRepository,
         @NonNull final IssuersRepository issuersRepository,
+        @NonNull final CardTokenRepository cardTokenRepository,
+        @NonNull final BankDealsRepository bankDealsRepository,
+        @NonNull final IdentificationRepository identificationRepository,
         @NonNull final AdvancedConfiguration advancedConfiguration,
         @NonNull final PaymentRecovery paymentRecovery) {
         super();
@@ -54,6 +64,9 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
         this.paymentSettingRepository = paymentSettingRepository;
         this.groupsRepository = groupsRepository;
         this.issuersRepository = issuersRepository;
+        this.cardTokenRepository = cardTokenRepository;
+        this.bankDealsRepository = bankDealsRepository;
+        this.identificationRepository = identificationRepository;
         this.advancedConfiguration = advancedConfiguration;
         this.paymentRecovery = paymentRecovery;
     }
@@ -61,7 +74,6 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     @Override
     public void initialize() {
         getView().onValidStart();
-        initializeCardToken();
         resolveBankDeals();
         getPaymentMethods();
         if (recoverWithCardHolder()) {
@@ -91,7 +103,7 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
 
     @Override
     public void getIdentificationTypesAsync() {
-        getResourcesProvider().getIdentificationTypesAsync(
+        identificationRepository.getIdentificationTypes().enqueue(
             new TaggedCallback<List<IdentificationType>>(ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES) {
                 @Override
                 public void onSuccess(final List<IdentificationType> identificationTypes) {
@@ -217,25 +229,25 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
     }
 
     /* default */ void getBankDealsAsync() {
-        getResourcesProvider()
-            .getBankDealsAsync(new TaggedCallback<List<BankDeal>>(ApiUtil.RequestOrigin.GET_BANK_DEALS) {
-                @Override
-                public void onSuccess(final List<BankDeal> bankDeals) {
-                    resolveBankDeals(bankDeals);
-                }
+        bankDealsRepository
+            .getBankDealsAsync().enqueue(new TaggedCallback<List<BankDeal>>(ApiUtil.RequestOrigin.GET_BANK_DEALS) {
+            @Override
+            public void onSuccess(final List<BankDeal> bankDeals) {
+                resolveBankDeals(bankDeals);
+            }
 
-                @Override
-                public void onFailure(final MercadoPagoError error) {
-                    if (isViewAttached()) {
-                        setFailureRecovery(new FailureRecovery() {
-                            @Override
-                            public void recover() {
-                                getBankDealsAsync();
-                            }
-                        });
-                    }
+            @Override
+            public void onFailure(final MercadoPagoError error) {
+                if (isViewAttached()) {
+                    setFailureRecovery(new FailureRecovery() {
+                        @Override
+                        public void recover() {
+                            getBankDealsAsync();
+                        }
+                    });
                 }
-            });
+            }
+        });
     }
 
     /* default */ void resolveBankDeals(final List<BankDeal> bankDeals) {
@@ -314,17 +326,17 @@ public class GuessingCardPaymentPresenter extends GuessingCardPresenter {
 
     @Override
     public void createToken() {
-        getResourcesProvider()
-            .createTokenAsync(cardToken, new TaggedCallback<Token>(ApiUtil.RequestOrigin.CREATE_TOKEN) {
-                @Override
-                public void onSuccess(final Token token) {
-                    resolveTokenRequest(token);
-                }
+        cardTokenRepository
+            .createTokenAsync(cardToken).enqueue(new TaggedCallback<Token>(ApiUtil.RequestOrigin.CREATE_TOKEN) {
+            @Override
+            public void onSuccess(final Token token) {
+                resolveTokenRequest(token);
+            }
 
-                @Override
-                public void onFailure(final MercadoPagoError error) {
-                    resolveTokenCreationError(error, ApiUtil.RequestOrigin.CREATE_TOKEN);
-                }
-            });
+            @Override
+            public void onFailure(final MercadoPagoError error) {
+                resolveTokenCreationError(error, ApiUtil.RequestOrigin.CREATE_TOKEN);
+            }
+        });
     }
 }

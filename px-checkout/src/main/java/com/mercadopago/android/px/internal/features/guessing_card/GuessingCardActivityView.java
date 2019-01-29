@@ -42,6 +42,10 @@ public interface GuessingCardActivityView extends MvpView {
 
     void setErrorContainerListener();
 
+    void showMissingIdentificationTypesError(boolean recoverable, String requestOrigin);
+
+    void showSettingNotFoundForBinError();
+
     void setContainerAnimationListeners();
 
     void setIdentificationTypeListeners();
@@ -109,6 +113,14 @@ public interface GuessingCardActivityView extends MvpView {
     void hideExclusionWithOneElementInfoView();
 
     void setInvalidCardOnePaymentMethodErrorView();
+
+    void setInvalidIdentificationNumberErrorView();
+
+    void setInvalidEmptyNameErrorView();
+
+    void setInvalidExpiryDateErrorView();
+
+    void setInvalidFieldErrorView();
 
     void setInvalidCardMultipleErrorView();
 

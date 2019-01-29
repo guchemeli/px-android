@@ -8,6 +8,7 @@ import com.mercadopago.android.px.internal.datasource.CardAssociationGatewayServ
 import com.mercadopago.android.px.internal.datasource.CardAssociationService;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.repository.CardPaymentMethodRepository;
+import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.util.ApiUtil;
 import com.mercadopago.android.px.model.BankDeal;
 import com.mercadopago.android.px.model.Card;
@@ -29,6 +30,7 @@ public class GuessingCardStoragePresenter extends GuessingCardPresenter {
     /* default */ final MercadoPagoESC mercadoPagoESC;
     /* default */ final String accessToken;
     private final CardPaymentMethodRepository cardPaymentMethodRepository;
+    private final IdentificationRepository identificationRepository;
     private final CardAssociationService cardAssociationService;
     private final CardAssociationGatewayService gatewayService;
     /* default */ @Nullable List<Issuer> cardIssuers;
@@ -37,12 +39,14 @@ public class GuessingCardStoragePresenter extends GuessingCardPresenter {
 
     public GuessingCardStoragePresenter(final String accessToken,
         final CardPaymentMethodRepository cardPaymentMethodRepository,
+        final IdentificationRepository identificationRepository,
         final CardAssociationService cardAssociationService,
         final MercadoPagoESC mercadoPagoESC,
         final CardAssociationGatewayService gatewayService) {
         super();
         this.accessToken = accessToken;
         this.cardPaymentMethodRepository = cardPaymentMethodRepository;
+        this.identificationRepository = identificationRepository;
         this.cardAssociationService = cardAssociationService;
         this.mercadoPagoESC = mercadoPagoESC;
         this.gatewayService = gatewayService;
@@ -52,7 +56,6 @@ public class GuessingCardStoragePresenter extends GuessingCardPresenter {
     public void initialize() {
         getView().onValidStart();
         getView().hideBankDeals();
-        initializeCardToken();
         getPaymentMethods();
     }
 
@@ -86,7 +89,7 @@ public class GuessingCardStoragePresenter extends GuessingCardPresenter {
 
     @Override
     public void getIdentificationTypesAsync() {
-        getResourcesProvider().getIdentificationTypesAsync(accessToken,
+        identificationRepository.getIdentificationTypes(accessToken).enqueue(
             new TaggedCallback<List<IdentificationType>>(ApiUtil.RequestOrigin.GET_IDENTIFICATION_TYPES) {
                 @Override
                 public void onSuccess(final List<IdentificationType> identificationTypes) {

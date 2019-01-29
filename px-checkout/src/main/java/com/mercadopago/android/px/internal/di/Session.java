@@ -11,6 +11,8 @@ import com.mercadopago.android.px.core.SplitPaymentProcessor;
 import com.mercadopago.android.px.internal.configuration.InternalConfiguration;
 import com.mercadopago.android.px.internal.datasource.AmountConfigurationRepositoryImpl;
 import com.mercadopago.android.px.internal.datasource.AmountService;
+import com.mercadopago.android.px.internal.datasource.BankDealsService;
+import com.mercadopago.android.px.internal.datasource.CardTokenService;
 import com.mercadopago.android.px.internal.datasource.DiscountServiceImp;
 import com.mercadopago.android.px.internal.datasource.EscManagerImp;
 import com.mercadopago.android.px.internal.datasource.GroupsService;
@@ -30,8 +32,11 @@ import com.mercadopago.android.px.internal.datasource.cache.GroupsMemCache;
 import com.mercadopago.android.px.internal.features.installments.PayerCostSolver;
 import com.mercadopago.android.px.internal.repository.AmountConfigurationRepository;
 import com.mercadopago.android.px.internal.repository.AmountRepository;
+import com.mercadopago.android.px.internal.repository.BankDealsRepository;
+import com.mercadopago.android.px.internal.repository.CardTokenRepository;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
+import com.mercadopago.android.px.internal.repository.IdentificationRepository;
 import com.mercadopago.android.px.internal.repository.InstructionsRepository;
 import com.mercadopago.android.px.internal.repository.IssuersRepository;
 import com.mercadopago.android.px.internal.repository.PaymentRepository;
@@ -40,8 +45,10 @@ import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.SummaryAmountRepository;
 import com.mercadopago.android.px.internal.repository.TokenRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
+import com.mercadopago.android.px.internal.services.BankDealService;
 import com.mercadopago.android.px.internal.services.CheckoutService;
 import com.mercadopago.android.px.internal.services.GatewayService;
+import com.mercadopago.android.px.internal.datasource.IdentificationService;
 import com.mercadopago.android.px.internal.services.InstallmentService;
 import com.mercadopago.android.px.internal.services.InstructionsClient;
 import com.mercadopago.android.px.internal.util.LocaleUtil;
@@ -72,6 +79,9 @@ public final class Session extends ApplicationModule
     private InstructionsService instructionsRepository;
     private SummaryAmountRepository summaryAmountRepository;
     private IssuersRepository issuersRepository;
+    private CardTokenRepository cardTokenRepository;
+    private BankDealsRepository bankDealsRepository;
+    private IdentificationRepository identificationRepository;
 
     private Session(@NonNull final Context context) {
         super(context.getApplicationContext());
@@ -133,6 +143,7 @@ public final class Session extends ApplicationModule
         summaryAmountRepository = null;
         amountConfigurationRepository = null;
         issuersRepository = null;
+        cardTokenRepository = null;
     }
 
     public GroupsRepository getGroupsRepository() {
@@ -323,5 +334,38 @@ public final class Session extends ApplicationModule
             issuersRepository = new IssuersService(issuersService, getConfigurationModule().getPaymentSettings());
         }
         return issuersRepository;
+    }
+
+    public CardTokenRepository getCardTokenRepository() {
+        if (cardTokenRepository == null) {
+            final GatewayService gatewayService =
+                RetrofitUtil.getRetrofitClient(getContext()).create(GatewayService.class);
+            cardTokenRepository =
+                new CardTokenService(gatewayService, getConfigurationModule().getPaymentSettings(),
+                    new Device(getContext()));
+        }
+        return cardTokenRepository;
+    }
+
+    public BankDealsRepository getBankDealsRepository() {
+        if (bankDealsRepository == null) {
+            final BankDealService bankDealsService =
+                RetrofitUtil.getRetrofitClient(getContext())
+                    .create(BankDealService.class);
+            bankDealsRepository =
+                new BankDealsService(bankDealsService, getContext(), getConfigurationModule().getPaymentSettings());
+        }
+        return bankDealsRepository;
+    }
+
+    public IdentificationRepository getIdentificationRepository() {
+        if (identificationRepository == null) {
+            final com.mercadopago.android.px.internal.services.IdentificationService identificationService =
+                RetrofitUtil.getRetrofitClient(getContext())
+                    .create(com.mercadopago.android.px.internal.services.IdentificationService.class);
+            identificationRepository =
+                new IdentificationService(identificationService, getConfigurationModule().getPaymentSettings());
+        }
+        return identificationRepository;
     }
 }
