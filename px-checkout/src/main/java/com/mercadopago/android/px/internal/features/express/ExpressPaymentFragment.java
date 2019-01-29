@@ -142,6 +142,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
     public void onViewCreated(@NonNull final View view, @Nullable final Bundle savedInstanceState) {
 
         configureViews(view);
+
         //TODO remove try catch after session is persisted
         try {
             presenter = createPresenter(view.getContext());
@@ -152,6 +153,7 @@ public class ExpressPaymentFragment extends Fragment implements ExpressPayment.V
         } catch (final Exception e) {
             //Nothing to do here
         }
+
         // Order is important - On click and events should be wired AFTER view is attached.
         summaryView.setOnFitListener(this);
         toolbarAppearAnimation = AnimationUtils.loadAnimation(view.getContext(), R.anim.px_toolbar_appear);

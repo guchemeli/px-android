@@ -147,7 +147,7 @@ public class PaymentService implements PaymentRepository {
                         //TODO refactor
                         final String secondaryPaymentMethodId =
                             amountConfigurationRepository
-                                .getConfigurationFor(card.getId()).split.secondaryPaymentMethodId;
+                                .getConfigurationFor(card.getId()).split.secondaryPaymentMethod.paymentMethodId;
                         userSelectionRepository
                             .select(card, paymentMethodSearch.getPaymentMethodById(secondaryPaymentMethodId));
                     } else {
@@ -300,13 +300,11 @@ public class PaymentService implements PaymentRepository {
             final PaymentData secondaryPaymentData = new PaymentData();
             secondaryPaymentData.setPaymentMethod(secondaryPaymentMethod);
             secondaryPaymentData.setPayer(paymentSettingRepository.getCheckoutPreference().getPayer());
-            secondaryPaymentData
-                .setTransactionAmount(currentConfiguration.split.amount);
-
+            secondaryPaymentData.setTransactionAmount(currentConfiguration.split.secondaryPaymentMethod.amount);
             secondaryPaymentData.setCampaign(discountModel.getCampaign());
-            paymentData.setDiscount(currentConfiguration.split.primaryPaymentMethodDiscount);
+            paymentData.setDiscount(currentConfiguration.split.primaryPaymentMethod.discount);
             secondaryPaymentData
-                .setDiscount(currentConfiguration.split.secondaryPaymentMethodDiscount);
+                .setDiscount(currentConfiguration.split.secondaryPaymentMethod.discount);
             paymentDataList.add(secondaryPaymentData);
         } else {
             paymentData.setDiscount(discountModel.getDiscount());

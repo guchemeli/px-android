@@ -50,7 +50,7 @@ public class AmountConfiguration implements Serializable, Parcelable {
     @NonNull
     public List<PayerCost> getAppliedPayerCost(final boolean userWantToSplit) {
         if (isSplitPossible(userWantToSplit)) {
-            return split.getPayerCosts();
+            return split.primaryPaymentMethod.getPayerCosts();
         } else {
             return getPayerCosts();
         }
@@ -59,8 +59,8 @@ public class AmountConfiguration implements Serializable, Parcelable {
     @NonNull
     public PayerCost getCurrentPayerCost(final boolean userWantToSplit, final int userSelectedIndex) {
         if (isSplitPossible(userWantToSplit)) {
-            return PayerCost.getPayerCost(split.getPayerCosts(), userSelectedIndex,
-                split.selectedPayerCostIndex);
+            return PayerCost.getPayerCost(split.primaryPaymentMethod.getPayerCosts(), userSelectedIndex,
+                split.primaryPaymentMethod.selectedPayerCostIndex);
         } else {
             return PayerCost.getPayerCost(getPayerCosts(), userSelectedIndex,
                 selectedPayerCostIndex);

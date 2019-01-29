@@ -65,13 +65,13 @@ public class SplitPaymentHeaderAdapter extends ViewAdapter<List<SplitPaymentHead
                     .withTextColor(ContextCompat.getColor(labeledSwitch.getContext(), R.color.ui_meli_black))
                     .apply(TextFormatter
                         .withCurrencyId(currencyId)
-                        .amount(split.getVisibleAmountToPay())
+                        .amount(split.secondaryPaymentMethod.getVisibleAmountToPay())
                         .normalDecimals()
                         .toSpannable());
 
             // create text message
             final SpannableStringBuilder message = new SpannableStringBuilder(TextUtil.SPACE)
-                .append(split.message);
+                .append(split.secondaryPaymentMethod.message);
 
             // added color
             ViewUtils.setColorInSpannable(ContextCompat.getColor(labeledSwitch.getContext(),
