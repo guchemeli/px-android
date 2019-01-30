@@ -6,7 +6,6 @@ import com.mercadopago.android.px.internal.callbacks.OnSelectedCallback;
 import com.mercadopago.android.px.internal.datasource.MercadoPagoESC;
 import com.mercadopago.android.px.internal.features.PaymentVaultPresenter;
 import com.mercadopago.android.px.internal.features.PaymentVaultView;
-import com.mercadopago.android.px.internal.features.hooks.Hook;
 import com.mercadopago.android.px.internal.features.providers.PaymentVaultProvider;
 import com.mercadopago.android.px.internal.repository.DiscountRepository;
 import com.mercadopago.android.px.internal.repository.GroupsRepository;
@@ -14,25 +13,16 @@ import com.mercadopago.android.px.internal.repository.PaymentSettingRepository;
 import com.mercadopago.android.px.internal.repository.PluginRepository;
 import com.mercadopago.android.px.internal.repository.UserSelectionRepository;
 import com.mercadopago.android.px.mocks.PaymentMethodSearchs;
-import com.mercadopago.android.px.model.Card;
-import com.mercadopago.android.px.model.CustomSearchItem;
-import com.mercadopago.android.px.model.Discount;
 import com.mercadopago.android.px.model.DiscountConfigurationModel;
-import com.mercadopago.android.px.model.PaymentMethod;
 import com.mercadopago.android.px.model.PaymentMethodSearch;
 import com.mercadopago.android.px.model.PaymentMethodSearchItem;
 import com.mercadopago.android.px.model.PaymentTypes;
 import com.mercadopago.android.px.model.Site;
-import com.mercadopago.android.px.model.exceptions.ApiException;
-import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
 import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.preferences.PaymentPreference;
-import com.mercadopago.android.px.utils.Discounts;
-import com.mercadopago.android.px.utils.StubFailMpCall;
 import com.mercadopago.android.px.utils.StubSuccessMpCall;
 import java.math.BigDecimal;
 import java.util.Collection;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +33,6 @@ import org.mockito.junit.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -195,7 +184,7 @@ public class PaymentVaultPresenterTest {
 
         presenter.initialize();
 
-        verifyDoNotSelectAutomatically(paymentMethodSearch);
+        verifyDoNotSelectCustomOptionAutomatically(paymentMethodSearch);
     }
 
     @Test
@@ -206,7 +195,18 @@ public class PaymentVaultPresenterTest {
 
         presenter.initialize();
 
-        verifyDoNotSelectAutomatically(paymentMethodSearch);
+        verifyDoNotSelectCustomOptionAutomatically(paymentMethodSearch);
+    }
+
+    @Test
+    public void whenOnlyOffPaymentTypeAvailableAndAccountMoneyAvailableDoNotSelectAutomatically() {
+        final PaymentMethodSearch paymentMethodSearch =
+            PaymentMethodSearchs.getPaymentMethodSearchWithOnlyOneOffTypeAndAccountMoneyMLA();
+        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
+
+        presenter.initialize();
+
+        verifyDoNotSelectCustomOptionAutomatically(paymentMethodSearch);
     }
 
     // --------- Helper methods ----------- //
@@ -221,7 +221,7 @@ public class PaymentVaultPresenterTest {
         verify(view, atLeastOnce()).hideProgress();
     }
 
-    private void verifyDoNotSelectAutomatically(final PaymentMethodSearch paymentMethodSearch) {
+    private void verifyDoNotSelectCustomOptionAutomatically(final PaymentMethodSearch paymentMethodSearch) {
         verifyInitializeWithGroups();
         verify(view).showCustomOptions(eq(paymentMethodSearch.getCustomSearchItems()), any(OnSelectedCallback.class));
         verify(view).showSearchItems(eq(paymentMethodSearch.getGroups()), any(OnSelectedCallback.class));
@@ -229,19 +229,6 @@ public class PaymentVaultPresenterTest {
     }
 
     /*
-
-    @Test
-    public void ifOnlyOffPaymentTypeAvailableAndAccountMoneyAvailableDoNotSelectAutomatically() {
-        final PaymentMethodSearch paymentMethodSearch =
-            PaymentMethodSearchs.getPaymentMethodSearchWithOnlyOneOffTypeAndAccountMoneyMLA();
-        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
-
-        presenter.initialize();
-
-        Assert.assertNotNull(stubView.customOptionsShown);
-        Assert.assertFalse(stubView.cardFlowStarted);
-        Assert.assertFalse(stubView.isItemShown);
-    }
 
     //User selections
 
