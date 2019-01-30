@@ -141,19 +141,25 @@ public class PaymentVaultPresenterTest {
         verify(view).showCustomOptions(eq(paymentMethodSearch.getCustomSearchItems()), any(OnSelectedCallback.class));
     }
 
-    /*
+
 
     @Test
     public void whenItemWithChildrenSelectedThenShowChildren() {
         final PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getCompletePaymentMethodSearchMLA();
+        final PaymentMethodSearchItem selectedSearchItem = paymentMethodSearch.getGroups().get(1);
         when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
 
-        presenter.initialize();
-        stubView.simulateItemSelection(1);
+        presenter.setSelectedSearchItem(selectedSearchItem);
 
-        assertEquals(paymentMethodSearch.getGroups().get(1).getChildren(), stubView.searchItemsShown);
+        presenter.initialize();
+
+
+        verify(view).setTitle(selectedSearchItem.getChildrenHeader());
+        verify(view).showSearchItems(eq(selectedSearchItem.getChildren()), any(OnSelectedCallback.class));
+        verify(view).hideProgress();
     }
 
+    /*
     //Automatic selections
 
     @Test
