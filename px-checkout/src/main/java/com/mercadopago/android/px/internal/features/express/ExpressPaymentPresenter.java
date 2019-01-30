@@ -147,7 +147,7 @@ import java.util.List;
 
     @Override
     public void fromBundle(@NonNull final Bundle bundle) {
-        payerCostSelection = bundle.getParcelable(BUNDLE_STATE_SPLIT_PREF);
+        payerCostSelection = bundle.getParcelable(BUNDLE_STATE_PAYER_COST);
         isSplitUserPreference = bundle.getBoolean(BUNDLE_STATE_SPLIT_PREF, false);
     }
 
