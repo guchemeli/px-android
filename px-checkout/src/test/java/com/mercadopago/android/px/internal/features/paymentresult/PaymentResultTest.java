@@ -9,7 +9,6 @@ import com.mercadopago.android.px.model.Instruction;
 import com.mercadopago.android.px.model.Payment;
 import com.mercadopago.android.px.model.PaymentData;
 import com.mercadopago.android.px.model.PaymentResult;
-import com.mercadopago.android.px.model.ScreenViewEvent;
 import com.mercadopago.android.px.model.Sites;
 import com.mercadopago.android.px.model.exceptions.ApiException;
 import com.mercadopago.android.px.model.exceptions.MercadoPagoError;
@@ -29,13 +28,13 @@ public class PaymentResultTest {
     @Mock private PaymentSettingRepository paymentSettingRepository;
     @Mock private CheckoutPreference checkoutPreference;
     @Mock private InstructionsRepository instructionsRepository;
-    
+
     @Before
-    public void setUp(){
+    public void setUp() {
         when(paymentSettingRepository.getCheckoutPreference()).thenReturn(checkoutPreference);
         when(checkoutPreference.getSite()).thenReturn(Sites.ARGENTINA);
     }
-    
+
     @Test
     public void whenPaymentWithCardApprovedThenShowCongrats() {
         MockedNavigator navigator = new MockedNavigator();
@@ -419,36 +418,6 @@ public class PaymentResultTest {
         }
 
         @Override
-        public String getCancelPayment() {
-            return null;
-        }
-
-        @Override
-        public String getContinueShopping() {
-            return null;
-        }
-
-        @Override
-        public String getExitButtonDefaultText() {
-            return null;
-        }
-
-        @Override
-        public String getChangePaymentMethodLabel() {
-            return null;
-        }
-
-        @Override
-        public String getRecoverPayment() {
-            return null;
-        }
-
-        @Override
-        public String getCardEnabled() {
-            return null;
-        }
-
-        @Override
         public String getErrorTitle() {
             return null;
         }
@@ -520,11 +489,6 @@ public class PaymentResultTest {
 
         @Override
         public String getRejectedCallForAuthBodySecondaryTitle() {
-            return null;
-        }
-
-        @Override
-        public String getReceiptDescription(final Long receiptId) {
             return null;
         }
     }

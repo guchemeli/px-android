@@ -105,27 +105,23 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
             //TODO fix amount.
             final PaymentResultBodyProps bodyProps =
                 new PaymentResultBodyProps.Builder(props.getPaymentResultScreenPreference())
-                .setStatus(props.paymentResult.getPaymentStatus())
-                .setStatusDetail(props.paymentResult.getPaymentStatusDetail())
-                .setPaymentData(props.paymentResult.getPaymentData())
-                .setDisclaimer(props.paymentResult.getStatementDescription())
-                .setPaymentId(props.paymentResult.getPaymentId())
-                .setInstruction(props.instruction)
-                .setCurrencyId(props.currencyId)
-                .setAmount(props.paymentResult.getPaymentData().getTransactionAmount())
-                .setProcessingMode(props.processingMode)
-                .build();
+                    .setStatus(props.paymentResult.getPaymentStatus())
+                    .setStatusDetail(props.paymentResult.getPaymentStatusDetail())
+                    .setPaymentData(props.paymentResult.getPaymentData())
+                    .setDisclaimer(props.paymentResult.getStatementDescription())
+                    .setPaymentId(props.paymentResult.getPaymentId())
+                    .setInstruction(props.instruction)
+                    .setCurrencyId(props.currencyId)
+                    .setAmount(props.paymentResult.getPaymentData().getTransactionAmount())
+                    .setProcessingMode(props.processingMode)
+                    .build();
             body = new Body(bodyProps, getDispatcher(), paymentResultProvider);
         }
         return body;
     }
 
-    /* default */ FooterContainer getFooterContainer() {
-        return new FooterContainer(new FooterContainer.Props(
-            props.paymentResult, props.getPaymentResultScreenPreference()),
-            getDispatcher(),
-            paymentResultProvider
-        );
+    /* default */ FooterPaymentResult getFooterContainer() {
+        return new FooterPaymentResult(props.paymentResult, getDispatcher());
     }
 
     private String getHeaderMode() {
@@ -268,7 +264,6 @@ public class PaymentResultContainer extends Component<PaymentResultProps, Void> 
             return DEFAULT_BADGE_IMAGE;
         }
     }
-
 
     private CharSequence getTitle(@NonNull final PaymentResultProps props) {
         if (props.hasCustomizedTitle()) {

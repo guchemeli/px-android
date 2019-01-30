@@ -97,36 +97,6 @@ public class PaymentResultProviderImpl implements PaymentResultProvider {
     }
 
     @Override
-    public String getCancelPayment() {
-        return context.getString(R.string.px_cancel_payment);
-    }
-
-    @Override
-    public String getContinueShopping() {
-        return context.getString(R.string.px_continue_shopping);
-    }
-
-    @Override
-    public String getExitButtonDefaultText() {
-        return context.getString(R.string.px_cancel_payment);
-    }
-
-    @Override
-    public String getChangePaymentMethodLabel() {
-        return context.getString(R.string.px_text_pay_with_other_method);
-    }
-
-    @Override
-    public String getRecoverPayment() {
-        return context.getString(R.string.px_text_enter_again);
-    }
-
-    @Override
-    public String getCardEnabled() {
-        return context.getString(R.string.px_text_card_enabled);
-    }
-
-    @Override
     public String getErrorTitle() {
         return context.getString(R.string.px_what_can_do);
     }
@@ -199,14 +169,5 @@ public class PaymentResultProviderImpl implements PaymentResultProvider {
     @Override
     public String getRejectedCallForAuthBodySecondaryTitle() {
         return context.getString(R.string.px_error_secondary_title_call);
-    }
-
-    @Override
-    public String getReceiptDescription(final Long receiptId) {
-        String description = "";
-        if (receiptId != null) {
-            description = context.getResources().getString(R.string.px_receipt, String.valueOf(receiptId));
-        }
-        return description;
     }
 }
