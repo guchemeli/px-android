@@ -7,6 +7,7 @@ import com.mercadopago.android.px.preferences.CheckoutPreference;
 import com.mercadopago.android.px.tracking.internal.mapper.FromItemToItemInfo;
 import com.mercadopago.android.px.tracking.internal.mapper.FromPaymentMethodSearchItemToAvailableMethod;
 import com.mercadopago.android.px.tracking.internal.model.SelectMethodData;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,10 @@ public class SelectMethodChildView extends ViewTracker {
     public SelectMethodChildView(final PaymentMethodSearch paymentMethodSearch,
         @NonNull final PaymentMethodSearchItem selected, @NonNull final CheckoutPreference preference) {
         parentId = selected.getId();
-        final List<PaymentMethodSearchItem> children = selected.getChildren();
+        List<PaymentMethodSearchItem> children = selected.getChildren();
+        if(children == null){
+            children = new ArrayList<>();
+        }
         data = new SelectMethodData(new FromPaymentMethodSearchItemToAvailableMethod(paymentMethodSearch).map(children),
             new FromItemToItemInfo().map(preference.getItems()), preference.getTotalAmount()).toMap();
     }
