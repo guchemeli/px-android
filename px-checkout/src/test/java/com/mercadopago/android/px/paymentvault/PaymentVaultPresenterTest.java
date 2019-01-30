@@ -119,8 +119,6 @@ public class PaymentVaultPresenterTest {
         verify(view).showEmptyPaymentMethodsError();
     }
 
-
-
     @Test
     public void whenPaymentMethodSearchHasItemsShowThem() {
         final PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getPaymentMethodWithoutCustomOptionsMLA();
@@ -130,7 +128,6 @@ public class PaymentVaultPresenterTest {
 
         verify(view).showSearchItems(eq(paymentMethodSearch.getGroups()), any(OnSelectedCallback.class));
     }
-
 
     @Test
     public void whenPaymentMethodSearchHasPayerCustomOptionsShowThem() {
@@ -142,8 +139,6 @@ public class PaymentVaultPresenterTest {
         verify(view).showCustomOptions(eq(paymentMethodSearch.getCustomSearchItems()), any(OnSelectedCallback.class));
     }
 
-
-
     @Test
     public void whenItemWithChildrenSelectedThenShowChildren() {
         final PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getCompletePaymentMethodSearchMLA();
@@ -154,12 +149,10 @@ public class PaymentVaultPresenterTest {
 
         presenter.initialize();
 
-
         verify(view).setTitle(selectedSearchItem.getChildrenHeader());
         verify(view).showSearchItems(eq(selectedSearchItem.getChildren()), any(OnSelectedCallback.class));
         verify(view).hideProgress();
     }
-
 
     //Automatic selections
 
@@ -194,20 +187,31 @@ public class PaymentVaultPresenterTest {
         verifyNoMoreInteractions(paymentSettingRepository);
     }
 
-    /*
-
     @Test
-    public void ifOnlyCardPaymentTypeAvailableAndCardAvailableDoNotSelectAutomatically() {
+    public void whenOnlyCardPaymentTypeAvailableAndCardAvailableDoNotSelectAutomatically() {
         final PaymentMethodSearch paymentMethodSearch =
             PaymentMethodSearchs.getPaymentMethodSearchWithOnlyCreditCardAndOneCardMLA();
         when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
 
         presenter.initialize();
 
-        Assert.assertNotNull(stubView.customOptionsShown);
-        Assert.assertFalse(stubView.cardFlowStarted);
-        Assert.assertFalse(stubView.isItemShown);
+        verifyInitializeWithGroups();
+        verify(view).showCustomOptions(eq(paymentMethodSearch.getCustomSearchItems()), any(OnSelectedCallback.class));
+        verify(view).showSearchItems(eq(paymentMethodSearch.getGroups()), any(OnSelectedCallback.class));
+        verifyNoMoreInteractions(view);
     }
+
+    private void verifyInitializeWithGroups(){
+        verify(view, atLeastOnce()).showAmount(discountRepository.getCurrentConfiguration(),
+            paymentSettingRepository.getCheckoutPreference().getTotalAmount(),
+            paymentSettingRepository.getCheckoutPreference().getSite());
+        verify(view, atLeastOnce()).setMainTitle();
+        verify(view, atLeastOnce())
+            .showPluginOptions(any(Collection.class), any(PaymentMethodPlugin.PluginPosition.class));
+        verify(view, atLeastOnce()).hideProgress();
+    }
+
+    /*
 
     @Test
     public void ifOnlyCardPaymentTypeAvailableAndAccountMoneyAvailableDoNotSelectAutomatically() {
