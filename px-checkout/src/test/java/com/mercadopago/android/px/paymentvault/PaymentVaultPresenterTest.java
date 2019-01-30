@@ -195,11 +195,21 @@ public class PaymentVaultPresenterTest {
 
         presenter.initialize();
 
-        verifyInitializeWithGroups();
-        verify(view).showCustomOptions(eq(paymentMethodSearch.getCustomSearchItems()), any(OnSelectedCallback.class));
-        verify(view).showSearchItems(eq(paymentMethodSearch.getGroups()), any(OnSelectedCallback.class));
-        verifyNoMoreInteractions(view);
+        verifyDoNotSelectAutomatically(paymentMethodSearch);
     }
+
+    @Test
+    public void whenOnlyCardPaymentTypeAvailableAndAccountMoneyAvailableDoNotSelectAutomatically() {
+        final PaymentMethodSearch paymentMethodSearch =
+            PaymentMethodSearchs.getPaymentMethodSearchWithOnlyCreditCardAndAccountMoneyMLA();
+        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
+
+        presenter.initialize();
+
+        verifyDoNotSelectAutomatically(paymentMethodSearch);
+    }
+
+    // --------- Helper methods ----------- //
 
     private void verifyInitializeWithGroups(){
         verify(view, atLeastOnce()).showAmount(discountRepository.getCurrentConfiguration(),
@@ -211,20 +221,14 @@ public class PaymentVaultPresenterTest {
         verify(view, atLeastOnce()).hideProgress();
     }
 
-    /*
-
-    @Test
-    public void ifOnlyCardPaymentTypeAvailableAndAccountMoneyAvailableDoNotSelectAutomatically() {
-        final PaymentMethodSearch paymentMethodSearch =
-            PaymentMethodSearchs.getPaymentMethodSearchWithOnlyCreditCardAndAccountMoneyMLA();
-        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
-
-        presenter.initialize();
-
-        Assert.assertNotNull(stubView.customOptionsShown);
-        Assert.assertFalse(stubView.cardFlowStarted);
-        Assert.assertFalse(stubView.isItemShown);
+    private void verifyDoNotSelectAutomatically(final PaymentMethodSearch paymentMethodSearch) {
+        verifyInitializeWithGroups();
+        verify(view).showCustomOptions(eq(paymentMethodSearch.getCustomSearchItems()), any(OnSelectedCallback.class));
+        verify(view).showSearchItems(eq(paymentMethodSearch.getGroups()), any(OnSelectedCallback.class));
+        verifyNoMoreInteractions(view);
     }
+
+    /*
 
     @Test
     public void ifOnlyOffPaymentTypeAvailableAndAccountMoneyAvailableDoNotSelectAutomatically() {
