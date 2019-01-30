@@ -159,20 +159,21 @@ public class PaymentVaultPresenterTest {
         verify(view).hideProgress();
     }
 
-    /*
+
     //Automatic selections
 
     @Test
-    public void ifOnlyUniqueSearchItemAvailableRestartWithItSelected() {
+    public void whenOnlyUniqueSearchItemAvailableRestartWithItSelected() {
         final PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getPaymentMethodSearchWithOnlyTicketMLA();
         when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
         when(discountRepository.getCurrentConfiguration()).thenReturn(WITHOUT_DISCOUNT);
 
         presenter.initialize();
 
-        assertEquals(paymentMethodSearch.getGroups().get(0), stubView.itemShown);
+        verify(view).showSelectedItem(paymentMethodSearch.getGroups().get(0));
     }
 
+    /*
     @Test
     public void ifOnlyCardPaymentTypeAvailableStartCardFlow() {
         final PaymentMethodSearch paymentMethodSearch =
