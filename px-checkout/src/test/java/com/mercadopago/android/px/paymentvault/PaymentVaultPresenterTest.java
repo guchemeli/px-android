@@ -39,6 +39,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -135,21 +136,6 @@ public class PaymentVaultPresenterTest {
         verify(view).showCustomOptions(eq(paymentMethodSearch.getCustomSearchItems()), any(OnSelectedCallback.class));
     }
 
-    @Test
-    public void whenItemWithChildrenSelectedThenShowChildren() {
-        final PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getCompletePaymentMethodSearchMLA();
-        final PaymentMethodSearchItem selectedSearchItem = paymentMethodSearch.getGroups().get(1);
-        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
-
-        presenter.setSelectedSearchItem(selectedSearchItem);
-
-        presenter.initialize();
-
-        verify(view).setTitle(selectedSearchItem.getChildrenHeader());
-        verify(view).showSearchItems(eq(selectedSearchItem.getChildren()), any(OnSelectedCallback.class));
-        verify(view).hideProgress();
-    }
-
     //Automatic selections
 
     @Test
@@ -216,8 +202,22 @@ public class PaymentVaultPresenterTest {
         verifyDoNotSelectCustomOptionAutomatically(paymentMethodSearch);
     }
 
-
     //User selections
+
+    @Test
+    public void whenItemWithChildrenSelectedThenShowChildren() {
+        final PaymentMethodSearch paymentMethodSearch = PaymentMethodSearchs.getCompletePaymentMethodSearchMLA();
+        final PaymentMethodSearchItem selectedSearchItem = paymentMethodSearch.getGroups().get(1);
+        when(groupsRepository.getGroups()).thenReturn(new StubSuccessMpCall<>(paymentMethodSearch));
+
+        presenter.setSelectedSearchItem(selectedSearchItem);
+
+        presenter.initialize();
+
+        verify(view).setTitle(selectedSearchItem.getChildrenHeader());
+        verify(view).showSearchItems(eq(selectedSearchItem.getChildren()), any(OnSelectedCallback.class));
+        verify(view).hideProgress();
+    }
 
     @Test
     public void whenCardPaymentTypeSelectedThenStartCardFlow() {
@@ -244,6 +244,19 @@ public class PaymentVaultPresenterTest {
         Assert.assertEquals(stubView.savedCardSelected, paymentMethodSearch.getCards().get(0));
     }
 
+    //Payment Preference tests
+    @Test
+    public void whenAllPaymentMethodsExcludedShowError() {
+        final PaymentPreference paymentPreference = new PaymentPreference();
+        paymentPreference.setExcludedPaymentTypeIds(PaymentTypes.getAllPaymentTypes());
+
+        when(checkoutPreference.getPaymentPreference()).thenReturn(paymentPreference);
+
+        presenter.initialize();
+
+        verify(view).showError(any(MercadoPagoError.class), anyString());
+    }
+
     @Test
     public void whenBoletoSelectedThenCollectPayerInformation() {
         final PaymentVaultPresenter presenter = getPresenter();
@@ -267,7 +280,7 @@ public class PaymentVaultPresenterTest {
 
     // --------- Helper methods ----------- //
 
-    private void verifyInitializeWithGroups(){
+    private void verifyInitializeWithGroups() {
         verify(view, atLeastOnce()).showAmount(discountRepository.getCurrentConfiguration(),
             paymentSettingRepository.getCheckoutPreference().getTotalAmount(),
             paymentSettingRepository.getCheckoutPreference().getSite());
@@ -285,18 +298,6 @@ public class PaymentVaultPresenterTest {
     }
 
     /*
-
-    //Payment Preference tests
-    @Test
-    public void whenAllPaymentMethodsExcludedShowError() {
-        final PaymentPreference paymentPreference = new PaymentPreference();
-        paymentPreference.setExcludedPaymentTypeIds(PaymentTypes.getAllPaymentTypes());
-
-        when(checkoutPreference.getPaymentPreference()).thenReturn(paymentPreference);
-        presenter.initialize();
-
-        assertEquals(MockedProvider.ALL_TYPES_EXCLUDED, stubView.errorShown.getMessage());
-    }
 
     @Test
     public void ifInvalidDefaultInstallmentsShowError() {
