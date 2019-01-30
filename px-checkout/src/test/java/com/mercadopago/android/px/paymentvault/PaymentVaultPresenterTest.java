@@ -42,6 +42,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
@@ -173,9 +174,8 @@ public class PaymentVaultPresenterTest {
         verify(view).showSelectedItem(paymentMethodSearch.getGroups().get(0));
     }
 
-    /*
     @Test
-    public void ifOnlyCardPaymentTypeAvailableStartCardFlow() {
+    public void whenOnlyCardPaymentTypeAvailableStartCardFlow() {
         final PaymentMethodSearch paymentMethodSearch =
             PaymentMethodSearchs.getPaymentMethodSearchWithOnlyCreditCardMLA();
         final PaymentVaultPresenter presenter = getPresenter();
@@ -186,13 +186,15 @@ public class PaymentVaultPresenterTest {
 
         verify(view).showAmount(discountRepository.getCurrentConfiguration(),
             checkoutPreference.getTotalAmount(), mockSite);
-        verify(view).setTitle(paymentVaultProvider.getTitle());
-        verify(view).startCardFlow(true);
+        verify(view).setMainTitle();
+        verify(view).startCardFlow(anyBoolean());
         verify(paymentSettingRepository, atLeastOnce()).getCheckoutPreference();
         verify(userSelectionRepository, times(1)).select(PaymentTypes.CREDIT_CARD);
         verifyNoMoreInteractions(view);
         verifyNoMoreInteractions(paymentSettingRepository);
     }
+
+    /*
 
     @Test
     public void ifOnlyCardPaymentTypeAvailableAndCardAvailableDoNotSelectAutomatically() {
