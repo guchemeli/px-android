@@ -163,7 +163,6 @@ public class PaymentVaultPresenterTest {
 
         verify(view).showAmount(discountRepository.getCurrentConfiguration(),
             checkoutPreference.getTotalAmount(), mockSite);
-        verify(view).setMainTitle();
         verify(view).startCardFlow(anyBoolean());
         verify(paymentSettingRepository, atLeastOnce()).getCheckoutPreference();
         verify(userSelectionRepository, times(1)).select(PaymentTypes.CREDIT_CARD);
@@ -402,7 +401,6 @@ public class PaymentVaultPresenterTest {
         verify(view, atLeastOnce()).showAmount(discountRepository.getCurrentConfiguration(),
             paymentSettingRepository.getCheckoutPreference().getTotalAmount(),
             paymentSettingRepository.getCheckoutPreference().getSite());
-        verify(view, atLeastOnce()).setMainTitle();
         verify(view, atLeastOnce())
             .showPluginOptions(any(Collection.class), any(PaymentMethodPlugin.PluginPosition.class));
         verify(view, atLeastOnce()).hideProgress();

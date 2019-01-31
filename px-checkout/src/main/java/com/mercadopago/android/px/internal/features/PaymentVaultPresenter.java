@@ -147,7 +147,6 @@ public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
     }
 
     /* default */ void initPaymentMethodSearch() {
-        getView().setMainTitle();
         showPaymentMethodGroup();
     }
 
