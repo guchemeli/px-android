@@ -463,7 +463,7 @@ public class PaymentVaultPresenterTest {
         @Override
         public void showPluginOptions(final Collection<PaymentMethodPlugin> items,
             final PaymentMethodPlugin.PluginPosition position) {
-
+            //Not yet tested
         }
 
         @Override
@@ -475,15 +475,17 @@ public class PaymentVaultPresenterTest {
 
         @Override
         public void showError(final MercadoPagoError mpException, final String requestOrigin) {
+            //Not yet tested
         }
 
         @Override
         public void setTitle(final String title) {
+            //Not yet tested
         }
 
         @Override
         public void setMainTitle() {
-
+            //Not yet tested
         }
 
         @Override
@@ -505,10 +507,12 @@ public class PaymentVaultPresenterTest {
         public void showAmount(@NonNull final DiscountConfigurationModel discountModel,
             @NonNull final BigDecimal totalAmount,
             @NonNull final Site site) {
+            //Not yet tested
         }
 
         @Override
         public void collectPayerInformation() {
+            //Not yet tested
         }
 
         @Override
@@ -528,12 +532,12 @@ public class PaymentVaultPresenterTest {
 
         @Override
         public void showEmptyPaymentMethodsError() {
-
+            //Not yet tested
         }
 
         @Override
         public void showMismatchingPaymentMethodError() {
-
+            //Not yet tested
         }
 
         /* default */ void simulateItemSelection(final int index) {
