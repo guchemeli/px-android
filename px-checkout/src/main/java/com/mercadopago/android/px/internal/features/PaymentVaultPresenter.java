@@ -167,7 +167,7 @@ public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
 
     private void resolveAvailablePaymentMethods() {
         if (noPaymentMethodsAvailable()) {
-            showEmptyPaymentMethodsError();
+            getView().showEmptyPaymentMethodsError();
         } else if (isOnlyOneItemAvailable() && !isDiscountAvailable()) {
             if (pluginRepository.hasEnabledPaymentMethodPlugin()) {
                 selectPluginPaymentMethod(pluginRepository.getFirstEnabledPlugin());
@@ -301,7 +301,7 @@ public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
         if (skipHook || (!hook1Displayed && !showHook1(selectedPaymentMethod.getPaymentTypeId()))) {
             skipHook = false;
             if (selectedPaymentMethod == null) {
-                showMismatchingPaymentMethodError();
+                getView().showMismatchingPaymentMethodError();
             } else {
                 handleCollectPayerInformation(selectedPaymentMethod);
             }
@@ -350,14 +350,6 @@ public class PaymentVaultPresenter extends BasePresenter<PaymentVaultView>
             &&
             (paymentMethodSearch.getCustomSearchItems() == null || paymentMethodSearch.getCustomSearchItems().isEmpty())
             && !pluginRepository.hasEnabledPaymentMethodPlugin();
-    }
-
-    private void showEmptyPaymentMethodsError() {
-        getView().showEmptyPaymentMethodsError();
-    }
-
-    private void showMismatchingPaymentMethodError() {
-        getView().showMismatchingPaymentMethodError();
     }
 
     public PaymentMethodSearchItem getSelectedSearchItem() {
